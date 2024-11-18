@@ -7,7 +7,7 @@ const { depo, leverage, risk_sl, risk_margin, coefPrice } = storeToRefs(useSetti
 const feeBuy = 0.02;
 const feeSell = 0.055;
 
-const setPrice = ref(0);
+const setPrice = ref();
 // Adjust the `digits` computed property to return the required decimal places
 const digits = computed(() => {
 	const priceValue = setPrice.value;
