@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useSettingsStore } from '../stores/settings.js';
 const { depo, leverage, risk_sl, risk_margin, coefPrice } = storeToRefs(useSettingsStore());
@@ -7,7 +7,14 @@ const { depo, leverage, risk_sl, risk_margin, coefPrice } = storeToRefs(useSetti
 const feeBuy = 0.02;
 const feeSell = 0.055;
 
-const setPrice = ref();
+const setPrice = ref(0);
+// Watch for changes to setPrice and handle empty input
+watch(setPrice, (newValue) => {
+	if (newValue === null || newValue === '') {
+		setPrice.value = 0; // Reset to 0 if the input is cleared
+	}
+});
+
 // Adjust the `digits` computed property to return the required decimal places
 const digits = computed(() => {
 	const priceValue = setPrice.value;
