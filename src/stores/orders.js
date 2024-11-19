@@ -1,20 +1,33 @@
 import { defineStore } from "pinia";
-import { computed, reactive } from "vue";
+import { computed, reactive, watch } from "vue";
 
 export const useOrderStore = defineStore(
   "orderStore",
-  () => {
-    const blocks = reactive([
-      {
-        date: null,
-        symbol: "",
-        buy: 0,
-        amnt: 0,
-        tp: 0,
-        sl: 0,
-        activeValue: "profit", // Default to 'profit'
+	() => {
+		const storedData = JSON.parse(localStorage.getItem("order-data")) || [];
+    const blocks = reactive(
+      storedData.length
+        ? storedData
+        : [
+            {
+              date: null,
+              symbol: "",
+              buy: 0,
+              amnt: 0,
+              tp: 0,
+              sl: 0,
+              activeValue: "profit", // Default to 'profit'
+            },
+          ]
+		);
+		watch(
+      () => blocks,
+      (newBlocks) => {
+        localStorage.setItem("order-data", JSON.stringify(newBlocks));
       },
-    ]);
+      { deep: true }
+    );
+
     const buyFee = 0.0002;
     const sellFee = 0.00055;
 
@@ -82,7 +95,7 @@ export const useOrderStore = defineStore(
   {
     persist: {
       key: "order-data",
-      storage: localStorage,
+      storage: window.localStorage,
     },
   }
 );
