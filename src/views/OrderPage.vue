@@ -28,11 +28,11 @@ watch(
 				<!-- Profit and Loss Section -->
 				<div class="flex gap-2">
 					<!-- Profit Radio Button and Label -->
-					<label :class="{
+					<label for="profit" :class="{
 						'text-green-500 font-bold': block.activeValue === 'profit',
 						'text-gray-500': block.activeValue !== 'profit',
 					}">
-						<input type="radio" value="profit" v-model="block.activeValue" />
+						<input id="profit" type="radio" value="profit" v-model="block.activeValue" />
 						Profit
 					</label>
 					<span :class="{
@@ -43,11 +43,11 @@ watch(
 					</span>
 
 					<!-- Loss Radio Button and Label -->
-					<label :class="{
+					<label for="loss" :class="{
 						'text-red-500 font-bold': block.activeValue === 'loss',
 						'text-gray-500': block.activeValue !== 'loss',
 					}">
-						<input type="radio" value="loss" v-model="block.activeValue" />
+						<input id="loss" type="radio" value="loss" v-model="block.activeValue" />
 						Loss
 					</label>
 					<span :class="{
@@ -60,18 +60,21 @@ watch(
 			</div>
 
 			<!-- Input Fields -->
-			<input id="a" type="date" v-model="block.date" placeholder="Date"
-				class="w-1/6 bg-gray-900 font-bold text-center" />
-			<input id="b" type="text" v-model="block.symbol" placeholder="Symbol"
-				class="w-1/6 bg-gray-900 font-bold text-center" />
-			<input id="c" type="number" v-model="block.buy" placeholder="Buy"
-				class="w-1/6 bg-gray-900 font-bold text-center" />
-			<input id="d" type="number" v-model="block.amnt" placeholder="Amnt"
-				class="w-1/6 bg-gray-900 font-bold text-center" />
-			<input id="e" type="number" v-model="block.tp" placeholder="TP" class="w-1/6 bg-gray-900 font-bold text-center" />
-			<input id="f" type="number" v-model="block.sl" placeholder="SL" class="w-1/6 bg-gray-900 font-bold text-center" />
-
-			<hr class="bg-green-600 mt-4" />
+			<div class="">
+				<input id="date" type="date" v-model="block.date" placeholder="Date"
+					class="w-1/6 bg-gray-900 font-bold text-center" />
+				<input id="symbol" type="text" v-model="block.symbol" placeholder="Symbol"
+					class="w-1/6 bg-gray-900 font-bold text-center" />
+				<input id="buy" type="number" v-model="block.buy" placeholder="Buy"
+					class="w-1/6 bg-gray-900 font-bold text-center" />
+				<input id="amnt" type="number" v-model="block.amnt" placeholder="Amnt"
+					class="w-1/6 bg-gray-900 font-bold text-center" />
+				<input id="tp" type="number" v-model="block.tp" placeholder="TP"
+					class="w-1/6 bg-gray-900 font-bold text-center" />
+				<input id="sl" type="number" v-model="block.sl" placeholder="SL"
+					class="w-1/6 bg-gray-900 font-bold text-center" />
+			</div>
+			<hr class="bg-green-600 mt-2" />
 		</div>
 	</div>
 </template>

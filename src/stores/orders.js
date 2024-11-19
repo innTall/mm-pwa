@@ -18,10 +18,10 @@ export const useOrderStore = defineStore(
     const buyFee = 0.0002;
     const sellFee = 0.00055;
 
-		const calculateFeeSl = (buy, amnt, sl) => {
+    const calculateFeeSl = (buy, amnt, sl) => {
       return Number(buy * amnt * buyFee + sl * amnt * sellFee).toFixed(2);
     };
-		const calculateFeeTp = (buy, amnt, tp) => {
+    const calculateFeeTp = (buy, amnt, tp) => {
       return Number(buy * amnt * buyFee + tp * amnt * sellFee).toFixed(2);
     };
 
@@ -34,8 +34,18 @@ export const useOrderStore = defineStore(
       const feeSl = calculateFeeSl(buy, amnt, sl); // Use SL for fee here
       return Number((sl - buy) * amnt - feeSl).toFixed(2);
     };
-		
-		const addBlock = () => {
+
+    const totalSum = computed(() => {
+      return blocks.reduce((sum, block) => {
+        const isProfit = block.activeValue === "profit";
+        const value = isProfit
+          ? calculateProfit(block.buy, block.amnt, block.tp)
+          : calculateLoss(block.buy, block.amnt, block.sl);
+        return sum + Number(value);
+      }, 0);
+    });
+
+    const addBlock = () => {
       blocks.push({
         date: null,
         symbol: "",
@@ -47,7 +57,7 @@ export const useOrderStore = defineStore(
       });
     };
 
-		const isBlockComplete = (block) => {
+    const isBlockComplete = (block) => {
       return (
         block.date &&
         block.symbol &&
@@ -56,8 +66,8 @@ export const useOrderStore = defineStore(
         block.tp > 0 &&
         block.sl > 0
       );
-		};
-		
+    };
+
     return {
       blocks,
       addBlock,
@@ -66,9 +76,13 @@ export const useOrderStore = defineStore(
       calculateFeeSl,
       calculateProfit,
       calculateLoss,
+      totalSum,
     };
   },
   {
-    persist: true,
+    persist: {
+      key: "order-data",
+      storage: localStorage,
+    },
   }
 );
