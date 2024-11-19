@@ -55,16 +55,16 @@ export default defineConfig({
       },
 
       workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
+        globPatterns: ["**/*.{js,css,html,svg,png,ico,json}"],
         globDirectory: "dist",
         cleanupOutdatedCaches: true,
         clientsClaim: true,
-        navigateFallback: "index.html",
+        navigateFallback: "/mm-pwa/index.html",
       },
 
       devOptions: {
         enabled: true,
-        navigateFallback: "index.html",
+        navigateFallback: "/mm-pwa/index.html",
         suppressWarnings: true,
         type: "module",
       },
