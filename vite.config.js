@@ -5,7 +5,7 @@ import vue from "@vitejs/plugin-vue";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/mm-pwa/',
+  base: "/mm-pwa/",
   plugins: [
     vue(),
     VitePWA({
@@ -56,12 +56,14 @@ export default defineConfig({
 
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
+        globDirectory: "dist",
         cleanupOutdatedCaches: true,
         clientsClaim: true,
+        navigateFallback: "index.html",
       },
 
       devOptions: {
-        enabled: false,
+        enabled: true,
         navigateFallback: "index.html",
         suppressWarnings: true,
         type: "module",
