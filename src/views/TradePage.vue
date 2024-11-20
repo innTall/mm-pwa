@@ -4,8 +4,8 @@ import { storeToRefs } from "pinia";
 import { useSettingsStore } from '../stores/settings.js';
 const { depo, leverage, risk_sl, risk_margin, coefPrice } = storeToRefs(useSettingsStore());
 // Constants for fee
-const feeBuy = 0.02;
-const feeSell = 0.055;
+const feeBuy = 0.0002;
+const feeSell = 0.00055;
 
 const setPrice = ref(0);
 // Watch for changes to setPrice and handle empty input
@@ -84,6 +84,8 @@ const buyPrice = computed(
 	() => (setPrice.value + priceDiff1.value / 2 * coefPrice.value
 	).toFixed(digits.value));
 
+const zeroPrice = computed(
+	() => (+buyPrice.value + buyPrice.value * (feeBuy + feeSell)).toFixed(digits.value));
 //const abc = +(lote.value * buyPrice.value).toFixed(digits.value);
 //const aaa = (+tp1.value + abc);
 const tpPrice1 = computed(() =>
@@ -197,7 +199,10 @@ const slPrice5 = computed(
 			<div class="">{{ tpPrice5 }}</div>
 		</div>
 	</div>
-	<p class="bg-green-600 text-center">Buy Price ###_ {{ buyPrice }} _###</p>
+	<div class="flex justify-around">
+		<p class="bg-green-600 text-center">Buy ___ {{ buyPrice }} ___</p>
+		<p class="bg-blue-600 text-center">Zero ___ {{ zeroPrice }} ___</p>
+	</div>
 	<div class="text-gray-600">
 		<div class="flex justify-around">
 			<div class="">{{ priceDiff1 }}</div>
