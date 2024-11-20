@@ -3,6 +3,13 @@ import { watch } from "vue";
 import { useOrderStore } from "@/stores/orders.js";
 const orderStore = useOrderStore();
 // Watch for changes to all blocks and auto-add a new block when needed
+const addOrder = () => {
+	orderStore.addBlock();
+};
+
+const blocks = orderStore.blocks;
+const totalSum = orderStore.totalSum;
+
 watch(
 	() => orderStore.blocks.map((block) => ({ ...block })), // Deep watch on all blocks
 	(newBlocks) => {
@@ -28,11 +35,11 @@ watch(
 				<!-- Profit and Loss Section -->
 				<div class="flex gap-2">
 					<!-- Profit Radio Button and Label -->
-					<label for="profit" :class="{
+					<label :for="'profit-' + index" :class="{
 						'text-green-500 font-bold': block.activeValue === 'profit',
 						'text-gray-500': block.activeValue !== 'profit',
 					}">
-						<input id="profit" type="radio" value="profit" v-model="block.activeValue" />
+						<input :id="'profit-' + index" type="radio" value="profit" v-model="block.activeValue" />
 						Profit
 					</label>
 					<span :class="{
@@ -43,11 +50,11 @@ watch(
 					</span>
 
 					<!-- Loss Radio Button and Label -->
-					<label for="loss" :class="{
+					<label :for="'loss-' + index" :class="{
 						'text-red-500 font-bold': block.activeValue === 'loss',
 						'text-gray-500': block.activeValue !== 'loss',
 					}">
-						<input id="loss" type="radio" value="loss" v-model="block.activeValue" />
+						<input :id="'loss-' + index" type="radio" value="loss" v-model="block.activeValue" />
 						Loss
 					</label>
 					<span :class="{
@@ -61,17 +68,17 @@ watch(
 
 			<!-- Input Fields -->
 			<div class="">
-				<input id="date" type="date" v-model="block.date" placeholder="Date"
+				<input :id="'date-' + index" type="date" v-model="block.date" placeholder="Date"
 					class="w-1/6 bg-gray-900 font-bold text-center" />
-				<input id="symbol" type="text" v-model="block.symbol" placeholder="Symbol"
+				<input :id="'symbol-' + index" type="text" v-model="block.symbol" placeholder="Symbol"
 					class="w-1/6 bg-gray-900 font-bold text-center" />
-				<input id="buy" type="number" v-model="block.buy" placeholder="Buy"
+				<input :id="'buy-' + index" type="number" v-model="block.buy" placeholder="Buy"
 					class="w-1/6 bg-gray-900 font-bold text-center" />
-				<input id="amnt" type="number" v-model="block.amnt" placeholder="Amnt"
+				<input :id="'amnt-' + index" type="number" v-model="block.amnt" placeholder="Amnt"
 					class="w-1/6 bg-gray-900 font-bold text-center" />
-				<input id="tp" type="number" v-model="block.tp" placeholder="TP"
+				<input :id="'tp-' + index" type="number" v-model="block.tp" placeholder="TP"
 					class="w-1/6 bg-gray-900 font-bold text-center" />
-				<input id="sl" type="number" v-model="block.sl" placeholder="SL"
+				<input :id="'sl-' + index" type="number" v-model="block.sl" placeholder="SL"
 					class="w-1/6 bg-gray-900 font-bold text-center" />
 			</div>
 			<hr class="bg-green-600 mt-2" />
