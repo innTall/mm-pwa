@@ -73,13 +73,13 @@ watch(
 				<input :id="'symbol-' + index" type="text" v-model="block.symbol" placeholder="Symbol"
 					class="w-1/6 bg-gray-900 font-bold text-center" />
 				<input :id="'buy-' + index" type="number" v-model="block.buy" placeholder="Buy"
-					class="w-1/6 bg-gray-900 font-bold text-center" />
+					class="w-1/6 bg-gray-900 font-bold text-center text-blue-400" />
 				<input :id="'amnt-' + index" type="number" v-model="block.amnt" placeholder="Amnt"
 					class="w-1/6 bg-gray-900 font-bold text-center" />
 				<input :id="'tp-' + index" type="number" v-model="block.tp" placeholder="TP"
-					class="w-1/6 bg-gray-900 font-bold text-center" />
+					class="w-1/6 bg-gray-900 font-bold text-center text-green-400" />
 				<input :id="'sl-' + index" type="number" v-model="block.sl" placeholder="SL"
-					class="w-1/6 bg-gray-900 font-bold text-center" />
+					class="w-1/6 bg-gray-900 font-bold text-center text-red-400" />
 			</div>
 			<hr class="bg-green-600 mt-2" />
 		</div>
