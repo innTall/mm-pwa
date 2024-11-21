@@ -3,7 +3,7 @@ import { ref, watchEffect } from "vue";
 export const useMinmaxStore = defineStore(
   "MinmaxStore",
   () => {
-    const firstBuyLevel = ref(0);
+    const firstBuyLevel = ref(1.2345);
     const buyLevelsCoef = ref(0);
     const minPrice = ref(0);
     const maxPrice = ref(0);

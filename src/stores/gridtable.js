@@ -19,6 +19,16 @@ const {
 export const useTableStore = defineStore(
   "table",
   () => {
+    let numOfOrderKeys = ref([]);
+    let buyLimitLevels = ref([]);
+    let buyOrdersArray = ref([]);
+    let sumBuyOrders = ref([]);
+    let amountBuyOrders = ref([]);
+    let sumAmountOrders = ref([]);
+    let buyZeroLevels = ref([]);
+    let sellLevelsArray = ref([]);
+    let totalProfit = ref([]);
+    const savedTables = ref([]);
     //* ----------------------------------
     //* <<< base level coef and values >>>
     //* ----------------------------------
@@ -59,7 +69,7 @@ export const useTableStore = defineStore(
     //* ----------------------
     //* <<< buy order keys >>>
     //* ----------------------
-    const numOfOrderKeys = computed(() =>
+    numOfOrderKeys = computed(() =>
       Array.from({ length: numOfOrder.value }, (_, index) => index + 1)
     );
     //* --------------------------------------------
@@ -136,7 +146,7 @@ export const useTableStore = defineStore(
     //* ---------------------------------
     const x = finalDiffBuyLevels;
     const y = buyFirstLevel.value;
-    let buyLimitLevels = [];
+    buyLimitLevels = [];
     function currentSubtr(x) {
       x.reduce((subtr, current, i) => {
         return (buyLimitLevels[i] = (subtr - current).toFixed(
@@ -182,7 +192,7 @@ export const useTableStore = defineStore(
       Array.from({
         length: Math.floor(Math.log(end / start) / Math.log(step)) + k,
       }).map((_, numOfOrder) => start * step ** numOfOrder);
-    let buyOrdersArray = buyOrders(buyOrderNext);
+    buyOrdersArray = buyOrders(buyOrderNext);
     buyOrdersArray = buyOrdersArray.map(function (each_element) {
       return Number((each_element * 1.001).toFixed(2)); //! * 1.001 ??
     });
@@ -191,7 +201,7 @@ export const useTableStore = defineStore(
     //* <<< BUY-order-$ SUM $ >>> Buy$SUM []
     //* ------------------------------------
     const s = buyOrdersArray;
-    let sumBuyOrders;
+    sumBuyOrders;
     let sumBuyOrdersList;
     function currentSum(s) {
       sumBuyOrders = [];
@@ -208,7 +218,7 @@ export const useTableStore = defineStore(
     //* ----------------------------------
     //* <<< amountOrder >>> AMOUNTORDER []
     //* ----------------------------------
-    const amountBuyOrders = buyOrdersArray.map(function (number, index) {
+    amountBuyOrders = buyOrdersArray.map(function (number, index) {
       return +(number / Number(buyLimitLevels[index])).toFixed(
         amountRound.value
       );
@@ -218,7 +228,7 @@ export const useTableStore = defineStore(
     //* <<< Amount orders SUM >>> Amnt SUM []
     //* -------------------------------------
     const a = amountBuyOrders;
-    let sumAmountOrders;
+    sumAmountOrders;
     function amountSum(a) {
       sumAmountOrders = [];
       a.reduce((sum, current, i) => {
@@ -233,7 +243,7 @@ export const useTableStore = defineStore(
     //* -------------------------------
     //* <<< Buy Zero levels >>> Zero []
     //* -------------------------------
-    const buyZeroLevels = sumBuyOrders.map(function (number, index) {
+    buyZeroLevels = sumBuyOrders.map(function (number, index) {
       return +(number / sumAmountOrders[index]).toFixed(priceRound.value);
     });
 
@@ -244,7 +254,7 @@ export const useTableStore = defineStore(
     for (let i = 0; i < numOfOrder.value; i++) {
       sellLevels.push(buyZeroLevels[i] * (gridSize.value / 100));
     }
-    let sellLevelsArray = buyZeroLevels.map(function (number, index) {
+    sellLevelsArray = buyZeroLevels.map(function (number, index) {
       return +(number + sellLevels[index]).toFixed(priceRound.value);
     });
 
@@ -255,9 +265,43 @@ export const useTableStore = defineStore(
       return (number * Number(sumAmountOrders[index])).toFixed(2);
     });
 
-    const totalProfit = totalSellOrders.map(function (number, index) {
+    totalProfit = totalSellOrders.map(function (number, index) {
       return +(number - Number(sumBuyOrders[index])).toFixed(2);
     });
+
+    function saveTable(date, symbol) {
+      const table = {
+        date,
+        symbol,
+        data: {
+          numOfOrderKeys: [...numOfOrderKeys.value],
+          buyLimitLevels: [...buyLimitLevels.value],
+          buyOrdersArray: [...buyOrdersArray.value],
+          sumBuyOrders: [...sumBuyOrders.value],
+          amountBuyOrders: [...amountBuyOrders.value],
+          sumAmountOrders: [...sumAmountOrders.value],
+          buyZeroLevels: [...buyZeroLevels.value],
+          sellLevelsArray: [...sellLevelsArray.value],
+          totalProfit: [...totalProfit.value],
+        },
+      };
+      savedTables.value.push(table);
+
+      // Clear current table after saving
+      numOfOrderKeys.value = [];
+      buyLimitLevels.value = [];
+      buyOrdersArray.value = [];
+      sumBuyOrders.value = [];
+      amountBuyOrders.value = [];
+      sumAmountOrders.value = [];
+      buyZeroLevels.value = [];
+      sellLevelsArray.value = [];
+      totalProfit.value = [];
+    }
+
+    function deleteTable(index) {
+      savedTables.value.splice(index, 1);
+    }
 
     return {
       gridFrequence,
@@ -284,6 +328,8 @@ export const useTableStore = defineStore(
       sellLevelsArray,
       totalSellOrders,
       totalProfit,
+      saveTable,
+      deleteTable,
     };
   },
   { persist: true }
