@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, watch, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 
 export const useSettingsStore = defineStore(
   "settings",
@@ -12,7 +12,6 @@ export const useSettingsStore = defineStore(
 
     // Watchers to trigger the database update on change
     watchEffect(depo, leverage, risk_sl, risk_margin, coefPrice);
-    //updateDatabase
 
     return {
       depo,
