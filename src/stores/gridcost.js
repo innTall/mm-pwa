@@ -7,6 +7,8 @@ export const useGridStore = defineStore(
     const numOfOrder = ref(0);
     const coefNextOrderCost = ref(0);
     const firstOrderCost = ref(0);
+    const priceRound = ref();
+    const amountRound = ref();
 
     watchEffect(numOfOrder, coefNextOrderCost, firstOrderCost);
     
@@ -17,7 +19,14 @@ export const useGridStore = defineStore(
       }
       return cost.toFixed(2);
     });
-    return { numOfOrder, coefNextOrderCost, firstOrderCost, gridCost };
+    return {
+      numOfOrder,
+      coefNextOrderCost,
+      firstOrderCost,
+      priceRound,
+      amountRound,
+      gridCost,
+    };
   },
   {
     persist: true,
