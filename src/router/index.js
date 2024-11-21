@@ -13,6 +13,21 @@ const router = createRouter({
       name: "BybitMarginResult",
       component: () => import("../views/BybitMarginResult.vue"),
     },
+    {
+      path: "/gridOptions",
+      name: "GridOptions",
+      component: () => import("../views/GridOptions.vue"),
+    },
+    {
+      path: "/bybitSpotResult",
+      name: "BybitSpotResult",
+      component: () => import("../views/BybitSpotResult.vue"),
+    },
+    {
+      path: "/binanceSpotResult",
+      name: "BinanceSpotResult",
+      component: () => import("../views/BinanceSpotResult.vue"),
+    },
   ],
 });
 export default router;
