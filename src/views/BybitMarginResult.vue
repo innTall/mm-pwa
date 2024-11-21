@@ -91,7 +91,7 @@ watch(
 				<input :id="'sl-' + index" type="number" v-model="block.sl" placeholder="SL"
 					class="w-1/6 bg-gray-900 font-bold text-center text-red-400" />
 			</div>
-			<hr class="bg-green-600 mt-2" />
+			<hr class="border-green-600 mt-2" />
 		</div>
 	</div>
 </template>

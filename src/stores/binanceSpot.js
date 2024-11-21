@@ -2,11 +2,10 @@ import { defineStore } from "pinia";
 import { computed, reactive, watch, toRaw } from "vue";
 import { saveOrders, fetchOrders } from "../utils/db.js";
 
-// Define database and store names for this instance
-const DB_NAME = "orderDatabase"; // Change this for different instances
-const STORE_NAME = "orders";
+const DB_NAME = "binanceSpotDatabase";
+const STORE_NAME = "binanceSpot";
 
-export const useOrderStore = defineStore("orderStore", () => {
+export const useBinanceStore = defineStore("binanceStore", () => {
   const blocks = reactive([]);
 
   const loadBlocks = async () => {

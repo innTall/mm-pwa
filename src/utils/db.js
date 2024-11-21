@@ -1,13 +1,15 @@
 import { openDB } from "idb";
-
-const DB_NAME = "orderDatabase";
-const STORE_NAME = "orders";
-
-export const getDB = async () => {
-  return await openDB(DB_NAME, 1, {
+// Configuration for multiple databases and stores
+const DATABASES = [
+  { dbName: "orderDatabase", storeName: "orders" },
+  { dbName: "bybitSpotDatabase", storeName: "bybitSpot" },
+  { dbName: "binanceSpotDatabase", storeName: "binanceSpot" },
+];
+export const getDB = async (dbName, storeName) => {
+  return await openDB(dbName, 1, {
     upgrade(db) {
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, {
+      if (!db.objectStoreNames.contains(storeName)) {
+        db.createObjectStore(storeName, {
           keyPath: "id",
           autoIncrement: true,
         });
@@ -15,19 +17,28 @@ export const getDB = async () => {
     },
   });
 };
-
 export const saveOrders = async (orders) => {
-  const db = await getDB();
-  const tx = db.transaction(STORE_NAME, "readwrite");
-  await tx.store.clear(); // Clear existing data to replace with new state
-  for (const order of orders) {
-    const plainOrder = JSON.parse(JSON.stringify(order)); // Convert reactive object to plain object
-    await tx.store.add(plainOrder);
-  }
-  await tx.done;
+	for (const { dbName, storeName } of DATABASES) {
+		const db = await getDB(dbName, storeName);
+		const tx = db.transaction(storeName, "readwrite");
+		await tx.store.clear(); // Clear existing data to replace with new state
+		for (const order of orders) {
+			const plainOrder = JSON.parse(JSON.stringify(order)); // Convert reactive object to plain object
+			await tx.store.add(plainOrder);
+		}
+		await tx.done;
+	};
 };
-
-export const fetchOrders = async () => {
-  const db = await getDB();
-  return await db.getAll(STORE_NAME);
+// Function to fetch orders from a specific database and store  
+export const fetchOrders = async (dbName, storeName) => {
+	const db = await getDB(dbName, storeName);
+	return await db.getAll(storeName);
 };
+// Example to fetch all orders from all storages
+	export const fetchAllOrders = async () => {
+		const results = {};
+		for (const { dbName, storeName } of DATABASES) {
+			results[storeName] = await fetchOrders(dbName, storeName);
+		}
+		return results;
+	};
