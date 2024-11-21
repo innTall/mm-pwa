@@ -1,17 +1,17 @@
 import { createRouter, createWebHistory } from "vue-router";
-import TradePage from "../views/TradePage.vue";
+import BybitMarginMM from "../views/BybitMarginMM.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      name: "Trade",
-      component: TradePage,
+      name: "BybitMarginMM",
+      component: BybitMarginMM,
     },
     {
-      path: "/order",
-      name: "Order",
-      component: () => import("../views/OrderPage.vue"),
+      path: "/bybitMarginResult",
+      name: "BybitMarginResult",
+      component: () => import("../views/BybitMarginResult.vue"),
     },
   ],
 });

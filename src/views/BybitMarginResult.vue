@@ -23,7 +23,17 @@ watch(
 </script>
 
 <template>
-	<div>
+	<div class="px-2 py-1">
+		<div class="flex justify-between border px-2">
+			<p class="">Bybit Margin Order</p>
+			<div :class="{
+				'text-green-500': orderStore.totalSum > 0,
+				'text-red-500': orderStore.totalSum < 0,
+				'text-gray-500': orderStore.totalSum === 0,
+			}" class="font-bold text-md">
+				Total Result: {{ orderStore.totalSum.toFixed(2) }}
+			</div>
+		</div>
 		<div v-for="(block, index) in orderStore.blocks" :key="index">
 			<div class="flex gap-3">
 				<!-- Header -->
