@@ -11,9 +11,9 @@ export const useBybitStore = defineStore("bybitStore", () => {
   const loadBlocks = async () => {
     const storedData = await fetchOrders(DB_NAME, STORE_NAME);
     if (storedData.length) {
-      storedData.forEach((block) => blocks.push(block));
+      storedData.forEach((block) => blocks.unshift(block)); // push
     } else {
-      blocks.push({
+      blocks.unshift({ // push
         date: null,
         symbol: "",
         buy: 0,
@@ -67,8 +67,12 @@ export const useBybitStore = defineStore("bybitStore", () => {
     }, 0);
   });
 
-  const addBlock = () => {
-    blocks.push({
+  const deleteBlock = (index) => {
+    blocks.splice(index, 1);
+  };
+
+  const addBlockAtTop = () => {
+    blocks.unshift({
       date: null,
       symbol: "",
       buy: 0,
@@ -92,7 +96,8 @@ export const useBybitStore = defineStore("bybitStore", () => {
 
   return {
     blocks,
-    addBlock,
+    addBlockAtTop,
+    deleteBlock,
     isBlockComplete,
     calculateFeeTp,
     calculateFeeSl,

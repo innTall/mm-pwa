@@ -1,10 +1,14 @@
 <script setup>
+import LogoItem from './layouts/LogoItem.vue';
 </script>
 
 <template>
 	<div class="flex justify-between px-2 py-1">
+		<div>
+			<LogoItem />
+		</div>
 		<div class="text-center">
-			<p class="">Bybit</p>
+			<p class="text-xs">Bybit</p>
 			<div class="">
 				<RouterLink :to="{ name: 'BybitMarginMM' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> MM |</span>
@@ -15,7 +19,7 @@
 			</div>
 		</div>
 		<div class="text-center">
-			<p class="">Bybit/Binance</p>
+			<p class="text-xs">Bybit/Binance</p>
 			<div class="">
 				<RouterLink :to="{ name: 'GridOptions' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Grid</span>
@@ -23,7 +27,7 @@
 			</div>
 		</div>
 		<div class="text-center">
-			<p class="">Bybit</p>
+			<p class="text-xs">Bybit</p>
 			<div class="">
 				<RouterLink :to="{ name: 'BybitSpotResult' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Result</span>
@@ -31,7 +35,7 @@
 			</div>
 		</div>
 		<div class="text-center">
-			<p class="">Binance</p>
+			<p class="text-xs">Binance</p>
 			<div class="">
 				<RouterLink :to="{ name: 'BinanceSpotResult' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Result</span>

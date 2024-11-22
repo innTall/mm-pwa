@@ -4,22 +4,31 @@ import { useOrderStore } from "@/stores/orders.js";
 const orderStore = useOrderStore();
 // Watch for changes to all blocks and auto-add a new block when needed
 const addOrder = () => {
-	orderStore.addBlock();
+	orderStore.addBlockAtTop(); // Assuming this method is added to the store
 };
 
+// Get reactive blocks and total sum from the store
 const blocks = orderStore.blocks;
 const totalSum = orderStore.totalSum;
 
+// Watch for changes in blocks and add a new block at the top if needed
 watch(
 	() => orderStore.blocks.map((block) => ({ ...block })), // Deep watch on all blocks
 	(newBlocks) => {
-		const lastBlock = newBlocks[newBlocks.length - 1];
-		if (orderStore.isBlockComplete(lastBlock)) {
-			orderStore.addBlock();
+		const firstBlock = newBlocks[0]; // Check the first block
+		if (orderStore.isBlockComplete(firstBlock)) {
+			orderStore.addBlockAtTop(); // Add a new block at the top
 		}
 	},
 	{ deep: true }
 );
+// Delete block logic with confirmation
+const confirmAndDeleteBlock = (index) => {
+	const confirmed = window.confirm("Are you sure you want to delete this block?");
+	if (confirmed) {
+		orderStore.deleteBlock(index);
+	}
+};
 </script>
 
 <template>
@@ -35,44 +44,48 @@ watch(
 			</div>
 		</div>
 		<div v-for="(block, index) in orderStore.blocks" :key="index">
-			<div class="flex gap-3">
+			<div class="flex">
 				<!-- Header -->
-				<div class="flex gap-5">
-					<p class="text-yellow-400 font-bold">Order data</p>
-					<p>Result</p>
-				</div>
+				<button @click="confirmAndDeleteBlock(index)" class="w-5 bg-red-600 text-white">
+					X
+				</button>
+				<div class="container flex justify-between">
+					<div class="text-yellow-400 font-bold">Order data</div>
+					<div class="flex gap-3">
+						<div>Result</div>
+						<!-- Profit and Loss Section -->
+						<!-- Profit Radio Button and Label -->
+						<div class="flex gap-3">
+							<label :for="'profit-' + index" :class="{
+								'text-green-500 font-bold': block.activeValue === 'profit',
+								'text-gray-500': block.activeValue !== 'profit',
+							}">
+								<input :id="'profit-' + index" type="radio" value="profit" v-model="block.activeValue" />
+								TP
+							</label>
+							<span :class="{
+								'text-green-500': block.activeValue === 'profit',
+								'text-gray-500': block.activeValue !== 'profit',
+							}">
+								{{ orderStore.calculateProfit(block.buy, block.amnt, block.tp) }}
+							</span>
 
-				<!-- Profit and Loss Section -->
-				<div class="flex gap-2">
-					<!-- Profit Radio Button and Label -->
-					<label :for="'profit-' + index" :class="{
-						'text-green-500 font-bold': block.activeValue === 'profit',
-						'text-gray-500': block.activeValue !== 'profit',
-					}">
-						<input :id="'profit-' + index" type="radio" value="profit" v-model="block.activeValue" />
-						Profit
-					</label>
-					<span :class="{
-						'text-green-500': block.activeValue === 'profit',
-						'text-gray-500': block.activeValue !== 'profit',
-					}">
-						{{ orderStore.calculateProfit(block.buy, block.amnt, block.tp) }}
-					</span>
-
-					<!-- Loss Radio Button and Label -->
-					<label :for="'loss-' + index" :class="{
-						'text-red-500 font-bold': block.activeValue === 'loss',
-						'text-gray-500': block.activeValue !== 'loss',
-					}">
-						<input :id="'loss-' + index" type="radio" value="loss" v-model="block.activeValue" />
-						Loss
-					</label>
-					<span :class="{
-						'text-red-500': block.activeValue === 'loss',
-						'text-gray-500': block.activeValue !== 'loss',
-					}">
-						{{ orderStore.calculateLoss(block.buy, block.amnt, block.sl) }}
-					</span>
+							<!-- Loss Radio Button and Label -->
+							<label :for="'loss-' + index" :class="{
+								'text-red-500 font-bold': block.activeValue === 'loss',
+								'text-gray-500': block.activeValue !== 'loss',
+							}">
+								<input :id="'loss-' + index" type="radio" value="loss" v-model="block.activeValue" />
+								SL
+							</label>
+							<span :class="{
+								'text-red-500': block.activeValue === 'loss',
+								'text-gray-500': block.activeValue !== 'loss',
+							}">
+								{{ orderStore.calculateLoss(block.buy, block.amnt, block.sl) }}
+							</span>
+						</div>
+					</div>
 				</div>
 			</div>
 

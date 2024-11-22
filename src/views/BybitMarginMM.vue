@@ -114,7 +114,9 @@ const slPrice4 = computed(
 const slPrice5 = computed(
 	() => (((sl5.value - lote.value * buyPrice.value) * -1) / lote.value
 	).toFixed(digits.value));
-
+function updateWidth(event, refName) {
+	// Handle width adjustment on user input if additional logic is needed
+}
 </script>
 
 <template>
@@ -150,11 +152,10 @@ const slPrice5 = computed(
 				</div>
 			</div>
 			<div>
-				<div class="border rounded-xl text-center">
-					<label for="setPrice" class="text-yellow-400 font-bold">setPrice:<br>
+				<div class="px-7 border rounded-xl text-center">
+					<label for="setPrice" class="text-yellow-400 font-bold appearance-none">setPrice:<br>
 						<input id="setPrice" type="number" v-model="setPrice" step="0.005" required
-							class="w-1/4 bg-gray-900 font-bold text-yellow-400">
-						$
+							class="w-[8ch] bg-gray-900 font-bold text-yellow-400 text-center">
 					</label>
 				</div>
 				<div class="border rounded-xl p-2 text-center">margin: {{ margin }}</div>
