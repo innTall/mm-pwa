@@ -114,9 +114,6 @@ const slPrice4 = computed(
 const slPrice5 = computed(
 	() => (((sl5.value - lote.value * buyPrice.value) * -1) / lote.value
 	).toFixed(digits.value));
-function updateWidth(event, refName) {
-	// Handle width adjustment on user input if additional logic is needed
-}
 </script>
 
 <template>
