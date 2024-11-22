@@ -2,13 +2,18 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useOrderStore = defineStore("orderStore", () => {
-  const date = ref(null);
-  const symbol = ref('');
-  const buy = ref(0);
-  const amnt = ref(0);
-  const tp = ref(0);
-  const sl = ref(0);
-  const activeValue = ref("profit");
+  // Store an array of order blocks
+  const orderBlocks = ref([
+    {
+      date: null,
+      symbol: "",
+      buy: null,
+      amnt: null,
+      tp: null,
+      sl: null,
+      activeValue: "profit",
+    },
+  ]);
   const buyFee = 0.0002;
   const sellFee = 0.00055;
 
@@ -19,15 +24,29 @@ export const useOrderStore = defineStore("orderStore", () => {
     return Number(buy * amnt * buyFee + tp * amnt * sellFee).toFixed(2);
   };
 
-  const TP = (buy, amnt, tp) => {
+  const T_P = (buy, amnt, tp) => {
     const feeTp = calculateFeeTp(buy, amnt, tp); // Use TP for fee here
     return Number((tp - buy) * amnt - feeTp).toFixed(2);
   };
 
-  const SL = (buy, amnt, sl) => {
+  const S_L = (buy, amnt, sl) => {
     const feeSl = calculateFeeSl(buy, amnt, sl); // Use SL for fee here
     return Number((sl - buy) * amnt - feeSl).toFixed(2);
   };
 
-  return { date, symbol, buy, amnt, tp, sl, activeValue, TP, SL };
+  const addNewBlock = () => {
+    orderBlocks.value.unshift({
+      date: null,
+      symbol: "",
+      buy: null,
+      amnt: null,
+      tp: null,
+      sl: null,
+      activeValue: "profit",
+    });
+  };
+  const removeBlock = (index) => {
+    orderBlocks.value.splice(index, 1);
+  };
+  return { orderBlocks, T_P, S_L, addNewBlock, removeBlock };
 });
