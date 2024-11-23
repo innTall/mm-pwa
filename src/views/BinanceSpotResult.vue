@@ -1,21 +1,9 @@
 <script setup>
-import { ref, computed } from "vue";
-const date = ref(null);
-const symbol = ref("");
-const buy = ref(null);
-const amnt = ref(null);
-const sell = ref(null);
-const buyFee = 0.0001;
-const sellFee = 0.0001;
-const cost = computed(() => {
-	return Number(buy.value * amnt.value + buy.value * amnt.value * buyFee).toFixed(2);
-});
-const profit = computed(() => {
-	return Number((sell.value / buy.value - 1) * 100).toFixed(2);
-});
-const tp = computed(() => {
-	Number((sell.value - buy.value) * amnt.value - sell.value * amnt.value * sellFee).toFixed(2);
-});
+//import { ref, watch, computed } from "vue";
+import { useBinanceStore } from "@/stores/binance.js";
+import { storeToRefs } from "pinia";
+
+const { date, symbol, buy, amnt, sell, cost, profit, tp } = storeToRefs(useBinanceStore());
 
 const clearField = (field) => {
 	if (field && typeof field === 'object' && 'value' in field) {
@@ -25,6 +13,7 @@ const clearField = (field) => {
 	}
 };
 </script>
+
 <template>
 	<div class="px-2 py-1">
 		<div class="flex justify-between border px-2">
