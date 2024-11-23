@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useOrderStore = defineStore("orderStore", () => {
+export const useMarginStore = defineStore("marginStore", () => {
   // Store an array of order blocks
   const orderBlocks = ref([
     {

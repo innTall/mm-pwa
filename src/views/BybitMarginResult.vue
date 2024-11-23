@@ -1,9 +1,9 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import { storeToRefs } from "pinia";
-import { useOrderStore } from "@/stores/orders.js";
-const { orderBlocks } = storeToRefs(useOrderStore());
-const { T_P, S_L, addNewBlock, removeBlock } = useOrderStore();
+import { useMarginStore } from "@/stores/margin.js";
+const { orderBlocks } = storeToRefs(useMarginStore());
+const { T_P, S_L, addNewBlock, removeBlock } = useMarginStore();
 // Utility function to clear a field
 const clearField = (field) => {
 	if (field && typeof field === 'object' && 'value' in field) {
@@ -142,7 +142,7 @@ const cancelRemoveBlock = () => {
 			</div>
 			<!-- Input Fields -->
 			<div class="">
-				<input :id="'loss' + index" type="date" v-model="block.date" placeholder="Date"
+				<input :id="'date' + index" type="date" v-model="block.date" placeholder="Date"
 					class="w-[8ch] bg-gray-900 text-center appearance-none" @focus="clearField(date)" />
 				<input :id="'symbol' + index" type="text" v-model="block.symbol" placeholder="Symbol"
 					class="w-[6ch] bg-gray-900 text-center" @focus="clearField(symbol)" />

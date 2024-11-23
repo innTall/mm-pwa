@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, watch, computed } from "vue";
+import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useMinmaxStore } from "@/stores/minmax.js";
 import { useGridStore } from "@/stores/gridcost.js";
@@ -12,8 +12,6 @@ const {
   numOfOrder,
   coefNextOrderCost,
   firstOrderCost,
-  priceRound,
-  amountRound,
 } = storeToRefs(useGridStore());
 
 export const useTableStore = defineStore(
@@ -29,6 +27,28 @@ export const useTableStore = defineStore(
     let sellLevelsArray = ref([]);
     let totalProfit = ref([]);
     const savedTables = ref([]);
+
+    // Adjust the `digits` computed property to return the required decimal places
+    const priceRound = computed(() => {
+      const priceValue = minPrice.value;
+      if (priceValue >= 10000) return 1;
+      if (priceValue >= 1000) return 2;
+      if (priceValue >= 100) return 2;
+      if (priceValue >= 10) return 3;
+      if (priceValue >= 1) return 3;
+      if (priceValue >= 0.1) return 4;
+      return 5;
+    });
+
+    // Computed property for formatted lote with decimal places
+    const loteRound = computed(() => {
+      const digitsPrice = priceRound.value;
+      if (digitsPrice == 1) return 3;
+      if (digitsPrice == 2) return 2;
+      if (digitsPrice == 3) return 1;
+      if (digitsPrice >= 4) return 0;
+    });
+
     //* ----------------------------------
     //* <<< base level coef and values >>>
     //* ----------------------------------
@@ -37,7 +57,8 @@ export const useTableStore = defineStore(
     );
     const minGridDeposit = computed(() =>
       Math.ceil(
-        (firstOrderCost.value * (1 - coefNextOrderCost.value ** numOfOrder.value)) /
+        (firstOrderCost.value *
+          (1 - coefNextOrderCost.value ** numOfOrder.value)) /
           (1 - coefNextOrderCost.value)
       )
     );
@@ -220,7 +241,7 @@ export const useTableStore = defineStore(
     //* ----------------------------------
     amountBuyOrders = buyOrdersArray.map(function (number, index) {
       return +(number / Number(buyLimitLevels[index])).toFixed(
-        amountRound.value
+        loteRound.value
       );
     });
 
