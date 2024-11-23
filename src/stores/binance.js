@@ -1,28 +1,89 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 export const useBinanceStore = defineStore("binanceStore", () => {
-  const date = ref(null);
-  const symbol = ref("");
-  const buy = ref(null);
-  const amnt = ref(null);
-  const sell = ref(null);
-  const activeMetric = ref("roi");
+  const blocks = ref([
+    {
+      date: null,
+      symbol: "",
+      buy: null,
+      amnt: null,
+      sell: null,
+      activeMetric: "roi",
+    },
+  ]);
 
   const buyFee = 0.0001;
   const sellFee = 0.0001;
 
-  const cost = computed(() => {
+  const calculateCost = (block) => {
     return Number(
-      buy.value * amnt.value + buy.value * amnt.value * buyFee
+      block.buy * block.amnt + block.buy * block.amnt * buyFee
     ).toFixed(2);
-  });
-  const roi = computed(() => {
-    return Number((sell.value / buy.value - 1) * 100).toFixed(2);
-  });
-  const tp = computed(() => {
+  };
+  const calculateRoi = (block) => {
+    return Number((block.sell / block.buy - 1) * 100).toFixed(2);
+  };
+  const calculateTp = (block) => {
     return Number(
-      (sell.value - buy.value) * amnt.value - sell.value * amnt.value * sellFee
+      (block.sell - block.buy) * block.amnt - block.sell * block.amnt * sellFee
     ).toFixed(2);
+  };
+
+  // Computed property to calculate Total Profit
+  const totalProfit = computed(() => {
+    return blocks.value
+      .reduce((sum, block, index) => {
+        if (block.activeMetric === "tp") {
+          const tpValue = parseFloat(blockMetrics.value[index]?.tp) || 0;
+          return sum + tpValue;
+        }
+        return sum;
+      }, 0)
+      .toFixed(2);
   });
-  return { date, symbol, buy, amnt, sell, cost, roi, tp, activeMetric };
+
+  const blockMetrics = computed(() =>
+    blocks.value.map((block) => ({
+      cost: calculateCost(block),
+      roi: calculateRoi(block),
+      tp: calculateTp(block),
+    }))
+  );
+
+  const isBlockComplete = (block) => {
+    return (
+      block.date &&
+      block.symbol &&
+      block.buy > 0 &&
+      block.amnt > 0 &&
+      block.sell > 0
+    );
+  };
+
+  const addBlock = () => {
+    blocks.value.unshift({
+      date: null,
+      symbol: "",
+      buy: null,
+      amnt: null,
+      sell: null,
+      activeMetric: "roi",
+    });
+  };
+
+  // Add a method to remove a block by index
+  const removeBlock = (index) => {
+    if (index >= 0 && index < blocks.value.length) {
+      blocks.value.splice(index, 1);
+    }
+  };
+
+  return {
+    blocks,
+    blockMetrics,
+    isBlockComplete,
+    addBlock,
+    removeBlock,
+    totalProfit,
+  };
 });
