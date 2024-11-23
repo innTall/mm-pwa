@@ -86,4 +86,6 @@ export const useBinanceStore = defineStore("binanceStore", () => {
     removeBlock,
     totalProfit,
   };
-});
+},
+  { persist: true }
+);

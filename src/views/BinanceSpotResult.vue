@@ -28,17 +28,17 @@ const clearField = (field) => {
 </script>
 
 <template>
-	<div class="px-2 py-1">
-		<div class="flex justify-between border px-2">
-			<div class="">Binance Spot Order</div>
+	<div class="px-2 py-2 text-sm">
+		<div class="flex justify-between border px-2 py-1">
+			<div class="">BINANCE Spot Order</div>
 			<div class="text-center font-bold">
 				<div class="">Total Profit: $, {{ totalProfit }}</div>
 			</div>
 		</div>
 		<!-- Dynamic Block -->
 		<div v-for="(block, index) in blocks" :key="index" class="mb-2">
-			<div class="container flex justify-between mt-1 items-center">
-				<div class="flex items-center">
+			<div class="container flex justify-between py-1 items-center">
+				<div class="flex items-center gap-3">
 					<div v-if="block.activeMetric === 'roi'" class="text-right">
 						<button class="w-5 bg-red-600 text-white hover:bg-red-700" @click="removeBlock(index)">
 							X
@@ -46,23 +46,21 @@ const clearField = (field) => {
 					</div>
 					<div class="text-yellow-400 font-bold">Order {{ index + 1 }}</div>
 				</div>
-				<div class="flex justify-between">
-					<!-- ROI Section -->
-					<div class="flex gap-3">
-						<label :for="'roi-' + index" class="flex items-center">
-							<input :id="'roi-' + index" type="radio" :name="'metric-' + index" value="roi"
-								v-model="block.activeMetric" class="mr-1" />
-							ROI, %
-						</label>
-						<span class="">{{ blockMetrics[index]?.roi }}</span>
-						<!-- TP Section -->
-						<label :for="'tp-' + index" class="flex items-center">
-							<input :id="'tp-' + index" type="radio" :name="'metric-' + index" value="tp" v-model="block.activeMetric"
-								class="mr-1" />
-							TP, $
-						</label>
-						<span class="">{{ blockMetrics[index]?.tp }}</span>
-					</div>
+				<!-- ROI Section -->
+				<div class="flex gap-3">
+					<label :for="'roi-' + index" class="flex items-center">
+						<input :id="'roi-' + index" type="radio" :name="'metric-' + index" value="roi" v-model="block.activeMetric"
+							class="mr-1" />
+						ROI, %
+					</label>
+					<span class="">{{ blockMetrics[index]?.roi }}</span>
+					<!-- TP Section -->
+					<label :for="'tp-' + index" class="flex items-center">
+						<input :id="'tp-' + index" type="radio" :name="'metric-' + index" value="tp" v-model="block.activeMetric"
+							class="mr-1" />
+						TP, $
+					</label>
+					<span class="">{{ blockMetrics[index]?.tp }}</span>
 				</div>
 			</div>
 			<!-- Input Fields -->
