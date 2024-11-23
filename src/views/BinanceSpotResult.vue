@@ -3,7 +3,7 @@
 import { useBinanceStore } from "@/stores/binance.js";
 import { storeToRefs } from "pinia";
 
-const { date, symbol, buy, amnt, sell, cost, profit, tp } = storeToRefs(useBinanceStore());
+const { date, symbol, buy, amnt, sell, cost, roi, tp, activeMetric } = storeToRefs(useBybitStore());
 
 const clearField = (field) => {
 	if (field && typeof field === 'object' && 'value' in field) {
@@ -26,8 +26,20 @@ const clearField = (field) => {
 			<div class="text-yellow-400 font-bold">Order</div>
 			<div class="flex justify-between gap-4">
 				<div class="">Result</div>
-				<div class="">TP, % {{ profit }}</div>
-				<div class="">TP, $ {{ tp }}</div>
+				<!-- ROI Section -->
+				<div class="flex gap-3">
+					<label for="roi" class="flex items-center">
+						<input id="roi" type="radio" name="metric" value="roi" v-model="activeMetric" class="mr-1" />
+						ROI, % =
+					</label>
+					<span class="">{{ roi }}</span>
+					<!-- TP Section -->
+					<label for="tp" class="flex items-center">
+						<input id="tp" type="radio" name="metric" value="tp" v-model="activeMetric" class="mr-1" />
+						TP, $ =
+					</label>
+					<span class="">{{ tp }}</span>
+				</div>
 			</div>
 		</div>
 	</div>
