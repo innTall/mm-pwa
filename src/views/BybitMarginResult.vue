@@ -66,9 +66,9 @@ const cancelRemoveBlock = () => {
 </script>
 
 <template>
-	<div class="px-2 py-1">
-		<div class="flex justify-between border px-2">
-			<div class="">Bybit Margin Order</div>
+	<div class="px-2 py-1 text-sm">
+		<div class="flex justify-between border px-2 py-1">
+			<div class="">BYBIT Margin Order</div>
 			<!-- Total Profit and Loss Display -->
 			<div class="text-center font-bold">
 				<p :class="{
@@ -104,7 +104,7 @@ const cancelRemoveBlock = () => {
 				</div>
 				<!-- Header -->
 				<div class="container flex justify-between">
-					<div class="text-yellow-400 font-bold">Order data</div>
+					<div class="text-yellow-400 font-bold">Order {{ index + 1 }}</div>
 					<div class="flex gap-3">
 						<div>Result</div>
 						<div class="flex gap-3">
@@ -141,11 +141,11 @@ const cancelRemoveBlock = () => {
 				</div>
 			</div>
 			<!-- Input Fields -->
-			<div class="">
+			<div class="flex justify-between">
 				<input :id="'date' + index" type="date" v-model="block.date" placeholder="Date"
 					class="w-[8ch] bg-gray-900 text-center appearance-none" @focus="clearField(date)" />
 				<input :id="'symbol' + index" type="text" v-model="block.symbol" placeholder="Symbol"
-					class="w-[6ch] bg-gray-900 text-center" @focus="clearField(symbol)" />
+					class="w-[6ch] bg-gray-900 text-center uppercase" @focus="clearField(symbol)" />
 				<input :id="'buy' + index" type="number" v-model="block.buy" placeholder="Buy"
 					class="w-[8ch] bg-gray-900 text-center text-blue-400 appearance-none" @focus="clearField(buy)" />
 				<input :id="'amnt' + index" type="number" v-model="block.amnt" placeholder="Amnt"

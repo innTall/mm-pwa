@@ -28,7 +28,7 @@ const clearField = (field) => {
 </script>
 
 <template>
-	<div class="px-2 py-2 text-sm">
+	<div class="px-2 py-1 text-sm">
 		<div class="flex justify-between border px-2 py-1">
 			<div class="">BINANCE Spot Order</div>
 			<div class="text-center font-bold">
@@ -69,7 +69,7 @@ const clearField = (field) => {
 					<input :id="'date-' + index" type="date" v-model="block.date" placeholder="Date"
 						class="w-[8ch] bg-gray-900 text-center appearance-none" @focus="clearField(date)" />
 					<input :id="'symbol-' + index" type="text" v-model="block.symbol" placeholder="Symbol"
-						class="w-[6ch] bg-gray-900 text-center" @focus="clearField(symbol)" />
+						class="w-[6ch] bg-gray-900 text-center uppercase" @focus="clearField(symbol)" />
 					<input :id="'buy-' + index" type="number" v-model="block.buy" placeholder="Buy"
 						class="w-[8ch] bg-gray-900 text-center text-green-400 appearance-none" @focus="clearField(buy)" />
 					<input :id="'amnt-' + index" type="number" v-model="block.amnt" placeholder="Amnt"

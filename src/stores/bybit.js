@@ -79,4 +79,6 @@ export const useBybitStore = defineStore("bybitStore", () => {
   };
 
   return { blocks, blockMetrics, isBlockComplete, addBlock, removeBlock, totalProfit };
-});
+},
+  { persist: true }
+);
