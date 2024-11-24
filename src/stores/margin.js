@@ -49,4 +49,6 @@ export const useMarginStore = defineStore("marginStore", () => {
     orderBlocks.value.splice(index, 1);
   };
   return { orderBlocks, T_P, S_L, addNewBlock, removeBlock };
-});
+},
+  { persist: true }
+);

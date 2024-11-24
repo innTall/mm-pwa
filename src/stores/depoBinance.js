@@ -64,5 +64,5 @@ export const useDepoBinanceStore = defineStore(
       deactivateBlock,
     };
   },
-  { persist: false }
+  { persist: true }
 );

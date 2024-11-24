@@ -66,5 +66,5 @@ export const useDepoBybitStore = defineStore(
 
     return { blocks, balances, lastBalance, updateLastBalance, addBlock, deactivateBlock };
   },
-  { persist: false }
+  { persist: true }
 );
