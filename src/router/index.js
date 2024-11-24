@@ -28,6 +28,16 @@ const router = createRouter({
       name: "BinanceSpotResult",
       component: () => import("../views/BinanceSpotResult.vue"),
     },
+    {
+      path: "/depositBinance",
+      name: "DepositBinance",
+      component: () => import("../components/DepositBinance.vue"),
+    },
+    {
+      path: "/depositBybit",
+      name: "DepositBybit",
+      component: () => import("../components/DepositBybit.vue"),
+    },
   ],
 });
 export default router;

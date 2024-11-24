@@ -1,4 +1,5 @@
 <script setup>
+import FooterBybit from '../components/FooterBybit.vue';
 import { ref, watch, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useMarginStore } from "@/stores/margin.js";
@@ -142,6 +143,9 @@ const totalActiveSum = computed(() => {
 			<hr class="border-green-600 mt-2" />
 		</div>
 	</div>
+	<footer class="fixed w-full h-10 left-0 bottom-0 z-10 bg-gray-900">
+		<FooterBybit />
+	</footer>
 </template>
 
 <style scoped></style>

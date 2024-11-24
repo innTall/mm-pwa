@@ -1,4 +1,5 @@
 <script setup>
+import FooterBybit from '../components/FooterBybit.vue';
 import { ref, watch, computed } from "vue";
 import { useBybitStore } from "@/stores/bybit.js";
 import { storeToRefs } from "pinia";
@@ -28,7 +29,7 @@ const clearField = (field) => {
 </script>
 
 <template>
-	<div class="px-2 py-1 text-sm">
+	<div class="container min-h-screen px-2 py-1 text-sm">
 		<div class="flex justify-between border px-2 py-1">
 			<div class="">BYBIT Spot Order</div>
 			<div class="text-center font-bold">
@@ -84,6 +85,9 @@ const clearField = (field) => {
 			<hr class="border-green-600 mt-1" />
 		</div>
 	</div>
+	<footer class="fixed bottom-0 left-0 w-full h-10 z-10 bg-gray-900">
+		<FooterBybit />
+	</footer>
 </template>
 
 <style scoped></style>
