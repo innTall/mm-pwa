@@ -11,7 +11,7 @@ export const useMarginStore = defineStore("marginStore", () => {
       amnt: null,
       tp: null,
       sl: null,
-      activeValue: "profit",
+      activeValue: "set",
     },
   ]);
   const buyFee = 0.0002;
@@ -42,7 +42,7 @@ export const useMarginStore = defineStore("marginStore", () => {
       amnt: null,
       tp: null,
       sl: null,
-      activeValue: "profit",
+      activeValue: "set",
     });
   };
   const removeBlock = (index) => {

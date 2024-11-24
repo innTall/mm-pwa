@@ -50,19 +50,6 @@ const totalActiveSum = computed(() => {
 		return sum; // If no activeValue, add nothing
 	}, 0);
 });
-
-// Track which block is showing the confirmation dialog
-const confirmingBlock = ref(null);
-const showConfirmation = (index) => {
-	confirmingBlock.value = index;
-};
-const confirmRemoveBlock = (index) => {
-	removeBlock(index);
-	confirmingBlock.value = null; // Hide the confirmation dialog
-};
-const cancelRemoveBlock = () => {
-	confirmingBlock.value = null; // Hide the confirmation dialog
-};
 </script>
 
 <template>
@@ -82,32 +69,23 @@ const cancelRemoveBlock = () => {
 		</div>
 		<!-- Loop through blocks -->
 		<div v-for="(block, index) in orderBlocks" :key="index" class="">
-			<div class="flex justify-between pb-1 mb-1">
-				<!--p class="font-bold">Order Block {{ orderBlocks.length - index }}</p-->
-			</div>
 			<div class="relative flex gap-3">
-				<!-- If confirmation is not active, show the delete button -->
-				<button v-if="confirmingBlock !== index" @click="showConfirmation(index)"
+				<button v-if="index && block.activeValue === 'set'" @click="removeBlock(index)"
 					class="w-5 bg-red-600 text-white hover:bg-red-500 hover:text-white">
 					X
 				</button>
-				<!-- Confirmation Dialog -->
-				<div v-else class="flex gap-2 items-center">
-					<button @click="confirmRemoveBlock(index)"
-						class="text-green-500 border border-green-500 px-2 py-1 rounded hover:bg-green-500 hover:text-white">
-						Yes
-					</button>
-					<button @click="cancelRemoveBlock"
-						class="text-gray-500 border border-gray-500 px-2 py-1 rounded hover:bg-gray-500 hover:text-white">
-						Cancel
-					</button>
-				</div>
 				<!-- Header -->
 				<div class="container flex justify-between">
 					<div class="text-yellow-400 font-bold">Order {{ index + 1 }}</div>
 					<div class="flex gap-3">
-						<div>Result</div>
 						<div class="flex gap-3">
+							<label :for="'set' + index" :class="{
+								'text-white font-bold': block.activeValue === 'set',
+								'text-gray-500': block.activeValue !== 'set',
+							}">
+								<input :id="'set' + index" type="radio" value="set" v-model="block.activeValue" />
+								Set
+							</label>
 							<label :for="'profit' + index" :class="{
 								'text-green-500 font-bold': block.activeValue === 'profit',
 								'text-gray-500': block.activeValue !== 'profit',
@@ -143,17 +121,23 @@ const cancelRemoveBlock = () => {
 			<!-- Input Fields -->
 			<div class="flex justify-between">
 				<input :id="'date' + index" type="date" v-model="block.date" placeholder="Date"
-					class="w-[8ch] bg-gray-900 text-center appearance-none" @focus="clearField(date)" />
+					class="w-[8ch] bg-gray-900 text-center appearance-none" @focus="clearField(date)"
+					:disabled="block.activeValue !== 'set'" />
 				<input :id="'symbol' + index" type="text" v-model="block.symbol" placeholder="Symbol"
-					class="w-[6ch] bg-gray-900 text-center uppercase" @focus="clearField(symbol)" />
+					class="w-[6ch] bg-gray-900 text-center uppercase" @focus="clearField(symbol)"
+					:disabled="block.activeValue !== 'set'" />
 				<input :id="'buy' + index" type="number" v-model="block.buy" placeholder="Buy"
-					class="w-[8ch] bg-gray-900 text-center text-blue-400 appearance-none" @focus="clearField(buy)" />
+					class="w-[8ch] bg-gray-900 text-center text-blue-400 appearance-none" @focus="clearField(buy)"
+					:disabled="block.activeValue !== 'set'" />
 				<input :id="'amnt' + index" type="number" v-model="block.amnt" placeholder="Amnt"
-					class="w-[6ch] bg-gray-900 text-center appearance-none" @focus="clearField(amnt)" />
+					class="w-[6ch] bg-gray-900 text-center appearance-none" @focus="clearField(amnt)"
+					:disabled="block.activeValue !== 'set'" />
 				<input :id="'tp' + index" type="number" v-model="block.tp" placeholder="TP"
-					class="w-[8ch] bg-gray-900 text-center text-green-400 appearance-none" @focus="clearField(tp)" />
+					class="w-[8ch] bg-gray-900 text-center text-green-400 appearance-none" @focus="clearField(tp)"
+					:disabled="block.activeValue !== 'set'" />
 				<input :id="'sl' + index" type="number" v-model="block.sl" placeholder="SL"
-					class="w-[8ch] bg-gray-900 text-center text-red-400 appearance-none" @focus="clearField(sl)" />
+					class="w-[8ch] bg-gray-900 text-center text-red-400 appearance-none" @focus="clearField(sl)"
+					:disabled="block.activeValue !== 'set'" />
 			</div>
 			<hr class="border-green-600 mt-2" />
 		</div>
