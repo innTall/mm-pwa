@@ -1,15 +1,17 @@
 <script setup>
-import { ref } from 'vue';
-const date = ref(null);
-const deposit = ref(null);
-const withdrawal = ref(null);
-const wallet = ref(null);
-const ordersSpot = ref(null);
-const profitSpot = ref(null);
-const ordersMargin = ref(null);
-const profitMargin = ref(null);
-const balance = (wallet.value + ordersSpot.value + profitSpot.value + ordersMargin.value + profitMargin.value).toFixed(2)
-const totalBalance = ref();
+import { useDepoBybitStore } from '@/stores/depoBybit.js';
+import { storeToRefs } from "pinia";
+
+const { addBlock, deactivateBlock, updateLastBalance } = useDepoBybitStore();
+const { blocks, balances, lastBalance } = storeToRefs(useDepoBybitStore());
+const handleAddBlock = (index) => {
+	deactivateBlock(index); // Deactivate the current block
+	addBlock(); // Add a new block
+};
+
+watch(balances, () => {
+	updateLastBalance(); // Update lastBalance when balances change
+});
 </script>
 
 <template>
@@ -20,45 +22,54 @@ const totalBalance = ref();
 				<!-- Total Profit and Loss Display -->
 				<div class="text-center font-bold">
 					<p :class="{
-						'text-green-500 font-bold': totalBalance > deposit,
-						'text-red-500 font-bold': totalBalance <= deposit,
+						'text-green-500 font-bold': balances > blocks.deposit,
+						'text-red-500 font-bold': balances <= blocks.deposit,
 					}">
-						Total Balance: {{ totalBalance }}
+						Total Balance: {{ balances.value }}
 					</p>
 				</div>
 			</div>
 
-			<div class="">
-				<div class="flex justify-between">
-					<div class="">
-						<input id="date" type="number" v-model="date" step="1" placeholder="Date"
-							class="w-[8ch] bg-gray-900 font-bold text-center">
-						<input id="deposit" type="number" v-model="deposit" step="5" placeholder="Deposit" appearance-none required
-							class="w-[8ch] bg-gray-900 font-bold text-center">
-						<input id="withdrawal" type="number" v-model="withdrawal" step="5" placeholder="Withdrawal" appearance-none
-							required class="w-[8ch] bg-gray-900 font-bold text-center">
-						<input id="wallet" type="number" v-model="wallet" step="0.005" placeholder="Wallet" appearance-none required
-							class="w-[8ch] bg-gray-900 font-bold text-center">
-					</div>
-					<div class="">Balance: {{ balance }}</div>
+			<div v-for="(block, index) in blocks" :key="index" class="p-2 text-sm">
+				<div class="flex justify-between text-center text-xs">
+					<div class="">Date:</div>
+					<div class="">Deposit:</div>
+					<div class="">Wallet:</div>
+					<div class="">Balance:</div>
 				</div>
 				<div class="flex justify-between">
-					<div class="">Spot:
-						<input id="ordersSpot" type="number" v-model="ordersSpot" step="0.5" placeholder="Orders" appearance-none
-							required class="w-[8ch] bg-gray-900 font-bold text-center">
-						<input id="profitSpot" type="number" v-model="profitSpot" step="0.05" placeholder="Profit" appearance-none
-							required class="w-[8ch] bg-gray-900 font-bold text-center">
-					</div>
-					<div class="">Margin:
-						<input id="ordersMargin" type="number" v-model="ordersMargin" step="0.5" placeholder="Orders"
-							appearance-none required class="w-[8ch] bg-gray-900 font-bold text-center">
-						<input id="profitMargin" type="number" v-model="profitMargin" step="0.05" placeholder="Profit"
-							appearance-none required class="w-[8ch] bg-gray-900 font-bold text-center">
-					</div>
+					<input id="date" type="date" v-model="block.date" step="1" placeholder="Date" :disabled="!block.isActive"
+						class="w-[8ch] bg-gray-900 text-center">
+					<input id="deposit" type="number" v-model="block.deposit" step="5" placeholder="Deposit" appearance-none
+						required :disabled="!block.isActive" class="w-[8ch] bg-gray-900 text-center">
+					<input id="wallet" type="number" v-model="block.wallet" step="0.005" placeholder="Wallet" appearance-none
+						required :disabled="!block.isActive" class="w-[8ch] bg-gray-900 text-center">
+					<div class="">{{ balances[index] }}</div>
 				</div>
+				<div class="flex justify-between text-xs">
+					<div class="">OrdersSpot:</div>
+					<div class="">ProfitSpot:</div>
+					<div class="">OrdersMargin:</div>
+					<div class="">ProfitMargin:</div>
+				</div>
+				<div class="flex justify-between">
+					<input id="ordersSpot" type="number" v-model="block.ordersSpot" step="0.5" placeholder="Orders"
+						appearance-none :disabled="!block.isActive" required class="w-[8ch] bg-gray-900 text-center">
+					<input id="profitSpot" type="number" v-model="block.profitSpot" step="0.05" placeholder="Profit"
+						appearance-none :disabled="!block.isActive" required class="w-[8ch] bg-gray-900 text-center">
+					<input id="ordersMargin" type="number" v-model="block.ordersMargin" step="0.5" placeholder="Orders"
+						appearance-none :disabled="!block.isActive" required class="w-[8ch] bg-gray-900 text-center">
+					<input id="profitMargin" type="number" v-model="block.profitMargin" step="0.05" placeholder="Profit"
+						appearance-none :disabled="!block.isActive" required class="w-[8ch] bg-gray-900 text-center">
+				</div>
+				<button v-if="block.isActive" @click="handleAddBlock(index)" class="mt-2 px-4 py-1 bg-green-600 text-white">
+					Add New Block
+				</button>
+				<hr class="border-green-600">
 			</div>
 		</div>
-		<hr class="border-green-600">
+		<!-- Passing lastBalance to the child component -->
+		<FooterBybit :lastBalance="lastBalance" />
 	</div>
 </template>
 <style scoped></style>
