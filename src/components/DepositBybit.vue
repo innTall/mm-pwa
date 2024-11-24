@@ -1,4 +1,6 @@
 <script setup>
+import FooterBybit from './FooterBybit.vue';
+import { watch } from 'vue';
 import { useDepoBybitStore } from '@/stores/depoBybit.js';
 import { storeToRefs } from "pinia";
 
