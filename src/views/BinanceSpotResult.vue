@@ -26,6 +26,9 @@ const clearField = (field) => {
 		field = '';
 	}
 };
+// Helper functions
+const isEditable = (block) => block.activeMetric === 'roi';
+const isDeletable = (block) => block.activeMetric === 'roi';
 </script>
 
 <template>
@@ -40,7 +43,7 @@ const clearField = (field) => {
 		<div v-for="(block, index) in blocks" :key="index" class="mb-2">
 			<div class="container flex justify-between py-1 items-center">
 				<div class="flex items-center gap-3">
-					<div v-if="block.activeMetric === 'roi'" class="text-right">
+					<div v-if="isDeletable(block)" class="text-right">
 						<button class="w-5 bg-red-600 text-white hover:bg-red-700" @click="removeBlock(index)">
 							X
 						</button>
@@ -68,15 +71,20 @@ const clearField = (field) => {
 			<div class="flex justify-between px-2">
 				<div class="">
 					<input :id="'date-' + index" type="date" v-model="block.date" placeholder="Date"
-						class="w-[8ch] bg-gray-900 text-center appearance-none" @focus="clearField(date)" />
+						class="w-[8ch] bg-gray-900 text-center appearance-none" :disabled="!isEditable(block)"
+						@focus="clearField(date)" />
 					<input :id="'symbol-' + index" type="text" v-model="block.symbol" placeholder="Symbol"
-						class="w-[6ch] bg-gray-900 text-center uppercase" @focus="clearField(symbol)" />
+						class="w-[6ch] bg-gray-900 text-center uppercase" :disabled="!isEditable(block)"
+						@focus="clearField(symbol)" />
 					<input :id="'buy-' + index" type="number" v-model="block.buy" placeholder="Buy"
-						class="w-[8ch] bg-gray-900 text-center text-green-400 appearance-none" @focus="clearField(buy)" />
+						class="w-[8ch] bg-gray-900 text-center text-green-400 appearance-none" :disabled="!isEditable(block)"
+						@focus="clearField(buy)" />
 					<input :id="'amnt-' + index" type="number" v-model="block.amnt" placeholder="Amnt"
-						class="w-[6ch] bg-gray-900 text-center appearance-none" @focus="clearField(amnt)" />
+						class="w-[6ch] bg-gray-900 text-center appearance-none" :disabled="!isEditable(block)"
+						@focus="clearField(amnt)" />
 					<input :id="'sell-' + index" type="number" v-model="block.sell" placeholder="Sell"
-						class="w-[8ch] bg-gray-900 text-center text-red-600 appearance-none" @focus="clearField(sell)" />
+						class="w-[8ch] bg-gray-900 text-center text-red-600 appearance-none" :disabled="!isEditable(block)"
+						@focus="clearField(sell)" />
 				</div>
 				<div class="font-bold">{{ blockMetrics[index]?.cost }}</div>
 			</div>
