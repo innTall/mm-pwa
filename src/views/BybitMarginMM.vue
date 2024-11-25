@@ -7,7 +7,7 @@ const { depo, leverage, risk_sl, risk_margin, coefPrice } = storeToRefs(useSetti
 const feeBuy = 0.0002;
 const feeSell = 0.00055;
 
-const setPrice = ref(0);
+const setPrice = ref(null);
 // Watch for changes to setPrice and handle empty input
 watch(setPrice, (newValue) => {
 	if (newValue === null || newValue === '') {
@@ -150,10 +150,10 @@ const slPrice5 = computed(
 			</div>
 			<div>
 				<div class="px-7 border rounded-xl text-center">
-					<label for="setPrice" class="text-yellow-400 font-bold appearance-none">setPrice:<br>
-						<input id="setPrice" type="number" v-model="setPrice" step="0.005" required
-							class="w-[8ch] bg-gray-900 font-bold text-yellow-400 text-center">
-					</label>
+					<!-- label for="setPrice" class="text-yellow-400 font-bold">setPrice:<br -->
+						<input id="setPrice" type="number" v-model="setPrice" placeholder="setPrice"
+							class="w-[8ch] bg-gray-700 mt-2 mb-2 font-bold text-yellow-400 text-center appearance-none">
+					<!-- /label -->
 				</div>
 				<div class="border rounded-xl p-2 text-center">margin: {{ margin }}</div>
 				<div class="border rounded-xl p-2 text-center">lote: {{ lote }}</div>

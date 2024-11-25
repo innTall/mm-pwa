@@ -54,7 +54,7 @@ const totalActiveSum = computed(() => {
 </script>
 
 <template>
-	<div class="px-2 py-1 text-sm">
+	<div class="container min-h-screen mb-10px-2 py-1 text-sm">
 		<div class="flex justify-between border px-2 py-1">
 			<div class="">BYBIT Margin Order</div>
 			<!-- Total Profit and Loss Display -->
@@ -143,7 +143,7 @@ const totalActiveSum = computed(() => {
 			<hr class="border-green-600 mt-2" />
 		</div>
 	</div>
-	<footer class="fixed w-full h-10 left-0 bottom-0 z-10 bg-gray-900">
+	<footer class="fixed w-full h-12 left-0 bottom-0 z-10 bg-gray-900">
 		<FooterBybit />
 	</footer>
 </template>

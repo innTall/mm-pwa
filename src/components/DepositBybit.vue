@@ -70,8 +70,10 @@ watch(balances, () => {
 				<hr class="border-green-600">
 			</div>
 		</div>
-		<!-- Passing lastBalance to the child component -->
-		<FooterBybit :lastBalance="lastBalance" />
+		<div class="fixed bottom-0 left-0 w-full h-12 z-10 bg-gray-900">
+			<!-- Passing lastBalance to the child component -->
+			<FooterBybit :lastBalance="lastBalance" />
+		</div>
 	</div>
 </template>
 <style scoped></style>

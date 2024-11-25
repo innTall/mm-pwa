@@ -19,7 +19,6 @@ watch(balances, () => {
 <template>
 	<div class="">
 		<div class="p-2 text-sm">
-
 			<div class="flex justify-between border px-2 py-1">
 				<div class="">BINANCE Balance</div>
 				<!-- Total Profit and Loss Display -->
@@ -61,8 +60,10 @@ watch(balances, () => {
 				<hr class="border-green-600">
 			</div>
 		</div>
-		<!-- Passing lastBalance to the child component -->
-		<FooterBinance :lastBalance="lastBalance" />
+		<div class="fixed bottom-0 left-0 w-full h-12 z-10 bg-gray-900">
+			<!-- Passing lastBalance to the child component -->
+			<FooterBinance :lastBalance="lastBalance" />
+		</div>
 	</div>
 </template>
 <style scoped></style>
