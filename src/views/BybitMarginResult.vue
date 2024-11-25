@@ -13,8 +13,8 @@ const clearField = (field) => {
 		field = '';
 	}
 };
-
-// Watch for changes in the order blocks to detect when a new block is needed
+const isFirstClickOnSL = ref(true); // Flag to track the first click
+// Watcher logic to handle dynamic addition of blocks based on field inputs
 watch(
 	orderBlocks,
 	(blocks) => {
@@ -31,6 +31,13 @@ watch(
 	},
 	{ deep: true } // Ensure deep watch on the order blocks
 );
+// Handle the first click on the 'sl' field
+const handleSLFocus = () => {
+	if (isFirstClickOnSL.value) {
+		store.addNewBlock(); // Add a new block
+		isFirstClickOnSL.value = false; // Prevent subsequent additions
+	}
+};
 
 // Computed property to calculate the sum of active values
 const totalActiveSum = computed(() => {
@@ -54,7 +61,7 @@ const totalActiveSum = computed(() => {
 </script>
 
 <template>
-	<div class="container min-h-screen mb-10px-2 py-1 text-sm">
+	<div class="container min-h-screen mb-10 px-2 py-1 text-sm">
 		<div class="flex justify-between border px-2 py-1">
 			<div class="">BYBIT Margin Order</div>
 			<!-- Total Profit and Loss Display -->
@@ -134,11 +141,17 @@ const totalActiveSum = computed(() => {
 					class="w-[6ch] bg-gray-900 text-center appearance-none" @focus="clearField(amnt)"
 					:disabled="block.activeValue !== 'set'" />
 				<input :id="'tp' + index" type="number" v-model="block.tp" placeholder="TP"
-					class="w-[8ch] bg-gray-900 text-center text-green-400 appearance-none" @focus="clearField(tp)"
-					:disabled="block.activeValue !== 'set'" />
+					class="w-[8ch] bg-gray-900 text-center text-green-400 appearance-none" :class="{
+						'text-green-400': block.activeValue === 'profit',
+						'text-gray-500': block.activeValue === 'loss' || block.activeValue !== 'set'
+					}" @focus="clearField(tp)" :disabled="block.activeValue !== 'set'" />
+				<!-- Attach focus listener to the 'sl' input -->
 				<input :id="'sl' + index" type="number" v-model="block.sl" placeholder="SL"
-					class="w-[8ch] bg-gray-900 text-center text-red-400 appearance-none" @focus="clearField(sl)"
-					:disabled="block.activeValue !== 'set'" />
+					class="w-[8ch] bg-gray-900 text-center text-red-400 appearance-none" 
+					:class="{
+						'text-red-400': block.activeValue === 'loss',
+						'text-gray-500': block.activeValue === 'profit' || block.activeValue !== 'set'
+					}" @focus="clearField(sl); handleSLFocus()" :disabled="block.activeValue !== 'set'" />
 			</div>
 			<hr class="border-green-600 mt-2" />
 		</div>

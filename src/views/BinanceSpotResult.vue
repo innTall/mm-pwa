@@ -1,11 +1,20 @@
 <script setup>
 import FooterBinance from '../components/FooterBinance.vue';
-import { ref, watch, computed } from "vue";
+import { ref, watch, nextTick } from "vue";
 import { useBinanceStore } from "@/stores/binance.js";
 import { storeToRefs } from "pinia";
 
 const { isBlockComplete, addBlock, removeBlock } = useBinanceStore();
 const { blocks, blockMetrics, totalProfit } = storeToRefs(useBinanceStore());
+
+const isFirstClickOnSell = ref(true); // Flag to track the first click
+// Function to handle the first focus on the sell field
+const handleSellFocus = () => {
+	if (isFirstClickOnSell.value) {
+		addBlock(); // Add a new block
+		isFirstClickOnSell.value = false; // Prevent subsequent additions
+	}
+};
 
 // Watch for changes in blocks and add a new block at the top if needed
 watch(
@@ -84,7 +93,7 @@ const isDeletable = (block) => block.activeMetric === 'roi';
 						@focus="clearField(amnt)" />
 					<input :id="'sell-' + index" type="number" v-model="block.sell" placeholder="Sell"
 						class="w-[8ch] bg-gray-900 text-center text-red-600 appearance-none" :disabled="!isEditable(block)"
-						@focus="clearField(sell)" />
+						@focus="clearField(sell); handleSellFocus" />
 				</div>
 				<div class="font-bold">{{ blockMetrics[index]?.cost }}</div>
 			</div>

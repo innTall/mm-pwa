@@ -7,6 +7,16 @@ import { storeToRefs } from "pinia";
 const { isBlockComplete, addBlock, removeBlock } = useBybitStore();
 const { blocks, blockMetrics, totalProfit } = storeToRefs(useBybitStore());
 
+// Flag to track the first click on the sell field
+const isFirstClickOnSell = ref(true);
+
+// Function to handle the first focus on the sell field
+const handleSellFocus = () => {
+	if (isFirstClickOnSell.value) {
+		addBlock(); // Add a new block
+		isFirstClickOnSell.value = false; // Prevent subsequent additions
+	}
+};
 // Watch for changes in blocks and add a new block at the top if needed
 watch(
 	() => blocks.value.map((block) => ({ ...block })), // Deep watch on all blocks
@@ -86,7 +96,7 @@ const isDeletable = (block) => block.activeMetric === 'roi';
 						@focus="clearField(amnt)" />
 					<input :id="'sell-' + index" type="number" v-model="block.sell" placeholder="Sell"
 						class="w-[8ch] bg-gray-900 text-center text-red-600 appearance-none" :disabled="!isEditable(block)"
-						@focus="clearField(sell)" />
+						@focus="clearField(sell); handleSellFocus" />
 				</div>
 				<div class="font-bold">{{ blockMetrics[index]?.cost }}</div>
 			</div>
