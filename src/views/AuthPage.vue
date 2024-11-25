@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+/*
 import { supabase } from '../supabase.js';
 
 const loading = ref(false);
@@ -22,11 +23,11 @@ const handleLogin = async () => {
 		loading.value = false
 	}
 }
-
+*/
 </script>
 
 <template>
-	<div class="h-full-screen bg-gray-900 z-10 flex mt-20">
+	<!-- div class="h-full-screen bg-gray-900 z-10 flex mt-20">
 		<form class="" @submit.prevent="handleLogin">
 			<div class="text-center ml-10">
 				<h1 id="header" class="font-bold text-xl font-serif forced-color-adjust-auto">MM Trade</h1>
@@ -41,5 +42,5 @@ const handleLogin = async () => {
 				</div>
 			</div>
 		</form>
-	</div>
+	</div -->
 </template>
