@@ -11,13 +11,12 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: "auto",
-      includeAssets: ["favicon.png", "apple-touch-icon.png", "mask-icon.png"],
-
-      pwaAssets: {
-        disabled: false,
-        config: true,
-      },
-
+      includeAssets: [
+        "favicon.png",
+        "apple-touch-icon.png",
+        "mask-icon.png",
+        "robots.txt",
+      ],
       manifest: {
         name: "mm-pwa",
         short_name: "mm-pwa",
@@ -56,17 +55,43 @@ export default defineConfig({
 
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,json}"],
-        globDirectory: "dist",
+        //globDirectory: "dist",
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         navigateFallback: "/mm-pwa/index.html",
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/my-api-domain\.com\/.*$/, // Offline caching for specific API
+            handler: "CacheFirst", // Use cached content first, fallback to network
+            options: {
+              cacheName: "api-cache",
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 24 * 60 * 60, // 1 day
+              },
+              cacheableResponse: {
+                statuses: [0, 200], // Cache opaque and successful responses
+              },
+            },
+          },
+          {
+            urlPattern: /\/.*/, // Cache all navigation requests
+            handler: "CacheFirst", // Try network first; fall back to cache
+            options: {
+              cacheName: "app-assets-cache",
+              expiration: {
+                maxEntries: 1000,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+              },
+            },
+          },
+        ],
+        offlineGoogleAnalytics: true, // Optionally enable offline GA
       },
-
       devOptions: {
         enabled: true,
         navigateFallback: "/mm-pwa/index.html",
         suppressWarnings: true,
-        type: "module",
       },
     }),
   ],
