@@ -2,7 +2,8 @@
 import { ref, watch, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useSettingsStore } from '../stores/settings.js';
-const { depo, leverage, risk_sl, risk_margin, coefPrice } = storeToRefs(useSettingsStore());
+import { supabase } from "@/api/supabase.js";
+const { depo, leverage, risk_sl, risk_margin, coef_price } = storeToRefs(useSettingsStore());
 // Constants for fee
 const feeBuy = 0.0002;
 const feeSell = 0.00055;
@@ -81,7 +82,7 @@ const priceDiff5 = computed(
 		).toFixed(digits.value));
 
 const buyPrice = computed(
-	() => (setPrice.value + priceDiff1.value / 2 * coefPrice.value
+	() => (setPrice.value + priceDiff1.value / 2 * coef_price.value
 	).toFixed(digits.value));
 
 const zeroPrice = computed(
@@ -114,118 +115,147 @@ const slPrice4 = computed(
 const slPrice5 = computed(
 	() => (((sl5.value - lote.value * buyPrice.value) * -1) / lote.value
 	).toFixed(digits.value));
+
+async function saveSettings() {
+	const { error } = await supabase.from("bybit_margin_mm").insert({
+		depo: depo.value,
+		leverage: leverage.value,
+		risk_sl: risk_sl.value,
+		risk_margin: risk_margin.value,
+		coef_price: coef_price.value,
+		margin: margin.value,
+		tp1: tp1.value,
+		tp2: tp2.value,
+		tp3: tp3.value,
+		tp4: tp4.value,
+		tp5: tp5.value,
+		sl1: sl1.value,
+		sl2: sl2.value,
+		sl3: sl3.value,
+		sl4: sl4.value,
+		sl5: sl5.value,
+	});
+	if (error) {
+		console.error("Error saving settings:", error);
+		alert("Failed to save settings.");
+	} else {
+		alert("Settings saved successfully!");
+	}
+};
 </script>
 
 <template>
 	<div class="container">
-		<div class="flex p-2 gap-5">
-			<div class="border rounded-xl px-3 py-1 text-right">
-				<div class="">
-					<label for="deposit">Deposit:
-						<input id="deposit" type="number" v-model="depo" step="10" required
-							class="w-1/4 bg-gray-900 font-bold text-center">
-						$
-					</label><br>
-					<label for="leverage">Leverage:
-						<input id="leverage" type="number" v-model="leverage" step="5" required
-							class="w-1/4 bg-gray-900 font-bold text-center">
-						^
-					</label><br>
-					<label for="risk">Risk SL:
-						<input id="risk" type="number" v-model="risk_sl" step="0.005" required
-							class="w-1/4 bg-gray-900 font-bold text-center">
-						%
-					</label><br>
-					<label for="risk_margin">Risk margin:
-						<input id="risk_margin" type="number" v-model="risk_margin" step="0.5" required
-							class="w-1/4 bg-gray-900 font-bold text-center">
-						%
-					</label><br>
-					<label for="coefPrice">CoefPrice:
-						<input id="coefPrice" type="number" v-model="coefPrice" step="0.05" required
-							class="w-1/4 bg-gray-900 font-bold text-center">
-						^
-					</label><br>
+		<div class="">
+			<div class="flex p-2 gap-5">
+				<div class="border rounded-xl px-3 py-1 text-right">
+					<div class="">
+						<label for="deposit">Deposit:
+							<input id="deposit" type="number" v-model="depo" step="10" required
+								class="w-1/4 bg-gray-900 font-bold text-center">
+							$
+						</label><br>
+						<label for="leverage">Leverage:
+							<input id="leverage" type="number" v-model="leverage" step="5" required
+								class="w-1/4 bg-gray-900 font-bold text-center">
+							^
+						</label><br>
+						<label for="risk">Risk SL:
+							<input id="risk" type="number" v-model="risk_sl" step="0.005" required
+								class="w-1/4 bg-gray-900 font-bold text-center">
+							%
+						</label><br>
+						<label for="risk_margin">Risk Margin:
+							<input id="risk_margin" type="number" v-model="risk_margin" step="0.5" required
+								class="w-1/4 bg-gray-900 font-bold text-center">
+							%
+						</label><br>
+						<label for="coef_price">Coef Price:
+							<input id="coef_price" type="number" v-model="coef_price" step="0.05" required
+								class="w-1/4 bg-gray-900 font-bold text-center">
+							^
+						</label><br>
+					</div>
 				</div>
-			</div>
-			<div>
-				<div class="px-7 border rounded-xl text-center">
-					<!-- label for="setPrice" class="text-yellow-400 font-bold">setPrice:<br -->
+				<div>
+					<div class="px-7 border rounded-xl text-center">
+						<!-- label for="setPrice" class="text-yellow-400 font-bold">setPrice:<br -->
 						<input id="setPrice" type="number" v-model="setPrice" placeholder="setPrice"
 							class="w-[8ch] bg-gray-700 mt-2 mb-2 font-bold text-yellow-400 text-center appearance-none">
-					<!-- /label -->
+						<!-- /label -->
+					</div>
+					<div class="border rounded-xl p-2 text-center">margin: {{ margin }}</div>
+					<div class="border rounded-xl p-2 text-center">lote: {{ lote }}</div>
 				</div>
-				<div class="border rounded-xl p-2 text-center">margin: {{ margin }}</div>
-				<div class="border rounded-xl p-2 text-center">lote: {{ lote }}</div>
 			</div>
-		</div>
-	</div>
-	<div class="">
-		<p class="text-center underline text-blue-600">*** Risk ***</p>
-		<div class="flex justify-around text-blue-600">
-			<div class="">1 %</div>
-			<div class="">2 %</div>
-			<div class="">3 %</div>
-			<div class="">4 %</div>
-			<div class="">5 %</div>
 		</div>
 		<div class="">
-			<div class="flex justify-around text-red-600">
-				<div class="">0.2 %</div>
-				<div class="">0.4 %</div>
-				<div class="">0.6 %</div>
-				<div class="">0.8 %</div>
+			<p class="text-center underline text-blue-600">*** Risk ***</p>
+			<div class="flex justify-around text-blue-600">
 				<div class="">1 %</div>
+				<div class="">2 %</div>
+				<div class="">3 %</div>
+				<div class="">4 %</div>
+				<div class="">5 %</div>
+			</div>
+			<div class="">
+				<div class="flex justify-around text-red-600">
+					<div class="">0.2 %</div>
+					<div class="">0.4 %</div>
+					<div class="">0.6 %</div>
+					<div class="">0.8 %</div>
+					<div class="">1 %</div>
+				</div>
 			</div>
 		</div>
-	</div>
-
-	<div class="text-green-600">
-		<p class="text-center underline">*** TP ***</p>
-		<div class="flex justify-around">
-			<div class="">{{ tp1 }} $</div>
-			<div class="">{{ tp2 }} $</div>
-			<div class="">{{ tp3 }} $</div>
-			<div class="">{{ tp4 }} $</div>
-			<div class="">{{ tp5 }} $</div>
-		</div>
-		<div class="flex justify-around ">
-			<div class="">{{ tpPrice1 }}</div>
-			<div class="">{{ tpPrice2 }}</div>
-			<div class="">{{ tpPrice3 }}</div>
-			<div class="">{{ tpPrice4 }}</div>
-			<div class="">{{ tpPrice5 }}</div>
-		</div>
-	</div>
-	<div class="flex justify-around">
-		<p class="bg-green-600 text-center">Buy ___ {{ buyPrice }} ___</p>
-		<p class="bg-blue-600 text-center">Zero ___ {{ zeroPrice }} ___</p>
-	</div>
-	<div class="text-gray-600">
-		<div class="flex justify-around">
-			<div class="">{{ priceDiff1 }}</div>
-			<div class="">{{ priceDiff2 }}</div>
-			<div class="">{{ priceDiff3 }}</div>
-			<div class="">{{ priceDiff4 }}</div>
-			<div class="">{{ priceDiff5 }}</div>
-		</div>
-	</div>
-	<div class="text-red-600">
-		<p class="text-center underline">*** SL ***</p>
-		<div class="flex justify-around">
-			<div class="">{{ slPrice1 }}</div>
-			<div class="">{{ slPrice2 }}</div>
-			<div class="">{{ slPrice3 }}</div>
-			<div class="">{{ slPrice4 }}</div>
-			<div class="">{{ slPrice5 }}</div>
+		<div class="text-green-600">
+			<p class="text-center underline">*** TP ***</p>
+			<div class="flex justify-around">
+				<div class="">{{ tp1 }} $</div>
+				<div class="">{{ tp2 }} $</div>
+				<div class="">{{ tp3 }} $</div>
+				<div class="">{{ tp4 }} $</div>
+				<div class="">{{ tp5 }} $</div>
+			</div>
+			<div class="flex justify-around ">
+				<div class="">{{ tpPrice1 }}</div>
+				<div class="">{{ tpPrice2 }}</div>
+				<div class="">{{ tpPrice3 }}</div>
+				<div class="">{{ tpPrice4 }}</div>
+				<div class="">{{ tpPrice5 }}</div>
+			</div>
 		</div>
 		<div class="flex justify-around">
-			<div class="">{{ sl1 }} $</div>
-			<div class="">{{ sl2 }} $</div>
-			<div class="">{{ sl3 }} $</div>
-			<div class="">{{ sl4 }} $</div>
-			<div class="">{{ sl5 }} $</div>
+			<p class="bg-green-600 text-center">Buy ___ {{ buyPrice }} ___</p>
+			<p class="bg-blue-600 text-center">Zero ___ {{ zeroPrice }} ___</p>
 		</div>
+		<div class="text-gray-600">
+			<div class="flex justify-around">
+				<div class="">{{ priceDiff1 }}</div>
+				<div class="">{{ priceDiff2 }}</div>
+				<div class="">{{ priceDiff3 }}</div>
+				<div class="">{{ priceDiff4 }}</div>
+				<div class="">{{ priceDiff5 }}</div>
+			</div>
+		</div>
+		<div class="text-red-600">
+			<p class="text-center underline">*** SL ***</p>
+			<div class="flex justify-around">
+				<div class="">{{ slPrice1 }}</div>
+				<div class="">{{ slPrice2 }}</div>
+				<div class="">{{ slPrice3 }}</div>
+				<div class="">{{ slPrice4 }}</div>
+				<div class="">{{ slPrice5 }}</div>
+			</div>
+			<div class="flex justify-around">
+				<div class="">{{ sl1 }} $</div>
+				<div class="">{{ sl2 }} $</div>
+				<div class="">{{ sl3 }} $</div>
+				<div class="">{{ sl4 }} $</div>
+				<div class="">{{ sl5 }} $</div>
+			</div>
+		</div>
+		<button @click="saveSettings()" class="bg-blue-400">Save</button>
 	</div>
 </template>
 <style scoped></style>

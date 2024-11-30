@@ -1,6 +1,7 @@
 <script setup>
 import FooterBybit from '../components/FooterBybit.vue';
 import { ref, watch, computed } from "vue";
+import { supabase } from "@/api/supabase.js";
 import { storeToRefs } from "pinia";
 import { useMarginStore } from "@/stores/margin.js";
 const { orderBlocks } = storeToRefs(useMarginStore());
@@ -71,12 +72,61 @@ const handleTPorSLActivation = (block) => {
 const handleDoubleClick = (block) => {
 	toggleBlock(block, false);
 };
+
+async function saveSettings() {
+	if (!orderBlocks.value || orderBlocks.value.length <= 1) {
+		alert("No valid data to save.");
+		return;
+	}
+
+	// Exclude the first block and any invalid blocks
+	const validBlocks = orderBlocks.value.slice(1).filter(block => {
+		return (
+			block.date &&
+			block.symbol &&
+			block.buy &&
+			block.amnt &&
+			block.tp &&
+			block.sl
+		);
+	});
+
+	if (validBlocks.length === 0) {
+		alert("No valid data to save after filtering.");
+		return;
+	}
+
+	try {
+		const { error } = await supabase.from("order_margin").insert(validBlocks.map(block => ({
+			date: block.date,
+			symbol: block.symbol,
+			buy: block.buy,
+			amnt: block.amnt,
+			tp: block.tp,
+			sl: block.sl,
+			activeValue: block.activeValue,
+			T_P: T_P(block.buy, block.amnt, block.tp),
+			S_L: S_L(block.buy, block.amnt, block.sl),
+		})));
+
+		if (error) {
+			console.error("Error saving settings:", error);
+			alert("Failed to save settings.");
+		} else {
+			alert("Settings saved successfully!");
+		}
+	} catch (err) {
+		console.error("Unexpected error:", err);
+		alert("An unexpected error occurred.");
+	}
+}
 </script>
 
 <template>
 	<div class="container min-h-screen mb-10 px-2 py-1 text-sm">
 		<div class="flex justify-between border px-2 py-1">
 			<div class="">BYBIT Margin Order</div>
+			<button @click="saveSettings" class="bg-blue-400">Send</button>
 			<!-- Total Profit and Loss Display -->
 			<div class="text-center font-bold">
 				<p :class="{
@@ -103,7 +153,7 @@ const handleDoubleClick = (block) => {
 						<div class="flex gap-3">
 							<label :for="'set' + index" :class="{
 								'text-white font-bold': block.activeValue === 'set',
-								'text-gray-700': block.activeValue !== 'set',
+								'text-gray-500': block.activeValue !== 'set',
 							}">
 								<input :id="'set' + index" type="radio" value="set" v-model="block.activeValue"
 									:disabled="block.disabled" />
@@ -111,7 +161,7 @@ const handleDoubleClick = (block) => {
 							</label>
 							<label :for="'profit' + index" :class="{
 								'text-green-500 font-bold': block.activeValue === 'profit',
-								'text-gray-700': block.activeValue !== 'profit',
+								'text-gray-500': block.activeValue !== 'profit',
 							}">
 								<input :id="'profit' + index" type="radio" value="profit" v-model="block.activeValue"
 									:disabled="block.disabled" @change="handleTPorSLActivation(block)" />
@@ -119,7 +169,7 @@ const handleDoubleClick = (block) => {
 							</label>
 							<span :class="{
 								'text-green-500': block.activeValue === 'profit',
-								'text-gray-700': block.activeValue !== 'profit',
+								'text-gray-500': block.activeValue !== 'profit',
 							}">
 								{{ T_P(block.buy, block.amnt, block.tp) }}
 							</span>
@@ -127,7 +177,7 @@ const handleDoubleClick = (block) => {
 							<!-- Loss Radio Button and Label -->
 							<label :for="'loss' + index" :class="{
 								'text-red-500 font-bold': block.activeValue === 'loss',
-								'text-gray-700': block.activeValue !== 'loss',
+								'text-gray-500': block.activeValue !== 'loss',
 							}">
 								<input :id="'loss' + index" type="radio" value="loss" v-model="block.activeValue"
 									:disabled="block.disabled" @change="handleTPorSLActivation(block)" />
@@ -135,7 +185,7 @@ const handleDoubleClick = (block) => {
 							</label>
 							<span :class="{
 								'text-red-500': block.activeValue === 'loss',
-								'text-gray-700': block.activeValue !== 'loss',
+								'text-gray-500': block.activeValue !== 'loss',
 							}">
 								{{ S_L(block.buy, block.amnt, block.sl) }}
 							</span>
@@ -149,8 +199,7 @@ const handleDoubleClick = (block) => {
 					class="w-[8ch] bg-gray-900 text-center appearance-none" @focus="clearField(date)"
 					:disabled="block.disabled" />
 				<input :id="'symbol' + index" type="text" v-model="block.symbol" placeholder="Symbol"
-					class="w-[6ch] bg-gray-900 text-center uppercase" @focus="clearField(symbol)"
-					:disabled="block.disabled" />
+					class="w-[6ch] bg-gray-900 text-center uppercase" @focus="clearField(symbol)" :disabled="block.disabled" />
 				<input :id="'buy' + index" type="number" v-model="block.buy" placeholder="Buy"
 					class="w-[8ch] bg-gray-900 text-center text-blue-400 appearance-none" @focus="clearField(buy)"
 					:disabled="block.disabled" />
@@ -160,13 +209,13 @@ const handleDoubleClick = (block) => {
 				<input :id="'tp' + index" type="number" v-model="block.tp" placeholder="TP"
 					class="w-[8ch] bg-gray-900 text-center appearance-none" :class="{
 						'text-green-400': block.activeValue === 'profit',
-						'text-gray-700': block.activeValue !== 'profit'
+						'text-gray-500': block.activeValue !== 'profit'
 					}" @focus="clearField('tp')" :disabled="block.disabled" />
 				<!-- Attach focus listener to the 'sl' input -->
 				<input :id="'sl' + index" type="number" v-model="block.sl" placeholder="SL"
 					class="w-[8ch] bg-gray-900 text-center appearance-none" :class="{
 						'text-red-400': block.activeValue === 'loss',
-						'text-gray-700': block.activeValue !== 'loss'
+						'text-gray-500': block.activeValue !== 'loss'
 					}" @focus="clearField('sl'); handleSLFocus()" :disabled="block.disabled" />
 			</div>
 			<hr class="border-green-600 mt-2" />

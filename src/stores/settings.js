@@ -8,17 +8,17 @@ export const useSettingsStore = defineStore(
     const leverage = ref(0);
     const risk_sl = ref(0);
     const risk_margin = ref(0);
-    const coefPrice = ref(0);
+    const coef_price = ref(0);
 
     // Watchers to trigger the database update on change
-    watchEffect(depo, leverage, risk_sl, risk_margin, coefPrice);
+    watchEffect(depo, leverage, risk_sl, risk_margin, coef_price);
 
     return {
       depo,
       leverage,
       risk_sl,
       risk_margin,
-      coefPrice,
+      coef_price,
     };
   },
   {

@@ -89,7 +89,7 @@ export default defineConfig({
         offlineGoogleAnalytics: true, // Optionally enable offline GA
       },
       devOptions: {
-        enabled: true,
+        enabled: process.env.NODE_ENV === "development",
         navigateFallback: "/mm-pwa/index.html",
         suppressWarnings: true,
       },
