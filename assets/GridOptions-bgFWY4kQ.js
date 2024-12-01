@@ -1,1 +1,0 @@
-import{r as t,o as e,a as o,t as r}from"./index-4mNB91ti.js";const a={class:""},p={__name:"GridOptions",setup(c){const s=t(1700);return(n,i)=>(e(),o("div",a," Grid of orders "+r(s.value),1))}};export{p as default};
