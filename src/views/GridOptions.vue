@@ -6,14 +6,19 @@ const fee = 0.001;
 const deposit = ref(1700);
 const coefOfRisk = ref(0.02);
 const coefNextOrderCost = ref(1.2);
+let nextBlockId = 1; // Global ID counter
 const firstOrderCost = computed(() => +(deposit.value * coefOfRisk.value).toFixed(2));
 
 // Array of blocks, separated into active and saved
 const activeBlocks = ref([createNewBlock(1)]);
-const savedBlocks = ref([]);
+
+function generateUniqueId() {
+	return nextBlockId++;
+}
 
 // Function to create a new block
-function createNewBlock(id) {
+function createNewBlock() {
+	const id = generateUniqueId();
 	const block = reactive({
 		id,
 		symbol: '',
@@ -25,12 +30,13 @@ function createNewBlock(id) {
 			const totalTokenAmount = block.orders.reduce((sum, order) => sum + order.tokenAmount, 0);
 			const totalBuyOrder = block.orders.reduce((sum, order) => sum + order.buyOrder, 0);
 			const totalSellOrder = block.orders.reduce((sum, order) => sum + order.sellOrder, 0);
-			const totalProfit = block.orders.reduce((sum, order) => sum + order.profit, 0);
+			const totalProfit = block.orders.length > 0 ? block.orders[block.orders.length - 1].profit : 0; // Last profit
 			return {
 				avgBuyPrice: totalTokenAmount ? totalBuyOrder / totalTokenAmount : 0,
 				avgSellPrice: totalTokenAmount ? totalSellOrder / totalTokenAmount : 0,
 				totalProfit,
 				totalBuyOrders: totalBuyOrder,
+				totalTokenAmount, // Added total token amount here
 			};
 		}),
 	});
@@ -46,7 +52,6 @@ function createNewBlock(id) {
 	};
 	recalculateOrder(initialOrder, null);
 	block.orders.push(initialOrder);
-
 	return block;
 }
 // Recalculate order details
@@ -65,9 +70,10 @@ function recalculateOrder(order, previousOrder) {
 	order.profit = +(order.sellOrder - order.buyOrder).toFixed(2);
 }
 
-// Add a new block
 function addBlock() {
-	const newBlock = createNewBlock(activeBlocks.value.length + savedBlocks.value.length + 1);
+	// Create a fresh new block
+	const newBlock = createNewBlock();
+	// Add it to the active blocks list
 	activeBlocks.value.unshift(newBlock);
 }
 
@@ -89,32 +95,9 @@ function addOrder(block) {
 	block.orders.push(newOrder);
 }
 
-// Save a block (mark as saved and move it to savedBlocks)
-function saveBlock(block) {
-	block.isSaved = true;
-	activeBlocks.value = activeBlocks.value.filter((b) => b.id !== block.id);
-	savedBlocks.value.push(block);
-}
-
-// Toggle block activation by double-clicking the 'Symbol' field
-function toggleActivation(block) {
-	block.isSaved = !block.isSaved;
-	if (block.isSaved) {
-		activeBlocks.value = activeBlocks.value.filter((b) => b.id !== block.id);
-		savedBlocks.value.push(block);
-	} else {
-		savedBlocks.value = savedBlocks.value.filter((b) => b.id !== block.id);
-		activeBlocks.value.push(block);
-	}
-}
-
 // Remove a block
-function removeBlock(blockId, isSaved) {
-	if (isSaved) {
-		savedBlocks.value = savedBlocks.value.filter((block) => block.id !== blockId);
-	} else {
-		activeBlocks.value = activeBlocks.value.filter((block) => block.id !== blockId);
-	}
+function removeBlock(blockId) {
+	activeBlocks.value = activeBlocks.value.filter((block) => block.id !== blockId);
 }
 </script>
 
@@ -150,13 +133,14 @@ function removeBlock(blockId, isSaved) {
 			<div class="mb-2">
 				<!-- Basic Block Data -->
 				<div class="flex justify-between">
-					<input :id="`symbol-${block.id}`" type="text" @dblclick="toggleActivation(block)" v-model="block.symbol"
-						placeholder="Symbol" class="w-[8ch] bg-gray-900 border text-center" />
+					<input :id="`symbol-${block.id}`" type="text" v-model="block.symbol" placeholder="Symbol"
+						class="w-[8ch] bg-gray-900 border text-center border-green-600 text-green-400" />
 					<input :id="`open-${block.id}`" type="date" v-model="block.open"
 						class="w-[10ch] bg-gray-900 border text-center" />
 					<input :id="`close-${block.id}`" type="date" v-model="block.close"
 						class="w-[10ch] bg-gray-900 border text-center" />
-					<button :id="`saveBlock-${block.id}`" @click="saveBlock(block)" class="border px-1 bg-gray-700">Save</button>
+					<button :id="`removeBlock-${block.id}`" @click="removeBlock(block.id, true)"
+						class="border bg-gray-700">Remove</button>
 				</div>
 			</div>
 
@@ -165,19 +149,21 @@ function removeBlock(blockId, isSaved) {
 				<div class="flex justify-between">
 					<span>{{ order.id }}</span>
 					<input :id="`buyPrice-${block.id}-${order.id}`" type="number" v-model="order.buyPrice" placeholder="Buy Price"
-						class="w-[6ch] bg-gray-900 text-center" @input="recalculateOrder(order)" />
+						class="w-[6ch] bg-gray-900 text-center text-yellow-400" @input="recalculateOrder(order)" />
 					<span>{{ order.tokenAmount }}</span>
 					<span>{{ order.buyOrder }}</span>
-					<input :id="`sellPrice-${block.id}-${order.id}`" type="number" v-model="order.sellPrice" placeholder="Sell Price"
-						class="w-[6ch] bg-gray-900 text-center" @input="recalculateOrder(order)" />
+					<input :id="`sellPrice-${block.id}-${order.id}`" type="number" v-model="order.sellPrice"
+						placeholder="Sell Price" class="w-[6ch] bg-gray-900 text-center text-yellow-400"
+						@input="recalculateOrder(order)" />
 					<span>{{ order.sellOrder }}</span>
 					<span>{{ order.profit }}</span>
-					<button :id="`addOrder-${block.id}`" @click="addOrder(block)" class="border px-1 bg-gray-700">Add Order</button>
+					<button :id="`addOrder-${block.id}`" @click="addOrder(block)" class="border px-1 bg-gray-700">Add
+						Order</button>
 				</div>
 			</div>
 
 			<!-- Summary -->
-			<div class="flex justify-between mt-2">
+			<div class="flex justify-between mt-2 text-center">
 				<div class="">
 					<span>Sum, $:</span><br>
 					<span>{{ block.summary.totalBuyOrders.toFixed(2) }}</span>
@@ -187,6 +173,10 @@ function removeBlock(blockId, isSaved) {
 					<span>{{ block.summary.avgBuyPrice.toFixed(4) }}</span>
 				</div>
 				<div class="">
+					<span>Amount:</span><br>
+					<span>{{ block.summary.totalTokenAmount.toFixed(2) }}</span>
+				</div>
+				<div class="">
 					<span>Sell:</span><br>
 					<span>{{ block.summary.avgSellPrice.toFixed(4) }}</span>
 				</div>
@@ -194,59 +184,8 @@ function removeBlock(blockId, isSaved) {
 					<span>TP:</span><br>
 					<span>{{ block.summary.totalProfit.toFixed(2) }}</span>
 				</div>
-				<button :id="`removeBlock-${block.id}`" @click="removeBlock(block.id, false)" class="border px-1 bg-gray-700">X Block</button>
 			</div>
-
-			<!-- Saved Orders Blocks -->
-			<div class="border p-1 text-center font-bold rounded-lg">###   Saved blocks and orders   ###</div>
-			<div v-for="block in savedBlocks" :key="block.id" class="border border-green-600 p-2 mt-4">
-				<div class="mb-2">
-					<!-- Basic Block Data -->
-					<div class="flex justify-between">
-						<input id="symbol" type="text" v-model="block.symbol" placeholder="Symbol"
-							class="w-[8ch] bg-gray-900 border border-green-400 text-green-600 font-bold text-center" @dblclick="toggleActivation(block)" readonly />
-						<input id="open" type="date" v-model="block.open" class="w-[10ch] bg-gray-900 border text-center"
-							disabled />
-						<input id="close" type="date" v-model="block.close" class="w-[10ch] bg-gray-900 border text-center"
-							disabled />
-						<button id="removeBlock" @click="removeBlock(block.id, true)" class="border">Remove</button>
-					</div>
-				</div>
-
-				<!-- Orders List (Read-only) -->
-				<div v-for="order in block.orders" :key="order.id" class="mb-1">
-					<div class="flex justify-between">
-						<span>{{ order.id }}</span>
-						<span>{{ order.buyPrice }}</span>
-						<span>{{ order.tokenAmount }}</span>
-						<span>{{ order.buyOrder }}</span>
-						<span>{{ order.sellPrice }}</span>
-						<span>{{ order.sellOrder }}</span>
-						<span>{{ order.profit }}</span>
-					</div>
-				</div>
-
-				<!-- Summary -->
-				<div class="flex justify-between mt-4">
-					<div class="">
-						<span>Sum, $:</span><br>
-						<span>{{ block.summary.totalBuyOrders.toFixed(2) }}</span>
-					</div>
-					<div class="">
-						<span>Buy:</span><br>
-						<span>{{ block.summary.avgBuyPrice.toFixed(4) }}</span>
-					</div>
-					<div class="">
-						<span>Sell:</span><br>
-						<span>{{ block.summary.avgSellPrice.toFixed(4) }}</span>
-					</div>
-					<div class="">
-						<span>TP:</span><br>
-						<span>{{ block.summary.totalProfit.toFixed(2) }}</span>
-					</div>
-					<button id="removeBlock" @click="removeBlock(block.id, false)" class="border">X Block</button>
-				</div>
-			</div>
+			<hr class="border-green-600 mt-2">
 		</div>
 	</div>
 </template>
