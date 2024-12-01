@@ -87,6 +87,9 @@ export default defineConfig({
           },
         ],
         offlineGoogleAnalytics: true, // Optionally enable offline GA
+        mode:
+          process.env.NODE_ENV === "development" ? "development" : "production",
+        debug: false, // Disable verbose logging
       },
       devOptions: {
         enabled: process.env.NODE_ENV === "development",

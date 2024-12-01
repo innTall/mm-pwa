@@ -14,9 +14,14 @@ const router = createRouter({
       component: () => import("../views/BybitMarginResult.vue"),
     },
     {
-      path: "/gridOptions",
-      name: "GridOptions",
-      component: () => import("../views/GridOptions.vue"),
+      path: "/gridBinance",
+      name: "GridBinance",
+      component: () => import("../views/GridBinance.vue"),
+    },
+    {
+      path: "/gridBybit",
+      name: "GridBybit",
+      component: () => import("../views/GridBybit.vue"),
     },
     {
       path: "/bybitSpotResult",

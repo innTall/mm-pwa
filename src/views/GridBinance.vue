@@ -1,104 +1,9 @@
 <script setup>
-import { ref, computed, reactive } from 'vue';
+import { useGridBinanceStore } from '@/stores/gridBinance.js';
+import { storeToRefs } from 'pinia';
 
-// *** Trade options ***
-const fee = 0.001;
-const deposit = ref(1700);
-const coefOfRisk = ref(0.02);
-const coefNextOrderCost = ref(1.2);
-let nextBlockId = 1; // Global ID counter
-const firstOrderCost = computed(() => +(deposit.value * coefOfRisk.value).toFixed(2));
-
-// Array of blocks, separated into active and saved
-const activeBlocks = ref([createNewBlock(1)]);
-
-function generateUniqueId() {
-	return nextBlockId++;
-}
-
-// Function to create a new block
-function createNewBlock() {
-	const id = generateUniqueId();
-	const block = reactive({
-		id,
-		symbol: '',
-		open: '',
-		close: '',
-		orders: [],
-		isSaved: false,
-		summary: computed(() => {
-			const totalTokenAmount = block.orders.reduce((sum, order) => sum + order.tokenAmount, 0);
-			const totalBuyOrder = block.orders.reduce((sum, order) => sum + order.buyOrder, 0);
-			const totalSellOrder = block.orders.reduce((sum, order) => sum + order.sellOrder, 0);
-			const totalProfit = block.orders.length > 0 ? block.orders[block.orders.length - 1].profit : 0; // Last profit
-			return {
-				avgBuyPrice: totalTokenAmount ? totalBuyOrder / totalTokenAmount : 0,
-				avgSellPrice: totalTokenAmount ? totalSellOrder / totalTokenAmount : 0,
-				totalProfit,
-				totalBuyOrders: totalBuyOrder,
-				totalTokenAmount, // Added total token amount here
-			};
-		}),
-	});
-	// Add the initial order
-	const initialOrder = {
-		id: 1,
-		buyPrice: 1.2345,
-		sellPrice: 1.456,
-		tokenAmount: 0,
-		buyOrder: firstOrderCost.value,
-		sellOrder: 0,
-		profit: 0,
-	};
-	recalculateOrder(initialOrder, null);
-	block.orders.push(initialOrder);
-	return block;
-}
-// Recalculate order details
-function recalculateOrder(order, previousOrder) {
-	if (previousOrder) {
-		// Buy order calculation based on the previous order and coefficient
-		order.buyOrder = +(previousOrder.buyOrder * coefNextOrderCost.value).toFixed(2);
-	} else {
-		// First order uses the computed firstOrderCost
-		order.buyOrder = +(firstOrderCost.value).toFixed(2);
-	}
-	// Calculate tokenAmount based on buyOrder and buyPrice
-	order.tokenAmount = +(order.buyOrder / order.buyPrice).toFixed(2);
-	// Calculate sellOrder and profit
-	order.sellOrder = +(order.sellPrice * order.tokenAmount * (1 - fee)).toFixed(2);
-	order.profit = +(order.sellOrder - order.buyOrder).toFixed(2);
-}
-
-function addBlock() {
-	// Create a fresh new block
-	const newBlock = createNewBlock();
-	// Add it to the active blocks list
-	activeBlocks.value.unshift(newBlock);
-}
-
-// Add a new order within a block
-function addOrder(block) {
-	const lastOrder = block.orders[block.orders.length - 1];
-	const nextBuyPrice = +(lastOrder.buyPrice - 0.1).toFixed(4); // Example logic for next buy price
-	const newOrder = {
-		id: block.orders.length + 1,
-		buyPrice: nextBuyPrice,
-		sellPrice: +(nextBuyPrice + 0.2).toFixed(4), // Example logic for next sell price
-		tokenAmount: 0,
-		buyOrder: 0,
-		sellOrder: 0,
-		profit: 0,
-	};
-	// Recalculate the new order based on the previous order
-	recalculateOrder(newOrder, lastOrder);
-	block.orders.push(newOrder);
-}
-
-// Remove a block
-function removeBlock(blockId) {
-	activeBlocks.value = activeBlocks.value.filter((block) => block.id !== blockId);
-}
+const { deposit, coefOfRisk, coefNextOrderCost, firstOrderCost, activeBlocks } = storeToRefs(useGridBinanceStore());
+const { addBlock, addOrder, removeBlock } = useGridBinanceStore();
 </script>
 
 <template>
@@ -139,7 +44,7 @@ function removeBlock(blockId) {
 						class="w-[10ch] bg-gray-900 border text-center" />
 					<input :id="`close-${block.id}`" type="date" v-model="block.close"
 						class="w-[10ch] bg-gray-900 border text-center" />
-					<button :id="`removeBlock-${block.id}`" @click="removeBlock(block.id, true)"
+					<button :id="`removeBlock-${block.id}`" @click="removeBlock(block.id)"
 						class="border bg-gray-700">Remove</button>
 				</div>
 			</div>
