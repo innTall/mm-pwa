@@ -1,17 +1,27 @@
 import { createRouter, createWebHistory } from "vue-router";
-import BybitMarginMM from "../views/BybitMarginMM.vue";
+import MarginBybit from "../views/MarginBybit.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      name: "BybitMarginMM",
-      component: BybitMarginMM,
+      name: "MarginBybit",
+      component: MarginBybit,
     },
     {
-      path: "/bybitMarginResult",
-      name: "BybitMarginResult",
-      component: () => import("../views/BybitMarginResult.vue"),
+      path: "/marginBybitResult",
+      name: "MarginBybitResult",
+      component: () => import("../views/MarginBybitResult.vue"),
+    },
+    {
+      path: "/marginBinance",
+      name: "MarginBinance",
+      component: () => import("../views/MarginBinance.vue"),
+    },
+    {
+      path: "/marginBinanceResult",
+      name: "MarginBinanceResult",
+      component: () => import("../views/MarginBinanceResult.vue"),
     },
     {
       path: "/gridBinance",
@@ -19,20 +29,21 @@ const router = createRouter({
       component: () => import("../views/GridBinance.vue"),
     },
     {
+      path: "/gridBinanceResult",
+      name: "GridBinanceResult",
+      component: () => import("../views/GridBinanceResult.vue"),
+    },
+    {
       path: "/gridBybit",
       name: "GridBybit",
       component: () => import("../views/GridBybit.vue"),
     },
     {
-      path: "/bybitSpotResult",
-      name: "BybitSpotResult",
-      component: () => import("../views/BybitSpotResult.vue"),
+      path: "/gridBybitResult",
+      name: "GridBybitResult",
+      component: () => import("../views/GridBybitResult.vue"),
     },
-    {
-      path: "/binanceSpotResult",
-      name: "BinanceSpotResult",
-      component: () => import("../views/BinanceSpotResult.vue"),
-    },
+    
     {
       path: "/depositBinance",
       name: "DepositBinance",
