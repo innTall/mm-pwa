@@ -3,7 +3,7 @@ import { ref, watch, computed } from "vue";
 
 const buyFee = 0.02;
 const sellFee = 0.055;
-const deposit = ref(1700);
+const deposit = ref(236);
 const leverage = ref(10);
 const riskMargin = ref(5);
 const coefNextOrderCost = ref(20);
@@ -17,12 +17,12 @@ const slPrice = ref(null);
 const open = ref(null);
 const close = ref(null);
 const nr = ref(1);
+const selectedSwitch = ref(null); // "tp" or "sl"
 
 // Reactive margin
 const margin = computed(() => (deposit.value * riskMargin.value / 100).toFixed(2));
 const tpCost = computed(() => (deposit.value * takeProfit.value / 100).toFixed(2));
 const slCost = computed(() => (deposit.value * stopLoss.value / 100).toFixed(2));
-
 const buyOrderMath = computed(() => (leverage.value * margin.value).toFixed(2));
 const buyOrder = computed(() => (buyPrice.value * amount.value).toFixed(2));
 
@@ -81,9 +81,6 @@ const feeBuy = computed(() => (buyOrder * buyFee / 100));
 const feeTP = computed(() => (tpPrice.value * amount.value * sellFee / 100));
 const feeSL = computed(() => (slPrice.value * amount.value * sellFee / 100));
 
-//const sl = computed(() => ((buyPrice.value - slPrice.value) * amount.value + feeBuy + feeSL).toFixed(2));
-//const tp = computed(() => ((tpPrice.value - buyPrice.value) * amount.value - feeBuy - feeTP).toFixed(2));
-
 const sl = computed(() => {
 	const buy = parseFloat(buyPrice.value);
 	const slP = parseFloat(slPrice.value);
@@ -107,17 +104,11 @@ const tp = computed(() => {
 	}
 	return ((tpP - buy) * amt - feeB - feeT).toFixed(2);
 });
-
-function addBlock() { }
-function removeBlock() { }
-function addOrder() { }
-function removeOrder() { }
-console.log(slCost.value, buyPrice.value, amount.value);
 </script>
 
 <template>
 	<div class="">
-		<!-- Static Permanent Block -->
+		<!-- Static Configuration Section -->
 		<div class="flex justify-between text-left p-1 text-sm">
 			<div class="">
 				<div>
@@ -169,8 +160,8 @@ console.log(slCost.value, buyPrice.value, amount.value);
 		<hr class="border-green-600 mt-1">
 
 		<!-- Dynamic Orders Blocks -->
-		<div class="p-2 mt-2 text-sm">
-			<div class="mb-2">
+		<div class="p-2 mt-1 text-sm">
+			<div class="">
 				<!-- Basic Block Data -->
 				<div class="flex justify-between">
 					<input id="symbol" type="text" v-model="symbol" placeholder="Symbol"
@@ -180,38 +171,46 @@ console.log(slCost.value, buyPrice.value, amount.value);
 					<button id="removeBlock" @click="removeBlock(id)" class="border bg-gray-700">Remove</button>
 				</div>
 				<!-- Orders List -->
-				<div class="mt-2">
-					<div class="flex justify-between">
+				<div class="">
+					<div class="flex justify-between mt-1">
 						<span>{{ nr }}</span>
 						<input id="buyPrice" type="number" v-model="buyPrice" placeholder="Buy Price"
-							class="w-[6ch] bg-gray-900 text-center text-yellow-400" />
+							class="w-[6ch] bg-gray-900 text-center underline" />
 						<input id="amount" type="number" v-model="amount" placeholder="Amount"
-							class="w-[6ch] bg-gray-900 text-center text-yellow-400" />
+							class="w-[6ch] bg-gray-900 text-center underline" />
 						<span class="">{{ buyOrder }}</span>
 						<div class="text-gray-500 text-xs">
 							<span>({{ amountMath }} - </span>
 							<span>{{ buyOrderMath }})</span>
 						</div>
-						<button id="addOrder" @click="addOrder(block)" class="border px-1 bg-gray-700">Add</button>
+						<button id="deleteOrder" @click="deleteOrder(block)" class="border px-2 bg-gray-700">X</button>
 					</div>
-					<div class="flex justify-between">
-						<div class="text-xs">SL</div>
-						<input id="sl" type="radio" class="">
+					<div class="flex justify-between mt-1">
+						<!-- SL Switch -->
+						<div class="flex items-center">
+							<input id="sl" type="radio" name="switchGroup" v-model="selectedSwitch" value="sl"
+								class="accent-red-600" />
+							<span :style="{ color: selectedSwitch === 'sl' ? 'red' : 'white' }">SL</span>
+						</div>
 						<input id="slPrice" type="number" v-model="slPrice" placeholder="SL Price"
-							class="w-[6ch] bg-gray-900 text-center text-yellow-400" />
-						<span>{{ sl }}</span>
+							class="w-[6ch] bg-gray-900 text-center underline"
+							:style="{ color: selectedSwitch === 'sl' ? 'red' : 'white' }" />
+						<span :style="{ color: selectedSwitch === 'sl' ? 'red' : 'white' }">{{ sl }}</span>
 						<div class="text-gray-500">
 							<span class="text-xs">({{ slPriceMath }})</span>
-							<!-- span class="">{{ slCost }})</span -->
 						</div>
-						<div class="text-xs">TP</div>
-						<input id="sl" type="radio" class="">
+						<!-- TP Switch -->
+						<div class="flex items-center">
+							<input id="tp" type="radio" name="switchGroup" v-model="selectedSwitch" value="tp"
+								class="accent-green-600" />
+							<span :style="{ color: selectedSwitch === 'tp' ? 'green' : 'white' }">TP</span>
+						</div>
 						<input id="tpPrice" type="number" v-model="tpPrice" placeholder="TP Price"
-							class="w-[6ch] bg-gray-900 text-center text-yellow-400" />
-						<span>{{ tp }}</span>
+							class="w-[6ch] bg-gray-900 text-center underline"
+							:style="{ color: selectedSwitch === 'tp' ? 'green' : 'white' }" />
+						<span :style="{ color: selectedSwitch === 'tp' ? 'green' : 'white' }">{{ tp }}</span>
 						<div class="text-gray-500">
 							<span class="text-xs">({{ tpPriceMath }})</span>
-							<!-- span class="">{{ tpCost }})</span -->
 						</div>
 					</div>
 				</div>
