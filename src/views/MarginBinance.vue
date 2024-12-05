@@ -2,13 +2,13 @@
 import { computed } from 'vue';
 import { useMarginBinanceStore } from '@/stores/marginBinance.js';
 import { storeToRefs } from 'pinia';
-const { deposit, leverage, riskMargin, coefNextOrderCost,	takeProfit,	stopLoss,
+const { deposit, leverage, riskMargin, coefNextOrderCost,	takeProfit,	stopLoss, orders,
 	amount,	symbol,	buyPrice,	tpPrice, slPrice,	open,	close, nr, selectedSwitch,
 	margin, tpCost,	slCost,	buyOrderMath,	buyOrder,	digits,	digits_lote, orderBlocks,
 	amountMath,	slPriceMath, tpPriceMath, feeBuy, feeTP, feeSL, sl, tp, } = storeToRefs(useMarginBinanceStore());
 const { addBlock, removeBlock, calculateBuyOrder,
 	calculateAmountMath, calculateSlPriceMath, calculateTpPriceMath,
-	calculateSl, calculateTp, } = useMarginBinanceStore();
+	calculateSl, calculateTp, addOrder, removeOrder, calculateBuyOrderMath } = useMarginBinanceStore();
 const toggleSwitch = (block) => {
 	block.selectedSwitch = !block.selectedSwitch;
 };
@@ -80,7 +80,7 @@ const getColorClass = (block, type) => {
 						class="w-[8ch] bg-gray-900 border text-center border-green-600 text-green-400 uppercase" />
 					<input id="open" type="date" v-model="block.open" class="w-[10ch] bg-gray-900 border text-center" />
 					<input id="close" type="date" v-model="block.close" class="w-[10ch] bg-gray-900 border text-center" />
-					<button id="removeBlock" @click="removeBlock(block.id)" class="border bg-gray-700">Remove</button>
+					<button id="removeBlock" @click="removeBlock(block.id)" class="border bg-gray-700 px-2">X Block</button>
 				</div>
 				<!-- Orders List -->
 				<div class="">
@@ -95,9 +95,9 @@ const getColorClass = (block, type) => {
 							<span>({{ calculateAmountMath(block) }} - </span>
 							<span>{{ buyOrderMath }})</span>
 						</div>
-						<!-- button id="deleteOrder" @click="deleteOrder(block)" class="border px-2 bg-gray-700">X</button -->
+						<button id="removeOrder" @click="removeOrder(block.id)" class="border px-2 bg-gray-700">X Order</button>
 					</div>
-					<div class="flex justify-between mt-1">
+					<div class="flex justify-between mt-1 items-center">
 						<!-- SL Switch -->
 						<div class="flex items-center">
 							<input id="sl" type="radio" :name="'switchGroup' + block.id" v-model="block.selectedSwitch" value="sl"
@@ -105,8 +105,7 @@ const getColorClass = (block, type) => {
 							<span :class="getColorClass(block, 'sl')">SL</span>
 						</div>
 						<input id="slPrice" type="number" v-model="block.slPrice" placeholder="SL Price"
-							class="w-[6ch] bg-gray-900 text-center"
-							:class="getColorClass(block, 'sl')" />
+							class="w-[6ch] bg-gray-900 text-center" :class="getColorClass(block, 'sl')" />
 						<span :class="getColorClass(block, 'sl')">{{ calculateSl(block) }}</span>
 						<div class="text-gray-500">
 							<span class="text-xs">({{ calculateSlPriceMath(block) }})</span>
@@ -118,17 +117,21 @@ const getColorClass = (block, type) => {
 							<span :class="getColorClass(block, 'tp')">TP</span>
 						</div>
 						<input id="tpPrice" type="number" v-model="block.tpPrice" placeholder="TP Price"
-							class="w-[6ch] bg-gray-900 text-center"
-							:class="getColorClass(block, 'tp')" />
+							class="w-[6ch] bg-gray-900 text-center" :class="getColorClass(block, 'tp')" />
 						<span :class="getColorClass(block, 'tp')">{{ calculateTp(block) }}</span>
 						<div class="text-gray-500">
 							<span class="text-xs">({{ calculateTpPriceMath(block) }})</span>
 						</div>
+						<div class="flex justify-end mb-2">
+							<button @click="AddOrder" class="px-2 bg-gray-700 text-white border rounded">
+								Add
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
+			<hr class="border-green-600">
 		</div>
-		<hr class="border-green-600">
 	</div>
 </template>
 <style scoped></style>
