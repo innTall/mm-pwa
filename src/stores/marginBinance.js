@@ -194,7 +194,7 @@ export const useMarginBinanceStore = defineStore(
         tpPrice: null,
         selectedSwitch: true,
       };
-      orderBlocks.value.push(newBlock);
+      orderBlocks.value.unshift(newBlock);
     };
 
     const removeBlock = (id) => {
@@ -214,8 +214,6 @@ export const useMarginBinanceStore = defineStore(
       if (!block.buyPrice || !block.amount) return 0;
       return (block.buyPrice * block.amount).toFixed(2);
     };
-
-    
 
     const calculateAmountMath = (block) => {
       if (!block.buyPrice || block.buyPrice <= 0) return 0;
@@ -296,46 +294,3 @@ export const useMarginBinanceStore = defineStore(
   },
   { persist: false }
 );
-/*
-  return {
-    deposit,
-    leverage,
-    riskMargin,
-    coefNextOrderCost,
-    takeProfit,
-    stopLoss,
-    symbol,
-    buyPrice,
-    tpPrice,
-    slPrice,
-    open,
-    close,
-    nr,
-    selectedSwitch,
-    margin,
-    tpCost,
-    slCost,
-    buyOrderMath,
-    buyOrder,
-    digits,
-    digits_lote,
-    amountMath,
-    slPriceMath,
-    tpPriceMath,
-    feeBuy,
-    feeTP,
-    feeSL,
-    sl,
-    tp,
-    orderBlocks,
-    addBlock,
-    removeBlock,
-    calculateBuyOrder,
-    calculateAmountMath,
-    calculateSlPriceMath,
-    calculateTpPriceMath,
-    calculateSl,
-    calculateTp,
-    addOrder,
-    RemoveOrder,
-*/

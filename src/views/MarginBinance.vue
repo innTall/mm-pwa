@@ -2,10 +2,9 @@
 import { computed } from 'vue';
 import { useMarginBinanceStore } from '@/stores/marginBinance.js';
 import { storeToRefs } from 'pinia';
-const { deposit, leverage, riskMargin, coefNextOrderCost,	takeProfit,	stopLoss, orders,
-	amount,	symbol,	buyPrice,	tpPrice, slPrice,	open,	close, nr, selectedSwitch,
-	margin, tpCost,	slCost,	buyOrderMath,	buyOrder,	digits,	digits_lote, orderBlocks,
-	amountMath,	slPriceMath, tpPriceMath, feeBuy, feeTP, feeSL, sl, tp, } = storeToRefs(useMarginBinanceStore());
+const { deposit, leverage, riskMargin, coefNextOrderCost, takeProfit, stopLoss, orders,
+	amount, symbol, buyPrice, tpPrice, slPrice, open, close, nr, selectedSwitch,
+	margin, tpCost, slCost, buyOrderMath, orderBlocks, } = storeToRefs(useMarginBinanceStore());
 const { addBlock, removeBlock, calculateBuyOrder,
 	calculateAmountMath, calculateSlPriceMath, calculateTpPriceMath,
 	calculateSl, calculateTp, addOrder, removeOrder, calculateBuyOrderMath } = useMarginBinanceStore();
@@ -16,26 +15,27 @@ const toggleSwitch = (block) => {
 const getColorClass = (block, type) => {
 	return block.selectedSwitch === type ? (type === "sl" ? "text-red-500" : "text-green-500") : "text-white";
 };
+console.log(orders);
 </script>
 
 <template>
 	<div class="">
 		<!-- Static Configuration Section -->
 		<div class="flex justify-between text-left p-1 text-sm">
-			<div class="">
-				<div>
+			<div class="container w-1/3">
+				<div class="">
 					<label for="deposit">Deposit, $:
 						<input id="deposit" type="number" v-model="deposit" step="1" min="1" required
 							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
 					</label>
 				</div>
-				<div>
+				<div class="">
 					<label for="leverage">Leverage:
 						<input id="leverage" type="number" v-model="leverage" step="1" min="1" required
 							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 					</label>
 				</div>
-				<div>
+				<div class="">
 					<label for="coefCost">CoefCost, %:
 						<input id="coefCost" type="number" v-model="coefNextOrderCost" step="1" min="1" required
 							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
@@ -48,21 +48,21 @@ const getColorClass = (block, type) => {
 						<input id="coefRisk" type="number" v-model="riskMargin" step="0.01" min="0" required
 							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 					</label>
-					{{ margin }}
+					{{ margin }} $
 				</div>
 				<div>
-					<label for="takeProfit">TP:
+					<label for="takeProfit">TakeProfit:
 						<input id="takeProfit" type="number" v-model="takeProfit" step="0.01" min="0" required
 							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 					</label>
-					{{ tpCost }}
+					{{ tpCost }} $
 				</div>
 				<div>
-					<label for="stopLoss">SL:
+					<label for="stopLoss">StopLoss:
 						<input id="stopLoss" type="number" v-model="stopLoss" step="0.01" min="0" required
 							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 					</label>
-					{{ slCost }}
+					{{ slCost }} $
 				</div>
 			</div>
 			<div class="flex items-center bg-gray-700 border px-1">
@@ -76,8 +76,9 @@ const getColorClass = (block, type) => {
 			<div class="">
 				<!-- Basic Block Data -->
 				<div class="flex justify-between">
-					<input id="symbol" type="text" v-model="block.symbol" placeholder="Symbol"
-						class="w-[8ch] bg-gray-900 border text-center border-green-600 text-green-400 uppercase" />
+					<input id="symbol" type="text" v-model="block.symbol" placeholder="Symbol" class="w-[10ch] px-2 text-yellow-400 text-center font-bold bg-gray-900 border border-gray-700 outline-none 
+             focus:bg-gray-800 focus:ring focus:ring-yellow-400 focus:border-yellow-400
+             invalid:bg-red-900 valid:bg-gray-800 uppercase" />
 					<input id="open" type="date" v-model="block.open" class="w-[10ch] bg-gray-900 border text-center" />
 					<input id="close" type="date" v-model="block.close" class="w-[10ch] bg-gray-900 border text-center" />
 					<button id="removeBlock" @click="removeBlock(block.id)" class="border bg-gray-700 px-2">X Block</button>
@@ -123,7 +124,7 @@ const getColorClass = (block, type) => {
 							<span class="text-xs">({{ calculateTpPriceMath(block) }})</span>
 						</div>
 						<div class="flex justify-end mb-2">
-							<button @click="AddOrder" class="px-2 bg-gray-700 text-white border rounded">
+							<button @click="addOrder" class="px-2 bg-gray-700 text-white border rounded">
 								Add
 							</button>
 						</div>
