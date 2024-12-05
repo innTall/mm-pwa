@@ -1,11 +1,11 @@
 <script setup>
-import FooterBybit from '../components/FooterBybit.vue';
+import FooterBinance from '../components/FooterBinance.vue';
 import { ref, watch, computed } from "vue";
 import { supabase } from "@/api/supabase.js";
 import { storeToRefs } from "pinia";
-import { useMarginStore } from "@/stores/margin.js";
-const { orderBlocks } = storeToRefs(useMarginStore());
-const { T_P, S_L, addNewBlock, removeBlock } = useMarginStore();
+import { useMarginBinanceResStore } from "@/stores/marginBinanceRes.js";
+const { orderBlocks } = storeToRefs(useMarginBinanceResStore());
+const { T_P, S_L, addNewBlock, removeBlock } = useMarginBinanceResStore();
 // Utility function to clear a field
 const clearField = (field) => {
 	if (field && typeof field === 'object' && 'value' in field) {
@@ -222,7 +222,7 @@ async function saveSettings() {
 		</div>
 	</div>
 	<footer class="fixed w-full h-12 left-0 bottom-0 z-10 bg-gray-900">
-		<FooterBybit />
+		<FooterBinance />
 	</footer>
 </template>
 

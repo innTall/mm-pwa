@@ -1,11 +1,11 @@
 <script setup>
 import FooterBinance from '../components/FooterBinance.vue';
 import { ref, watch, nextTick } from "vue";
-import { useBinanceStore } from "@/stores/binance.js";
+import { useSpotBinanceResStore } from "@/stores/spotBinanceRes.js";
 import { storeToRefs } from "pinia";
 
-const { isBlockComplete, addBlock, removeBlock } = useBinanceStore();
-const { blocks, blockMetrics, totalProfit } = storeToRefs(useBinanceStore());
+const { isBlockComplete, addBlock, removeBlock } = useSpotBinanceResStore();
+const { blocks, blockMetrics, totalProfit } = storeToRefs(useSpotBinanceResStore());
 
 const isFirstClickOnSell = ref(true); // Flag to track the first click
 // Function to handle the first focus on the sell field

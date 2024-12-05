@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-export const useBybitStore = defineStore("bybitStore", () => {
+export const useSpotBybitResStore = defineStore("spotBybitRes", () => {
   const blocks = ref([
     {
       date: null,

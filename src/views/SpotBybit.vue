@@ -1,9 +1,9 @@
 <script setup>
-import { useGridBinanceStore } from '@/stores/gridBinance.js';
+import { useSpotBybitStore } from '@/stores/spotBybit.js';
 import { storeToRefs } from 'pinia';
 
-const { deposit, coefOfRisk, coefNextOrderCost, firstOrderCost, activeBlocks } = storeToRefs(useGridBinanceStore());
-const { addBlock, addOrder, removeBlock } = useGridBinanceStore();
+const { deposit, coefOfRisk, coefNextOrderCost, firstOrderCost, activeBlocks } = storeToRefs(useSpotBybitStore());
+const { addBlock, addOrder, removeBlock } = useSpotBybitStore();
 </script>
 
 <template>
@@ -94,4 +94,3 @@ const { addBlock, addOrder, removeBlock } = useGridBinanceStore();
 		</div>
 	</div>
 </template>
-<style scoped></style>

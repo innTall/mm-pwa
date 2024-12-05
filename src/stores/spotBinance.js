@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { reactive, ref, computed } from "vue";
 
-export const useGridBinanceStore = defineStore("gridBinance", () => {
+export const useSpotBinanceStore = defineStore("spotBinance", () => {
   const fee = 0.001;
   const deposit = ref(1700);
   const coefOfRisk = ref(0.02);

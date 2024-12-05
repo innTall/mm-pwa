@@ -1,11 +1,11 @@
 <script setup>
 import FooterBybit from '../components/FooterBybit.vue';
 import { ref, watch, computed } from "vue";
-import { useBybitStore } from "@/stores/bybit.js";
+import { useSpotBybitResStore } from "@/stores/spotBybitRes.js";
 import { storeToRefs } from "pinia";
 
-const { isBlockComplete, addBlock, removeBlock } = useBybitStore();
-const { blocks, blockMetrics, totalProfit } = storeToRefs(useBybitStore());
+const { isBlockComplete, addBlock, removeBlock } = useSpotBybitResStore();
+const { blocks, blockMetrics, totalProfit } = storeToRefs(useSpotBybitResStore());
 
 // Flag to track the first click on the sell field
 const isFirstClickOnSell = ref(true);

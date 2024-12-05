@@ -1,9 +1,9 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import { storeToRefs } from "pinia";
-import { useSettingsStore } from '../stores/settings.js';
+import { useMarginBybitStore } from '../stores/marginBybit.js';
 import { supabase } from "@/api/supabase.js";
-const { depo, leverage, risk_sl, risk_margin, coef_price } = storeToRefs(useSettingsStore());
+const { depo, leverage, risk_sl, risk_margin, coef_price } = storeToRefs(useMarginBybitStore());
 // Constants for fee
 const feeBuy = 0.0002;
 const feeSell = 0.00055;

@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { ref, watchEffect } from "vue";
 
-export const useSettingsStore = defineStore(
-  "settings",
+export const useMarginBybitStore = defineStore(
+  "marginBybit",
   () => {
     const depo = ref(0);
     const leverage = ref(0);

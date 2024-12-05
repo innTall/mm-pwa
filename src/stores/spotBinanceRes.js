@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-export const useBinanceStore = defineStore("binanceStore", () => {
+export const useSpotBinanceResStore = defineStore("spotBinanceRes", () => {
   const blocks = ref([
     {
       date: null,

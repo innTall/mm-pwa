@@ -11,9 +11,9 @@ import LogoItem from './layouts/LogoItem.vue';
 			<p class="text-xs">Bybit</p>
 			<div class="text-sm">
 				<RouterLink :to="{ name: 'MarginBybit' }" v-slot="{ isActive }">
-					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> MM |</span>
+					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Margin |</span>
 				</RouterLink>
-				<RouterLink :to="{ name: 'MarginBybitResult' }" v-slot="{ isActive }">
+				<RouterLink :to="{ name: 'MarginBybitRes' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Res</span>
 				</RouterLink>
 			</div>
@@ -22,9 +22,9 @@ import LogoItem from './layouts/LogoItem.vue';
 			<p class="text-xs">Binance</p>
 			<div class="text-sm">
 				<RouterLink :to="{ name: 'MarginBinance' }" v-slot="{ isActive }">
-					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> MM |</span>
+					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Margin |</span>
 				</RouterLink>
-				<RouterLink :to="{ name: 'MarginBinanceResult' }" v-slot="{ isActive }">
+				<RouterLink :to="{ name: 'MarginBinanceRes' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Res</span>
 				</RouterLink>
 			</div>
@@ -32,10 +32,10 @@ import LogoItem from './layouts/LogoItem.vue';
 		<div class="text-center">
 			<p class="text-xs">Binance</p>
 			<div class="text-sm">
-				<RouterLink :to="{ name: 'GridBinance' }" v-slot="{ isActive }">
-					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Grid |</span>
+				<RouterLink :to="{ name: 'SpotBinance' }" v-slot="{ isActive }">
+					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Spot |</span>
 				</RouterLink>
-				<RouterLink :to="{ name: 'GridBinanceResult' }" v-slot="{ isActive }">
+				<RouterLink :to="{ name: 'SpotBinanceRes' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Res</span>
 				</RouterLink>
 			</div>
@@ -43,10 +43,10 @@ import LogoItem from './layouts/LogoItem.vue';
 		<div class="text-center">
 			<p class="text-xs">Bybit</p>
 			<div class="text-sm">
-				<RouterLink :to="{ name: 'GridBybit' }" v-slot="{ isActive }">
-					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Grid |</span>
+				<RouterLink :to="{ name: 'SpotBybit' }" v-slot="{ isActive }">
+					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Spot |</span>
 				</RouterLink>
-				<RouterLink :to="{ name: 'GridBybitResult' }" v-slot="{ isActive }">
+				<RouterLink :to="{ name: 'SpotBybitRes' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Res</span>
 				</RouterLink>
 			</div>
