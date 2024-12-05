@@ -39,7 +39,7 @@ const { addBlock, addOrder, removeBlock } = useSpotBybitStore();
 				<!-- Basic Block Data -->
 				<div class="flex justify-between">
 					<input :id="`symbol-${block.id}`" type="text" v-model="block.symbol" placeholder="Symbol"
-						class="w-[8ch] bg-gray-900 border text-center border-green-600 text-green-400" />
+						class="w-[8ch] bg-gray-900 border text-center border-green-600 text-green-400 uppercase" />
 					<input :id="`open-${block.id}`" type="date" v-model="block.open"
 						class="w-[10ch] bg-gray-900 border text-center" />
 					<input :id="`close-${block.id}`" type="date" v-model="block.close"

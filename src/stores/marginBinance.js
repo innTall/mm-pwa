@@ -102,6 +102,89 @@ export const useMarginBinanceStore = defineStore("marginBinance", () => {
     return ((tpP - buy) * amt - feeB - feeT).toFixed(2);
   });
 
+  // Add dynamic blocks state
+  const orderBlocks = ref([
+    {
+      id: 1, // Unique identifier
+      symbol: "",
+      open: null,
+      close: null,
+      buyPrice: null,
+      amount: null,
+      slPrice: null,
+      tpPrice: null,
+      selectedSwitch: true,
+    },
+  ]);
+
+  // Methods to add and remove blocks
+  const addBlock = () => {
+    const newBlock = {
+      id: orderBlocks.value.length + 1,
+      symbol: "",
+      open: null,
+      close: null,
+      buyPrice: null,
+      amount: null,
+      slPrice: null,
+      tpPrice: null,
+      selectedSwitch: true,
+    };
+    orderBlocks.value.push(newBlock);
+  };
+
+  const removeBlock = (id) => {
+    orderBlocks.value = orderBlocks.value.filter((block) => block.id !== id);
+  };
+
+  // Helper Functions
+  const calculateBuyOrder = (block) => {
+    if (!block.buyPrice || !block.amount) return 0;
+    return (block.buyPrice * block.amount).toFixed(2);
+  };
+
+  const calculateAmountMath = (block) => {
+    if (!block.buyPrice || block.buyPrice <= 0) return 0;
+    const margin = (deposit.value * riskMargin.value) / 100;
+    return +((leverage.value * margin) / block.buyPrice).toFixed(2);
+  };
+
+  const calculateSlPriceMath = (block) => {
+    if (!block.buyPrice || !block.amount || block.amount <= 0) return null;
+    const slCost = (deposit.value * 2) / 100; // Replace 2 with block-specific SL percent if needed
+    return (
+      ((slCost - block.buyPrice * block.amount) * -1) /
+      block.amount
+    ).toFixed(2);
+  };
+
+  const calculateTpPriceMath = (block) => {
+    if (!block.buyPrice || !block.amount || block.amount <= 0) return null;
+    const tpCost = (deposit.value * 5) / 100; // Replace 5 with block-specific TP percent if needed
+    return ((tpCost + block.buyPrice * block.amount) / block.amount).toFixed(2);
+  };
+
+  const calculateSl = (block) => {
+    const slPrice = parseFloat(block.slPrice);
+    if (!slPrice || !block.buyPrice || !block.amount) return null;
+    const buyOrder = calculateBuyOrder(block);
+    const feeBuy = (buyOrder * buyFee) / 100;
+    const feeSL = (slPrice * block.amount * sellFee) / 100;
+    return ((block.buyPrice - slPrice) * block.amount + feeBuy + feeSL).toFixed(
+      2
+    );
+  };
+
+  const calculateTp = (block) => {
+    const tpPrice = parseFloat(block.tpPrice);
+    if (!tpPrice || !block.buyPrice || !block.amount) return null;
+    const buyOrder = calculateBuyOrder(block);
+    const feeBuy = (buyOrder * buyFee) / 100;
+    const feeTP = (tpPrice * block.amount * sellFee) / 100;
+    return ((tpPrice - block.buyPrice) * block.amount - feeBuy - feeTP).toFixed(
+      2
+    );
+  };
   return {
     deposit,
     leverage,
@@ -133,6 +216,15 @@ export const useMarginBinanceStore = defineStore("marginBinance", () => {
     feeSL,
     sl,
     tp,
+    orderBlocks,
+    addBlock,
+    removeBlock,
+    calculateBuyOrder,
+    calculateAmountMath,
+    calculateSlPriceMath,
+    calculateTpPriceMath,
+    calculateSl,
+    calculateTp,
   };
 },
 	{persist: false}
