@@ -1,16 +1,11 @@
 <script setup>
-import { computed } from 'vue';
 import { useMarginBinanceStore } from '@/stores/marginBinance.js';
 import { storeToRefs } from 'pinia';
-const { deposit, leverage, riskMargin, coefNextOrderCost, takeProfit, stopLoss, orders,
-	amount, symbol, buyPrice, tpPrice, slPrice, open, close, nr, selectedSwitch,
-	margin, tpCost, slCost, buyOrderMath, orderBlocks, } = storeToRefs(useMarginBinanceStore());
-const { addBlock, removeBlock, calculateBuyOrder,
-	calculateAmountMath, calculateSlPriceMath, calculateTpPriceMath,
-	calculateSl, calculateTp, addOrder, removeOrder, calculateBuyOrderMath } = useMarginBinanceStore();
-const toggleSwitch = (block) => {
-	block.selectedSwitch = !block.selectedSwitch;
-};
+const { deposit, leverage, riskMargin, margin, tpCost, slCost, buyOrderMath, coefNextOrderCost,
+	takeProfit, stopLoss, orderBlocks, orders, } = storeToRefs(useMarginBinanceStore());
+const { addBlock, removeBlock, calculateBuyOrder, calculateAmountMath, calculateSlPriceMath, 
+	calculateTpPriceMath, calculateSl, calculateTp, addOrder, removeOrder, } = useMarginBinanceStore();
+
 // Helper function to determine the color class for SL/TP
 const getColorClass = (block, type) => {
 	return block.selectedSwitch === type ? (type === "sl" ? "text-red-500" : "text-green-500") : "text-white";
