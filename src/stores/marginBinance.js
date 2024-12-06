@@ -40,8 +40,7 @@ export const useMarginBinanceStore = defineStore(
       const block = reactive({
         id: generateUniqueId(),
         symbol: "",
-        open: "",
-        close: "",
+        date: "",
         orders: [],
         isSaved: false,
         summary: computed(() => {

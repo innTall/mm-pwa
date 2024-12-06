@@ -88,8 +88,7 @@ const getColorClass = (block, type) => {
 					<input id="symbol" type="text" v-model="block.symbol" placeholder="Symbol" class="w-[10ch] px-2 text-yellow-400 text-center font-bold bg-gray-900 border border-gray-700 outline-none 
              focus:bg-gray-800 focus:ring focus:ring-yellow-400 focus:border-yellow-400
              invalid:bg-red-900 valid:bg-gray-800 uppercase" />
-					<input id="open" type="date" v-model="block.open" class="w-[10ch] bg-gray-900 border text-center" />
-					<input id="close" type="date" v-model="block.close" class="w-[10ch] bg-gray-900 border text-center" />
+					<input id="date" type="date" v-model="block.date" class="w-[10ch] bg-gray-900 border text-center" />
 					<button id="removeBlock" @click="removeBlock(block.id)" class="border bg-gray-700 px-2">X Block</button>
 					<button id="addOrder" @click="addOrder(block)" class="px-2 bg-gray-700 border">
 						Add
