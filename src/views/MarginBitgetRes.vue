@@ -3,7 +3,7 @@ import FooterBitget from '../components/FooterBitget.vue';
 import { ref, watch, computed } from "vue";
 import { supabase } from "@/api/supabase.js";
 import { storeToRefs } from "pinia";
-import { useMarginBitgetResStore } from "@/stores/marginBinanceRes.js";
+import { useMarginBitgetResStore } from "@/stores/marginBitgetRes.js";
 const { orderBlocks } = storeToRefs(useMarginBitgetResStore());
 const { T_P, S_L, addNewBlock, removeBlock } = useMarginBitgetResStore();
 // Utility function to clear a field
