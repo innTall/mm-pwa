@@ -2,9 +2,9 @@
 import { useMarginBinanceStore } from '@/stores/marginBinance.js';
 import { storeToRefs } from 'pinia';
 const { deposit, leverage, riskMargin, margin, tpCost, slCost, buyOrderMath, coefNextOrderCost,
-	takeProfit, stopLoss, activeBlocks, totalActiveTpAndSl, } = storeToRefs(useMarginBinanceStore());
+	takeProfit, stopLoss, activeBlocks, totalActiveTpAndSl, sortedSymbols } = storeToRefs(useMarginBinanceStore());
 const { addBlock, removeBlock, addOrder, removeOrder, calculateBuyOrder, calculateAmountMath, calculateSlPriceMath,
-	calculateTpPriceMath, calculateSl, calculateTp,  } = useMarginBinanceStore();
+	calculateTpPriceMath, calculateSl, calculateTp, } = useMarginBinanceStore();
 
 // Helper function to determine the color class for SL/TP
 const getColorClass = (block, type) => {
@@ -67,6 +67,18 @@ const getColorClass = (block, type) => {
 			</div>
 		</div>
 		<hr class="border-green-600 mt-1">
+		<!-- Block Symbols Section -->
+		<div class="">
+			<div class="flex gap-2">
+				<div class="">Symbols:</div>
+				<ul class="flex">
+					<li v-for="symbol in sortedSymbols" :key="symbol" class="uppercase">
+						{{ symbol }} .
+					</li>
+				</ul>
+			</div>
+			<hr class="border-green-600">
+		</div>
 
 		<!-- Dynamic Orders Blocks -->
 		<div v-for="block in activeBlocks" :key="block.id" class="p-2 mt-1 text-sm">
@@ -99,7 +111,7 @@ const getColorClass = (block, type) => {
 						<button id="removeOrder" @click="removeOrder(block, order.id)"
 							class="border px-2 bg-gray-400 font-bold text-red-600">X</button>
 					</div>
-					<div class="flex justify-between mt-1 items-center">
+					<div class="flex justify-between mt-1 mb-1 items-center">
 						<!-- SL Switch -->
 						<div class="flex items-center">
 							<input id="sl" type="radio" :name="'switchGroup' + order.id" v-model="order.selectedSwitch" value="sl"

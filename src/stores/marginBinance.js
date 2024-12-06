@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed, reactive } from "vue";
+import { ref, computed, watch, reactive } from "vue";
 
 export const useMarginBinanceStore = defineStore(
   "marginBinance",
@@ -30,15 +30,15 @@ export const useMarginBinanceStore = defineStore(
     );
 
     const activeBlocks = ref([createNewBlock()]);
+    const activeSymbols = ref([]); // New array to store active symbols
 
     function generateUniqueId() {
       return nextBlockId++;
     }
 
     function createNewBlock() {
-      const id = generateUniqueId();
       const block = reactive({
-        id,
+        id: generateUniqueId(),
         symbol: "",
         open: "",
         close: "",
@@ -63,7 +63,22 @@ export const useMarginBinanceStore = defineStore(
       recalculateOrder(initialOrder, null);
       block.orders.push(initialOrder);
 
+      // Watch the block's symbol and update activeSymbols accordingly
+      //block.symbol = "";
+      watch(
+        () => block.symbol,
+        //(newSymbol) => {
+        () => {
+          updateActiveSymbols(); // Update the symbol list
+        }
+      );
       return block;
+    }
+
+    function updateActiveSymbols() {
+      activeSymbols.value = activeBlocks.value
+        .filter((block) => block.symbol) // Only include blocks with a defined symbol
+        .map((block) => block.symbol); // Map to the list of symbols
     }
 
     function recalculateOrder(order, previousOrder) {
@@ -73,6 +88,7 @@ export const useMarginBinanceStore = defineStore(
     function addBlock() {
       const newBlock = createNewBlock();
       activeBlocks.value.unshift(newBlock);
+      updateActiveSymbols(); // Update the symbols
     }
 
     function addOrder(block) {
@@ -205,6 +221,7 @@ export const useMarginBinanceStore = defineStore(
       activeBlocks.value = activeBlocks.value.filter(
         (block) => block.id !== blockId
       );
+      updateActiveSymbols(); // Update the symbols
     };
     // Function to remove an order by ID
     const removeOrder = (block, orderId) => {
@@ -213,6 +230,10 @@ export const useMarginBinanceStore = defineStore(
         block.orders.splice(index, 1); // Remove the order at the specified index
       }
     };
+
+    const sortedSymbols = computed(() => {
+      return [...activeSymbols.value].sort((a, b) => a.localeCompare(b));
+    });
     return {
       deposit,
       leverage,
@@ -225,6 +246,8 @@ export const useMarginBinanceStore = defineStore(
       takeProfit,
       stopLoss,
       activeBlocks,
+      activeSymbols, // Expose the symbols
+      sortedSymbols, // Expose the sorted symbols
       addBlock,
       removeBlock,
       calculateBuyOrder,
