@@ -24,6 +24,16 @@ const router = createRouter({
       component: () => import("../views/MarginBinanceRes.vue"),
     },
     {
+      path: "/marginBitget",
+      name: "MarginBitget",
+      component: () => import("../views/MarginBitget.vue"),
+    },
+    {
+      path: "/marginBitgetRes",
+      name: "MarginBitgetRes",
+      component: () => import("../views/MarginBitgetRes.vue"),
+    },
+    {
       path: "/spotBinance",
       name: "SpotBinance",
       component: () => import("../views/SpotBinance.vue"),
@@ -44,6 +54,16 @@ const router = createRouter({
       component: () => import("../views/SpotBybitRes.vue"),
     },
     {
+      path: "/spotBitget",
+      name: "SpotBitget",
+      component: () => import("../views/SpotBitget.vue"),
+    },
+    {
+      path: "/spotBitgetRes",
+      name: "SpotBitgetRes",
+      component: () => import("../views/SpotBitgetRes.vue"),
+    },
+    {
       path: "/depositBinance",
       name: "DepositBinance",
       component: () => import("../components/DepositBinance.vue"),
@@ -52,6 +72,11 @@ const router = createRouter({
       path: "/depositBybit",
       name: "DepositBybit",
       component: () => import("../components/DepositBybit.vue"),
+    },
+    {
+      path: "/depositBitget",
+      name: "DepositBitget",
+      component: () => import("../components/DepositBitget.vue"),
     },
   ],
 });

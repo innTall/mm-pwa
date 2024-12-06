@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { ref, computed, watch, reactive } from "vue";
 
-export const useMarginBinanceStore = defineStore(
-  "marginBinance",
+export const useMarginBitgetStore = defineStore(
+  "marginBitget",
   () => {
     const buyFee = 0.1;
     const sellFee = 0.1;

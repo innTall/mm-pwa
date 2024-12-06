@@ -1,10 +1,10 @@
 <script setup>
-import { useMarginBybitStore } from '@/stores/marginBybit.js';
+import { useMarginBitgetStore } from '@/stores/marginBitget.js';
 import { storeToRefs } from 'pinia';
 const { deposit, leverage, riskMargin, margin, tpCost, slCost, buyOrderMath, coefNextOrderCost,
-	takeProfit, stopLoss, activeBlocks, totalActiveTpAndSl, sortedSymbols } = storeToRefs(useMarginBybitStore());
+	takeProfit, stopLoss, activeBlocks, totalActiveTpAndSl, sortedSymbols } = storeToRefs(useMarginBitgetStore());
 const { addBlock, removeBlock, addOrder, removeOrder, calculateBuyOrder, calculateAmountMath, calculateSlPriceMath,
-	calculateTpPriceMath, calculateSl, calculateTp, } = useMarginBybitStore();
+	calculateTpPriceMath, calculateSl, calculateTp, } = useMarginBitgetStore();
 
 // Helper function to determine the color class for SL/TP
 const getColorClass = (block, type) => {
