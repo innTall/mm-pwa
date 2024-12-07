@@ -7,29 +7,29 @@ import LogoItem from './layouts/LogoItem.vue';
 		<div>
 			<LogoItem />
 		</div>
-		<div class="flex justify-between gap-5">
+		<div class="flex justify-between gap-5 text-sm">
 			<div class="text-center">
-				<div class="text-sm">Binance</div>
+				<div class="">Binance</div>
 				<RouterLink :to="{ name: 'MarginBinance' }" v-slot="{ isActive }">
-					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Mar |</span>
+					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Margin |</span>
 				</RouterLink>
 				<RouterLink :to="{ name: 'SpotBinance' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Spot</span>
 				</RouterLink>
 			</div>
 			<div class="text-center">
-				<div class="text-sm">Bitget</div>
+				<div class="">Bitget</div>
 				<RouterLink :to="{ name: 'MarginBitget' }" v-slot="{ isActive }">
-					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Mar |</span>
+					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Margin |</span>
 				</RouterLink>
 				<RouterLink :to="{ name: 'SpotBitget' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Spot</span>
 				</RouterLink>
 			</div>
 			<div class="text-center">
-				<div class="text-sm">Bybit</div>
+				<div class="">Bybit</div>
 				<RouterLink :to="{ name: 'MarginBybit' }" v-slot="{ isActive }">
-					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Mar |</span>
+					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Margin |</span>
 				</RouterLink>
 				<RouterLink :to="{ name: 'SpotBybit' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Spot</span>

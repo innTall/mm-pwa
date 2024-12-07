@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue';
 import FooterBitget from '../components/FooterBitget.vue';
 import { useMarginBitgetStore } from '@/stores/marginBitget.js';
 import { storeToRefs } from 'pinia';
@@ -11,66 +12,70 @@ const { addBlock, removeBlock, addOrder, removeOrder, calculateBuyOrder, calcula
 const getColorClass = (block, type) => {
 	return block.selectedSwitch === type ? (type === "sl" ? "text-red-500" : "text-green-500") : "text-white";
 };
+// Helper function to determine color class
+const totalActiveTpAndSlColor = computed(() => {
+	return totalActiveTpAndSl.value > 0 ? "text-green-500" : totalActiveTpAndSl.value < 0 ? "text-red-500" : "text-white";
+});
+const getBlockTotalColor = (block) => {
+	const value = block.totalActiveTpAndSl; // Assuming this is computed for each block
+	return value > 0 ? "text-green-500" : value < 0 ? "text-red-500" : "text-white";
+};
 </script>
 
 <template>
 	<div class="">
 		<!-- Static Configuration Section -->
-		<div class="flex justify-between text-left p-1 text-sm">
-			<div class="container w-1/3">
-				<div class="">
-					<label for="deposit">Deposit, $:
-						<input id="deposit" type="number" v-model="deposit" step="1" min="1" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
-					</label>
+		<div class="flex justify-between p-1 text-sm">
+			<div class="">
+				<div class="flex justify-between">
+					<div class="">Deposit, $:</div>
+					<input id="deposit" type="number" v-model="deposit" step="1" min="1" required
+						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
 				</div>
-				<div class="">
-					<label for="leverage">Leverage:
-						<input id="leverage" type="number" v-model="leverage" step="1" min="1" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
-					</label>
+				<div class="flex justify-between">
+					<div class="">Leverage:</div>
+					<input id="leverage" type="number" v-model="leverage" step="1" min="1" required
+						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
 				</div>
-				<div class="">
-					<label for="coefCost">CoefCost, %:
-						<input id="coefCost" type="number" v-model="coefNextOrderCost" step="1" min="1" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
-					</label>
+				<div class="flex justify-between">
+					<div class="">CoefCost, %:</div>
+					<input id="coefCost" type="number" v-model="coefNextOrderCost" step="1" min="1" required
+						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
 				</div>
 			</div>
 			<div class="">
-				<div>
-					<label for="stopLoss">RiskMargin:
-						<input id="coefRisk" type="number" v-model="riskMargin" step="0.01" min="0" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
-					</label>
-					{{ margin }}
+				<div class="flex justify-between">
+					<div class="">Margin:</div>
+					<input id="coefRisk" type="number" v-model="riskMargin" step="0.01" min="0" required
+						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 				</div>
-				<div>
-					<label for="takeProfit">TakeProfit:
-						<input id="takeProfit" type="number" v-model="takeProfit" step="0.01" min="0" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
-					</label>
-					{{ tpCost }}
+				<div class="flex justify-between">
+					<div class="">TP:</div>
+					<input id="takeProfit" type="number" v-model="takeProfit" step="0.01" min="0" required
+						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 				</div>
-				<div>
-					<label for="stopLoss">StopLoss:
-						<input id="stopLoss" type="number" v-model="stopLoss" step="0.01" min="0" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
-					</label>
-					{{ slCost }}
+				<div class="flex justify-between">
+					<div class="">SL:</div>
+					<input id="stopLoss" type="number" v-model="stopLoss" step="0.01" min="0" required
+						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 				</div>
 			</div>
+			<div class="">
+				<div class="text-right">{{ margin }} $</div>
+				<div class="text-right">{{ tpCost }} $</div>
+				<div class="text-right">{{ slCost }} $</div>
+			</div>
 			<div class="text-center">
-				<button @click="addBlock" class="bg-gray-700 border px-1">ADD</button>
+				<button @click="addBlock" class="px-2 border border-green-600 font-bold text-green-600">ADD</button>
 				<!-- Total sum of all active 'sl' and 'tp' values -->
 				<div class="">TP</div>
-				<div class="text-green-600">{{ totalActiveTpAndSl }}</div>
+				<div :class="totalActiveTpAndSlColor">{{ totalActiveTpAndSl }}</div>
 			</div>
 		</div>
 		<hr class="border-green-600 mt-1">
 		<!-- Block Symbols Section -->
-		<div class="">
-			<div class="px-1 flex gap-2 text-sm">
+		<div class="px-1">
+			<div class="flex gap-2 text-sm">
 				<div class="">Symbols:</div>
 				<ul class="flex">
 					<li v-for="symbol in sortedSymbols" :key="symbol" class="uppercase">
@@ -86,11 +91,14 @@ const getColorClass = (block, type) => {
 			<div class="">
 				<!-- Basic Block Data -->
 				<div class="flex justify-between">
-					<input id="symbol" type="text" v-model="block.symbol" placeholder="Symbol" class="w-[10ch] px-2 text-yellow-400 text-center font-bold bg-gray-900 border border-gray-700 outline-none 
-             focus:bg-gray-800 focus:ring focus:ring-yellow-400 focus:border-yellow-400
-             invalid:bg-red-900 valid:bg-gray-800 uppercase" />
+					<input id="symbol" type="text" v-model="block.symbol" placeholder="Symbol"
+						class="w-[10ch] px-2 text-center font-bold bg-gray-900 border uppercase" />
 					<input id="date" type="date" v-model="block.date" class="w-[10ch] bg-gray-900 border text-center" />
-					<button id="removeBlock" @click="removeBlock(block.id)" class="border bg-gray-700 px-2">X Block</button>
+					<div class="">
+						<span :class="getBlockTotalColor(block)">{{ block.totalActiveTpAndSl }}</span>
+					</div>
+					<button id="removeBlock" @click="removeBlock(block.id)"
+						class="px-2 font-bold text-red-600 border border-red-600">X Block</button>
 					<button id="addOrder" @click="addOrder(block)"
 						class="px-2 border border-green-600 font-extrabold text-green-600">
 						+
@@ -98,7 +106,7 @@ const getColorClass = (block, type) => {
 				</div>
 				<!-- Orders List -->
 				<div v-for="order in block.orders" :key="order.id" class="">
-					<div class="flex justify-between mt-1">
+					<div class="flex justify-between mt-1 items-center">
 						<span>{{ order.id }}</span>
 						<input id="buyPrice" type="number" v-model="order.buyPrice" placeholder="Buy Price"
 							class="w-[6ch] bg-gray-900 text-center" />

@@ -43,12 +43,17 @@ export const useMarginBitgetStore = defineStore(
         date: "",
         orders: [],
         isSaved: false,
-        summary: computed(() => {
-          const totalProfit =
-            block.orders.length > 0
-              ? block.orders[block.orders.length - 1].profit
-              : 0;
-          return totalProfit;
+        totalActiveTpAndSl: computed(() => {
+          return block.orders
+            .reduce((total, order) => {
+              if (order.selectedSwitch === "tp" && order.tp) {
+                total += parseFloat(order.tp) || 0;
+              } else if (order.selectedSwitch === "sl" && order.sl) {
+                total += parseFloat(order.sl) || 0;
+              }
+              return total;
+            }, 0)
+            .toFixed(2); // Format to 2 decimal places
         }),
       });
       const initialOrder = {
@@ -247,6 +252,7 @@ export const useMarginBitgetStore = defineStore(
       activeBlocks,
       activeSymbols, // Expose the symbols
       sortedSymbols, // Expose the sorted symbols
+      totalActiveTpAndSl,
       addBlock,
       removeBlock,
       calculateBuyOrder,
@@ -257,7 +263,6 @@ export const useMarginBitgetStore = defineStore(
       calculateTp,
       addOrder,
       removeOrder,
-      totalActiveTpAndSl,
     };
   },
   { persist: true }
