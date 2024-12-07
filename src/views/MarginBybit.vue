@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import FooterBybit from '../components/FooterBybit.vue';
 import { useMarginBybitStore } from '@/stores/marginBybit.js';
 import { storeToRefs } from 'pinia';
@@ -19,6 +19,27 @@ const totalActiveTpAndSlColor = computed(() => {
 const getBlockTotalColor = (block) => {
 	const value = block.totalActiveTpAndSl; // Assuming this is computed for each block
 	return value > 0 ? "text-green-500" : value < 0 ? "text-red-500" : "text-white";
+};
+// Create alert of remove block or order
+const showConfirmDialog = ref(false);
+const confirmMessage = ref("");
+let confirmCallback = null;
+const openRemoveBlockDialog = (blockId) => {
+	confirmMessage.value = "Delete this block?";
+	confirmCallback = () => removeBlock(blockId);
+	showConfirmDialog.value = true;
+};
+const openRemoveOrderDialog = (block, orderId) => {
+	confirmMessage.value = "Delete this order?";
+	confirmCallback = () => removeOrder(block, orderId);
+	showConfirmDialog.value = true;
+};
+const confirmAction = () => {
+	if (confirmCallback) confirmCallback();
+	showConfirmDialog.value = false;
+};
+const cancelAction = () => {
+	showConfirmDialog.value = false;
 };
 </script>
 
@@ -97,12 +118,29 @@ const getBlockTotalColor = (block) => {
 					<div class="">
 						<span :class="getBlockTotalColor(block)">{{ block.totalActiveTpAndSl }}</span>
 					</div>
-					<button id="removeBlock" @click="removeBlock(block.id)"
+					<button id="removeBlock" @click="openRemoveBlockDialog(block.id)"
 						class="px-2 font-bold text-red-600 border border-red-600">X Block</button>
 					<button id="addOrder" @click="addOrder(block)"
 						class="px-2 border border-green-600 font-extrabold text-green-600">
 						+
 					</button>
+					<!-- Modal -->
+					<div v-if="showConfirmDialog"
+						class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+						<div class="bg-gray-700 rounded-lg shadow-lg w-1/2 max-w-md p-2 text-center">
+							<p class="text-sm text-white">{{ confirmMessage }}</p>
+							<div class="mt-2 flex justify-center space-x-4">
+								<button @click="confirmAction"
+									class="bg-green-600 hover:bg-green-400 text-white px-4 py-2 rounded transition">
+									Yes
+								</button>
+								<button @click="cancelAction"
+									class="bg-red-600 hover:bg-red-400 text-white px-4 py-2 rounded transition">
+									No
+								</button>
+							</div>
+						</div>
+					</div>
 				</div>
 				<!-- Orders List -->
 				<div v-for="order in block.orders" :key="order.id" class="">
@@ -117,7 +155,7 @@ const getBlockTotalColor = (block) => {
 							<span>({{ calculateAmountMath(order) }} - </span>
 							<span>{{ buyOrderMath }})</span>
 						</div>
-						<button id="removeOrder" @click="removeOrder(block, order.id)"
+						<button id="removeOrder" @click="openRemoveOrderDialog(block, order.id)"
 							class="px-2 font-bold text-red-600 border border-red-600">X</button>
 					</div>
 					<div class="flex justify-between mt-1 mb-1 items-center">
