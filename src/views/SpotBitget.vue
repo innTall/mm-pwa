@@ -1,4 +1,5 @@
 <script setup>
+import FooterBitget from '../components/FooterBitget.vue';
 import { useSpotBitgetStore } from '@/stores/spotBitget.js';
 import { storeToRefs } from 'pinia';
 
@@ -34,7 +35,7 @@ const { addBlock, addOrder, removeBlock } = useSpotBitgetStore();
 		<hr class="border-green-600 mt-2">
 
 		<!-- Dynamic Orders Blocks -->
-		<div v-for="block in activeBlocks" :key="block.id" class="p-2 mt-2">
+		<div v-for="block in activeBlocks" :key="block.id" class="p-2 mt-2 text-sm">
 			<div class="mb-2">
 				<!-- Basic Block Data -->
 				<div class="flex justify-between">
@@ -62,8 +63,8 @@ const { addBlock, addOrder, removeBlock } = useSpotBitgetStore();
 						@input="recalculateOrder(order)" />
 					<span>{{ order.sellOrder }}</span>
 					<span>{{ order.profit }}</span>
-					<button :id="`addOrder-${block.id}`" @click="addOrder(block)" class="border px-1 bg-gray-700">Add
-						Order</button>
+					<button :id="`addOrder-${block.id}`" @click="addOrder(block)"
+						class="px-2 border border-green-600 font-extrabold text-green-600">+</button>
 				</div>
 			</div>
 
@@ -93,5 +94,8 @@ const { addBlock, addOrder, removeBlock } = useSpotBitgetStore();
 			<hr class="border-green-600 mt-2">
 		</div>
 	</div>
+	<footer class="fixed w-full h-12 left-0 bottom-0 z-10 bg-gray-900">
+		<FooterBitget />
+	</footer>
 </template>
 <style scoped></style>

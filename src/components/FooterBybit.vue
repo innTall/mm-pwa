@@ -17,13 +17,21 @@ watch(() => props.lastBalance, (newVal) => {
 
 <template>
 	<hr class="border-green-600">
-	<div class="flex justify-between ml-3 text-md items-center">
+	<div class="flex justify-between ml-3 text-sm items-center">
+		<div class="">
+			<RouterLink :to="{ name: 'MarginBybitRes' }" v-slot="{ isActive }">
+				<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']">Margin | </span>
+			</RouterLink>
+			<RouterLink :to="{ name: 'SpotBybitRes' }" v-slot="{ isActive }">
+				<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']">Spot</span>
+			</RouterLink>
+		</div>
 		<div class="">
 			<RouterLink :to="{ name: 'DepositBybit' }" v-slot="{ isActive }">
 				<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']">Deposit</span>
 			</RouterLink>
 		</div>
-		<div class="p-2 text-sm">
+		<div class="p-2">
 			<div class="flex justify-between px-2 py-1 gap-3">
 				<div>Free money:</div>
 				<div class="text-center font-bold">{{ storedBalance }}</div>

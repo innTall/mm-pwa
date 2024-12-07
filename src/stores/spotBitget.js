@@ -5,7 +5,7 @@ export const useSpotBitgetStore = defineStore(
   "spotBitget",
   () => {
     const fee = 0.001;
-    const deposit = ref(1700);
+    const deposit = ref(5100);
     const coefOfRisk = ref(0.02);
     const coefNextOrderCost = ref(1.2);
     let nextBlockId = 1;

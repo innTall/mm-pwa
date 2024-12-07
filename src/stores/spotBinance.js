@@ -3,7 +3,7 @@ import { reactive, ref, computed } from "vue";
 
 export const useSpotBinanceStore = defineStore("spotBinance", () => {
   const fee = 0.001;
-  const deposit = ref(1700);
+  const deposit = ref(468);
   const coefOfRisk = ref(0.02);
   const coefNextOrderCost = ref(1.2);
   let nextBlockId = 1;

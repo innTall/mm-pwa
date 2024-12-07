@@ -20,7 +20,7 @@ watch(balances, () => {
 	<div class="">
 		<div class="p-2 text-sm">
 			<div class="flex justify-between border px-2 py-1">
-				<div class="">BINANCE Balance</div>
+				<div class="">BITGET Balance</div>
 				<!-- Total Profit and Loss Display -->
 				<div class="text-center">
 					<p :class="{

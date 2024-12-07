@@ -1,4 +1,5 @@
 <script setup>
+import FooterBybit from '../components/FooterBybit.vue';
 import { useMarginBybitStore } from '@/stores/marginBybit.js';
 import { storeToRefs } from 'pinia';
 const { deposit, leverage, riskMargin, margin, tpCost, slCost, buyOrderMath, coefNextOrderCost,
@@ -16,7 +17,7 @@ const getColorClass = (block, type) => {
 	<div class="">
 		<!-- Static Configuration Section -->
 		<div class="flex justify-between text-left p-1 text-sm">
-			<div class="container w-1/3">
+			<div class="">
 				<div class="">
 					<label for="deposit">Deposit, $:
 						<input id="deposit" type="number" v-model="deposit" step="1" min="1" required
@@ -26,7 +27,7 @@ const getColorClass = (block, type) => {
 				<div class="">
 					<label for="leverage">Leverage:
 						<input id="leverage" type="number" v-model="leverage" step="1" min="1" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
+							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
 					</label>
 				</div>
 				<div class="">
@@ -42,21 +43,21 @@ const getColorClass = (block, type) => {
 						<input id="coefRisk" type="number" v-model="riskMargin" step="0.01" min="0" required
 							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 					</label>
-					{{ margin }} $
+					{{ margin }}
 				</div>
 				<div>
 					<label for="takeProfit">TakeProfit:
 						<input id="takeProfit" type="number" v-model="takeProfit" step="0.01" min="0" required
 							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 					</label>
-					{{ tpCost }} $
+					{{ tpCost }}
 				</div>
 				<div>
 					<label for="stopLoss">StopLoss:
 						<input id="stopLoss" type="number" v-model="stopLoss" step="0.01" min="0" required
 							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 					</label>
-					{{ slCost }} $
+					{{ slCost }}
 				</div>
 			</div>
 			<div class="text-center">
@@ -69,7 +70,7 @@ const getColorClass = (block, type) => {
 		<hr class="border-green-600 mt-1">
 		<!-- Block Symbols Section -->
 		<div class="">
-			<div class="flex gap-2">
+			<div class="px-1 flex gap-2 text-sm">
 				<div class="">Symbols:</div>
 				<ul class="flex">
 					<li v-for="symbol in sortedSymbols" :key="symbol" class="uppercase">
@@ -90,8 +91,9 @@ const getColorClass = (block, type) => {
              invalid:bg-red-900 valid:bg-gray-800 uppercase" />
 					<input id="date" type="date" v-model="block.date" class="w-[10ch] bg-gray-900 border text-center" />
 					<button id="removeBlock" @click="removeBlock(block.id)" class="border bg-gray-700 px-2">X Block</button>
-					<button id="addOrder" @click="addOrder(block)" class="px-2 bg-gray-700 border">
-						Add
+					<button id="addOrder" @click="addOrder(block)"
+						class="px-2 border border-green-600 font-extrabold text-green-600">
+						+
 					</button>
 				</div>
 				<!-- Orders List -->
@@ -108,7 +110,7 @@ const getColorClass = (block, type) => {
 							<span>{{ buyOrderMath }})</span>
 						</div>
 						<button id="removeOrder" @click="removeOrder(block, order.id)"
-							class="border px-2 bg-gray-400 font-bold text-red-600">X</button>
+							class="px-2 font-bold text-red-600 border border-red-600">X</button>
 					</div>
 					<div class="flex justify-between mt-1 mb-1 items-center">
 						<!-- SL Switch -->
@@ -141,5 +143,8 @@ const getColorClass = (block, type) => {
 			<hr class="border-green-600">
 		</div>
 	</div>
+	<footer class="fixed w-full h-12 left-0 bottom-0 z-10 bg-gray-900">
+		<FooterBybit />
+	</footer>
 </template>
 <style scoped></style>

@@ -16,8 +16,8 @@ export const useMarginBitgetResStore = defineStore(
         activeValue: "set",
       },
     ]);
-    const buyFee = 0.0002;
-    const sellFee = 0.00055;
+    const buyFee = 0.001;
+    const sellFee = 0.001;
 
     const calculateFeeSl = (buy, amnt, sl) => {
       return Number(buy * amnt * buyFee + sl * amnt * sellFee).toFixed(2);

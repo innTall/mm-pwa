@@ -12,8 +12,8 @@ export const useSpotBybitResStore = defineStore("spotBybitRes", () => {
     },
   ]);
 
-  const buyFee = 0.0001;
-  const sellFee = 0.0001;
+  const buyFee = 0.001;
+  const sellFee = 0.001;
 
   const calculateCost = (block) => {
     return Number(

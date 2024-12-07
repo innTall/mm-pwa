@@ -125,7 +125,7 @@ async function saveSettings() {
 <template>
 	<div class="container min-h-screen mb-10 px-2 py-1 text-sm">
 		<div class="flex justify-between border px-2 py-1">
-			<div class="">BYBIT Margin Order</div>
+			<div class="">BINANCE Margin Order</div>
 			<button @click="saveSettings" class="bg-blue-400">Send</button>
 			<!-- Total Profit and Loss Display -->
 			<div class="text-center font-bold">
