@@ -7,25 +7,25 @@ export const useSpotBinanceStore = defineStore("spotBinance", () => {
   const riskTrade = ref(0.02);
   const coefNextBuyOrder = ref(1.2);
 
-  const defaultBlock = () => ({
-    nr: 1,
-    symbol: "",
-    start: null,
-    fin: null,
-    buyPrice: 1,
-    sellPrice: null,
-    orders: reactive([
-      {
-        buyPrice: 1,
-        sellPrice: null,
-        amount: null,
-        buyOrder: null,
-        sellOrder: null,
-        profit: null,
-      },
-    ]),
-  });
-
+  const defaultBlock = () => {
+    const firstOrder = {
+      buyPrice: 1,
+      sellPrice: null,
+      amount: null,
+      buyOrder: null,
+      sellOrder: null,
+      profit: null,
+    };
+    // Watch the first order's values immediately
+    watchOrderValues(firstOrder);
+    return {
+      nr: 1,
+      symbol: "",
+      start: null,
+      fin: null,
+      orders: ref([firstOrder]),
+    };
+  };
   const orderBlocks = ref([defaultBlock()]);
 
   const addOrderBlock = () => {
@@ -55,9 +55,9 @@ export const useSpotBinanceStore = defineStore("spotBinance", () => {
       sellOrder: null,
       profit: null,
     };
-
     watchOrderValues(newOrder);
-    block.orders = [...block.orders, newOrder];
+    block.orders.push(newOrder);
+    // block.orders = [...block.orders, newOrder];
   };
 
   const removeOrder = (blockIndex, orderIndex) => {
@@ -67,17 +67,7 @@ export const useSpotBinanceStore = defineStore("spotBinance", () => {
     }
   };
 
-  const watchOrderValues = (order) => {
-    watch(
-      () => [order.buyPrice],
-      () => {
-        updateOrderValues(order);
-      },
-      { deep: true, immediate: true }
-    );
-  };
-
-  const updateOrderValues = (order) => {
+  function updateOrderValues(order) {
     if (!order.buyPrice) {
       order.amount = null;
       order.buyOrder = null;
@@ -115,6 +105,16 @@ export const useSpotBinanceStore = defineStore("spotBinance", () => {
     order.sellOrder = sellOrder;
     order.profit = profit;
   };
+
+  function watchOrderValues(order) {
+    watch(
+      () => [order.buyPrice],
+      () => {
+        updateOrderValues(order);
+      },
+      { deep: true, immediate: true }
+    );
+  }
 
   const clearBuyPrice = (order) => {
     if (order.buyPrice === 1) order.buyPrice = null;
