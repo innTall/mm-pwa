@@ -29,42 +29,42 @@ export const useSpotBitgetStore = defineStore(
         orders: [],
         isSaved: false,
         summary: computed(() => {
-          const totalTokenAmount = block.orders.reduce(
-            (sum, order) => sum + order.tokenAmount,
+          const totalTokenAmount = Number(block.orders.reduce(
+            (sum, order) => sum + (order.tokenAmount || 0),
             0
-          );
+          ));
           const totalBuyOrder = block.orders.reduce(
-            (sum, order) => sum + order.buyOrder,
+            (sum, order) => sum + (order.buyOrder || 0),
             0
           );
           const totalSellOrder = block.orders.reduce(
-            (sum, order) => sum + order.sellOrder,
+            (sum, order) => sum + (order.sellOrder || 0),
             0
           );
-          const totalProfit =
-            block.orders.length > 0
-              ? block.orders[block.orders.length - 1].profit
-              : 0;
+          const totalProfit = block.orders.reduce(
+            (sum, order) => sum + (order.profit || 0),
+            0
+          );
           return {
-            avgBuyPrice: totalTokenAmount
+            avgBuyPrice: Number(totalTokenAmount
               ? totalBuyOrder / totalTokenAmount
-              : 0,
-            avgSellPrice: totalTokenAmount
+              : 0),
+            avgSellPrice: Number(totalTokenAmount
               ? totalSellOrder / totalTokenAmount
-              : 0,
-            totalProfit,
-            totalBuyOrders: totalBuyOrder,
-            totalTokenAmount,
+              : 0),
+            totalProfit: Number(totalProfit) || 0,
+            totalBuyOrders: Number(totalBuyOrder) || 0,
+            totalTokenAmount: Number(totalTokenAmount) || 0,
           };
         }),
       });
 
       const initialOrder = {
         id: 1,
-        buyPrice: 1.2345,
-        sellPrice: 1.456,
+        buyPrice: 1,
+        sellPrice: null,
         tokenAmount: 0,
-        buyOrder: firstOrderCost.value,
+        buyOrder: firstOrderCost.value || 0,
         sellOrder: 0,
         profit: 0,
       };
@@ -75,20 +75,26 @@ export const useSpotBitgetStore = defineStore(
     }
 
     function recalculateOrder(order, previousOrder) {
-      if (previousOrder) {
-        order.buyOrder = +(
-          previousOrder.buyOrder * coefNextOrderCost.value
-        ).toFixed(2);
-      } else {
-        order.buyOrder = +firstOrderCost.value.toFixed(2);
-      }
-      order.tokenAmount = +(order.buyOrder / order.buyPrice).toFixed(2);
+      const buyPrice = +(order.buyPrice) || 1;
+      const sellPrice = +(order.sellPrice) || 0;
+      const feeRate = 1 + fee;
+
+      order.buyOrder = previousOrder
+        ? +(
+            parseFloat(previousOrder.buyOrder) *
+            coefNextOrderCost.value *
+            feeRate
+          ).toFixed(2)
+        : +(firstOrderCost.value * feeRate).toFixed(2);
+      order.tokenAmount = +(parseFloat(order.buyOrder) / buyPrice).toFixed(2);
       order.sellOrder = +(
-        order.sellPrice *
-        order.tokenAmount *
+        sellPrice *
+        parseFloat(order.tokenAmount) *
         (1 - fee)
       ).toFixed(2);
-      order.profit = +(order.sellOrder - order.buyOrder).toFixed(2);
+      order.profit = +(
+        parseFloat(order.sellOrder) - parseFloat(order.buyOrder)
+      ).toFixed(2);
     }
 
     function addBlock() {
@@ -112,12 +118,32 @@ export const useSpotBitgetStore = defineStore(
       block.orders.push(newOrder);
     }
 
+    const clearBuyPrice = (order) => {
+      if (order.buyPrice === 1) order.buyPrice = undefined; // null
+    };
+    const restoreDefaultBuyPrice = (order) => {
+      if (!order.buyPrice) order.buyPrice = 1;
+    };
+    const clearSellPrice = (order) => {
+      if (order.sellPrice === 1) order.sellPrice = undefined; // null
+    };
+    const restoreDefaultSellPrice = (order) => {
+      if (!order.sellPrice) order.sellPrice = 1;
+    };
+
     function removeBlock(blockId) {
       activeBlocks.value = activeBlocks.value.filter(
         (block) => block.id !== blockId
       );
     }
 
+    // New function to delete an order
+    function removeOrder(blockId, orderId) {
+      const block = activeBlocks.value.find((block) => block.id === blockId);
+      if (block) {
+        block.orders = block.orders.filter((order) => order.id !== orderId); // Reactivity-safe
+      }
+    }
     return {
       deposit,
       coefOfRisk,
@@ -127,6 +153,12 @@ export const useSpotBitgetStore = defineStore(
       addBlock,
       addOrder,
       removeBlock,
+      removeOrder,
+      clearBuyPrice,
+      clearSellPrice,
+      restoreDefaultBuyPrice,
+      restoreDefaultSellPrice,
+      recalculateOrder,
     };
   },
   {

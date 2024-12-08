@@ -4,7 +4,8 @@ import { useSpotBitgetStore } from '@/stores/spotBitget.js';
 import { storeToRefs } from 'pinia';
 
 const { deposit, coefOfRisk, coefNextOrderCost, firstOrderCost, activeBlocks } = storeToRefs(useSpotBitgetStore());
-const { addBlock, addOrder, removeBlock } = useSpotBitgetStore();
+const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice,
+	clearSellPrice, restoreDefaultBuyPrice, restoreDefaultSellPrice, recalculateOrder, } = useSpotBitgetStore();
 </script>
 
 <template>
@@ -30,7 +31,7 @@ const { addBlock, addOrder, removeBlock } = useSpotBitgetStore();
 				</label>
 			</div>
 			<div>First Order: {{ firstOrderCost }}</div>
-			<button id="addBlock" class="border px-1 bg-gray-700" @click="addBlock">ADD</button>
+			<button id="addBlock" class="px-2 border border-green-600 font-bold text-green-600" @click="addBlock">ADD</button>
 		</div>
 		<hr class="border-green-600 mt-2">
 
@@ -46,7 +47,9 @@ const { addBlock, addOrder, removeBlock } = useSpotBitgetStore();
 					<input :id="`close-${block.id}`" type="date" v-model="block.close"
 						class="w-[10ch] bg-gray-900 border text-center" />
 					<button :id="`removeBlock-${block.id}`" @click="removeBlock(block.id)"
-						class="border bg-gray-700">Remove</button>
+						class="px-2 font-bold text-red-600 border border-red-600">X Block</button>
+					<button :id="`addOrder-${block.id}`" @click="addOrder(block)"
+						class="px-2 border border-green-600 font-extrabold text-green-600">+</button>
 				</div>
 			</div>
 
@@ -54,17 +57,18 @@ const { addBlock, addOrder, removeBlock } = useSpotBitgetStore();
 			<div v-for="order in block.orders" :key="order.id" class="mb-1">
 				<div class="flex justify-between">
 					<span>{{ order.id }}</span>
-					<input :id="`buyPrice-${block.id}-${order.id}`" type="number" v-model="order.buyPrice" placeholder="Buy Price"
-						class="w-[6ch] bg-gray-900 text-center text-yellow-400" @input="recalculateOrder(order)" />
+					<input :id="`buyPrice-${block.id}-${order.id}`" type="number" v-model.number="order.buyPrice"
+						placeholder="Buy Price" class="w-[6ch] bg-gray-900 text-center text-yellow-400"
+						@input="recalculateOrder(order)" @focus="clearBuyPrice(order)" @blur="restoreDefaultBuyPrice(order)" />
 					<span>{{ order.tokenAmount }}</span>
 					<span>{{ order.buyOrder }}</span>
-					<input :id="`sellPrice-${block.id}-${order.id}`" type="number" v-model="order.sellPrice"
+					<input :id="`sellPrice-${block.id}-${order.id}`" type="number" v-model.number="order.sellPrice"
 						placeholder="Sell Price" class="w-[6ch] bg-gray-900 text-center text-yellow-400"
-						@input="recalculateOrder(order)" />
+						@input="recalculateOrder(order)" @focus="clearSellPrice(order)" @blur="restoreDefaultSellPrice(order)" />
 					<span>{{ order.sellOrder }}</span>
 					<span>{{ order.profit }}</span>
-					<button :id="`addOrder-${block.id}`" @click="addOrder(block)"
-						class="px-2 border border-green-600 font-extrabold text-green-600">+</button>
+					<button :id="`removeOrder-${block.id} -${order.id}`" @click="removeOrder(block.id, order.id)"
+						class="px-2 border border-red-600 font-bold text-red-600">X</button>
 				</div>
 			</div>
 
@@ -72,7 +76,7 @@ const { addBlock, addOrder, removeBlock } = useSpotBitgetStore();
 			<div class="flex justify-between mt-2 text-center">
 				<div class="">
 					<span>Sum, $:</span><br>
-					<span>{{ block.summary.totalBuyOrders.toFixed(2) }}</span>
+					<span>{{ block.summary.totalBuyOrders }}</span>
 				</div>
 				<div class="">
 					<span>Buy:</span><br>
@@ -80,7 +84,7 @@ const { addBlock, addOrder, removeBlock } = useSpotBitgetStore();
 				</div>
 				<div class="">
 					<span>Amount:</span><br>
-					<span>{{ block.summary.totalTokenAmount.toFixed(2) }}</span>
+					<span>{{ block.summary.totalTokenAmount }}</span>
 				</div>
 				<div class="">
 					<span>Sell:</span><br>
@@ -88,7 +92,7 @@ const { addBlock, addOrder, removeBlock } = useSpotBitgetStore();
 				</div>
 				<div class="">
 					<span>TP:</span><br>
-					<span>{{ block.summary.totalProfit.toFixed(2) }}</span>
+					<span>{{ block.summary.totalProfit }}</span>
 				</div>
 			</div>
 			<hr class="border-green-600 mt-2">
