@@ -13,8 +13,8 @@ const defaultBlock = () => ({
 	symbol: '',
 	start: null,
 	fin: null,
-	firstBuyPrice: 1,
-	firstSellPrice: null
+	buyPrice: 1,
+	sellPrice: null
 });
 
 const orderBlocks = ref([defaultBlock()]);
@@ -30,12 +30,12 @@ const removeOrderBlock = (index) => {
 	orderBlocks.value.forEach((block, idx) => (block.nr = idx + 1));
 };
 
-const clearFirstBuyPrice = (block) => {
-	if (block.firstBuyPrice === 1) block.firstBuyPrice = null;
+const clearBuyPrice = (block) => {
+	if (block.buyPrice === 1) block.buyPrice = null;
 };
 
-const restoreDefaultFirstBuyPrice = (block) => {
-	if (!block.firstBuyPrice) block.firstBuyPrice = 1;
+const restoreDefaultBuyPrice = (block) => {
+	if (!block.buyPrice) block.buyPrice = 1;
 };
 
 // Computed for individual blocks
@@ -57,14 +57,14 @@ const calculateDigitsLote = (digitsPrice) => {
 };
 
 const calculateValues = (block) => {
-	const digits = calculateDigits(block.firstBuyPrice);
+	const digits = calculateDigits(block.buyPrice);
 	const digitsLote = calculateDigitsLote(digits);
-	const firstBuyOrderCost = (deposit.value * riskTrade.value).toFixed(2);
-	const amount = (firstBuyOrderCost / block.firstBuyPrice).toFixed(digitsLote);
-	const profit = ((block.firstSellPrice - block.firstBuyPrice) * amount).toFixed(2);
-	const firstSellOrderCost = (amount * block.firstSellPrice).toFixed(2);
+	const buyOrder = (deposit.value * riskTrade.value).toFixed(2);
+	const amount = (buyOrder / block.buyPrice).toFixed(digitsLote);
+	const profit = ((block.sellPrice - block.buyPrice) * amount).toFixed(2);
+	const sellOrder = (amount * block.sellPrice).toFixed(2);
 
-	return { firstBuyOrderCost, amount, profit, firstSellOrderCost };
+	return { buyOrder, amount, profit, sellOrder };
 };
 </script>
 
@@ -108,14 +108,14 @@ const calculateValues = (block) => {
 			<!--  Orders List -->
 			<div class="flex justify-between">
 				<span>{{ block.nr }}</span>
-				<input id="buyPrice" type="number" v-model="block.firstBuyPrice" placeholder="BuyPrice" min="0.01"
-					class="w-[6ch] bg-gray-900 text-center text-yellow-400" @focus="clearFirstBuyPrice(block)"
-					@blur="restoreDefaultFirstBuyPrice(block)" />
+				<input id="buyPrice" type="number" v-model="block.buyPrice" placeholder="BuyPrice" min="0.01"
+					class="w-[6ch] bg-gray-900 text-center text-yellow-400" @focus="clearBuyPrice(block)"
+					@blur="restoreDefaultBuyPrice(block)" />
 				<span>{{ calculateValues(block).amount }}</span>
-				<span>{{ calculateValues(block).firstBuyOrderCost }}</span>
-				<input id="sellPrice" type="number" v-model="block.firstSellPrice" placeholder="SellPrice"
+				<span>{{ calculateValues(block).buyOrder }}</span>
+				<input id="sellPrice" type="number" v-model="block.sellPrice" placeholder="SellPrice"
 					class="w-[6ch] bg-gray-900 text-center text-yellow-400" />
-				<span>{{ calculateValues(block).firstSellOrderCost }}</span>
+				<span>{{ calculateValues(block).sellOrder }}</span>
 				<span>{{ calculateValues(block).profit }}</span>
 			</div>
 		</div>
