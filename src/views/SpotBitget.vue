@@ -3,8 +3,9 @@ import FooterBitget from '../components/FooterBitget.vue';
 import { useSpotBitgetStore } from '@/stores/spotBitget.js';
 import { storeToRefs } from 'pinia';
 
-const { deposit, coefOfRisk, coefNextOrderCost, firstOrderCost, activeBlocks } = storeToRefs(useSpotBitgetStore());
-const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice,
+const { deposit, coefOfRisk, coefNextOrderCost, firstOrderCost, activeBlocks, showConfirmDialog,
+	confirmMessage, } = storeToRefs(useSpotBitgetStore());
+const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmAction, cancelAction,
 	clearSellPrice, restoreDefaultBuyPrice, restoreDefaultSellPrice, recalculateOrder, } = useSpotBitgetStore();
 </script>
 
@@ -96,6 +97,21 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice,
 				</div>
 			</div>
 			<hr class="border-green-600 mt-2">
+		</div>
+		<!-- Modal -->
+		<div v-if="showConfirmDialog" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+			<div class="bg-gray-700 rounded-lg shadow-lg w-1/2 max-w-md p-2 text-center">
+				<p class="text-sm text-white">{{ confirmMessage }}</p>
+				<div class="mt-2 flex justify-center space-x-4">
+					<button @click="confirmAction"
+						class="bg-green-600 hover:bg-green-400 text-white px-4 py-2 rounded transition">
+						Yes
+					</button>
+					<button @click="cancelAction" class="bg-red-600 hover:bg-red-400 text-white px-4 py-2 rounded transition">
+						No
+					</button>
+				</div>
+			</div>
 		</div>
 	</div>
 	<footer class="fixed w-full h-12 left-0 bottom-0 z-10 bg-gray-900">

@@ -10,6 +10,10 @@ export const useSpotBitgetStore = defineStore(
     const coefNextOrderCost = ref(1.2);
     let nextBlockId = 1;
 
+    const showConfirmDialog = ref(false);
+    const confirmMessage = ref("");
+    const pendingAction = ref(null);
+
     const firstOrderCost = computed(
       () => +(deposit.value * coefOfRisk.value).toFixed(2)
     );
@@ -29,10 +33,12 @@ export const useSpotBitgetStore = defineStore(
         orders: [],
         isSaved: false,
         summary: computed(() => {
-          const totalTokenAmount = Number(block.orders.reduce(
-            (sum, order) => sum + (order.tokenAmount || 0),
-            0
-          ));
+          const totalTokenAmount = Number(
+            block.orders.reduce(
+              (sum, order) => sum + (order.tokenAmount || 0),
+              0
+            )
+          );
           const totalBuyOrder = block.orders.reduce(
             (sum, order) => sum + (order.buyOrder || 0),
             0
@@ -46,12 +52,12 @@ export const useSpotBitgetStore = defineStore(
             0
           );
           return {
-            avgBuyPrice: Number(totalTokenAmount
-              ? totalBuyOrder / totalTokenAmount
-              : 0),
-            avgSellPrice: Number(totalTokenAmount
-              ? totalSellOrder / totalTokenAmount
-              : 0),
+            avgBuyPrice: Number(
+              totalTokenAmount ? totalBuyOrder / totalTokenAmount : 0
+            ),
+            avgSellPrice: Number(
+              totalTokenAmount ? totalSellOrder / totalTokenAmount : 0
+            ),
             totalProfit: Number(totalProfit) || 0,
             totalBuyOrders: Number(totalBuyOrder) || 0,
             totalTokenAmount: Number(totalTokenAmount) || 0,
@@ -75,8 +81,8 @@ export const useSpotBitgetStore = defineStore(
     }
 
     function recalculateOrder(order, previousOrder) {
-      const buyPrice = +(order.buyPrice) || 1;
-      const sellPrice = +(order.sellPrice) || 0;
+      const buyPrice = +order.buyPrice || 1;
+      const sellPrice = +order.sellPrice || 0;
       const feeRate = 1 + fee;
 
       order.buyOrder = previousOrder
@@ -130,13 +136,12 @@ export const useSpotBitgetStore = defineStore(
     const restoreDefaultSellPrice = (order) => {
       if (!order.sellPrice) order.sellPrice = 1;
     };
-
+    /*
     function removeBlock(blockId) {
       activeBlocks.value = activeBlocks.value.filter(
         (block) => block.id !== blockId
       );
     }
-
     // New function to delete an order
     function removeOrder(blockId, orderId) {
       const block = activeBlocks.value.find((block) => block.id === blockId);
@@ -144,16 +149,54 @@ export const useSpotBitgetStore = defineStore(
         block.orders = block.orders.filter((order) => order.id !== orderId); // Reactivity-safe
       }
     }
+    */
+    function removeBlock(blockId) {
+      confirmMessage.value = "Are you sure you want to delete this block?";
+      pendingAction.value = () => {
+        activeBlocks.value = activeBlocks.value.filter(
+          (block) => block.id !== blockId
+        );
+      };
+      showConfirmDialog.value = true;
+    }
+
+    function removeOrder(blockId, orderId) {
+      confirmMessage.value = "Are you sure you want to delete this order?";
+      pendingAction.value = () => {
+        const block = activeBlocks.value.find((block) => block.id === blockId);
+        if (block) {
+          block.orders = block.orders.filter((order) => order.id !== orderId);
+        }
+      };
+      showConfirmDialog.value = true;
+    }
+
+    function confirmAction() {
+      if (pendingAction.value) {
+        pendingAction.value();
+        pendingAction.value = null;
+      }
+      showConfirmDialog.value = false;
+    }
+
+    function cancelAction() {
+      showConfirmDialog.value = false;
+      pendingAction.value = null;
+    }
     return {
       deposit,
       coefOfRisk,
       coefNextOrderCost,
       firstOrderCost,
       activeBlocks,
+      showConfirmDialog,
+      confirmMessage,
       addBlock,
       addOrder,
       removeBlock,
       removeOrder,
+      confirmAction,
+      cancelAction,
       clearBuyPrice,
       clearSellPrice,
       restoreDefaultBuyPrice,
