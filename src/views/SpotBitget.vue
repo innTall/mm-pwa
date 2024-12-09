@@ -61,7 +61,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmActi
 					<input :id="`buyPrice-${block.id}-${order.id}`" type="number" v-model.number="order.buyPrice"
 						placeholder="Buy Price" class="w-[6ch] bg-gray-900 text-center text-yellow-400"
 						@input="recalculateOrder(order)" @focus="clearBuyPrice(order)" @blur="restoreDefaultBuyPrice(order)" />
-					<span>{{ order.tokenAmount }}</span>
+					<span>{{ order.amount }}</span>
 					<span>{{ order.buyOrder }}</span>
 					<input :id="`sellPrice-${block.id}-${order.id}`" type="number" v-model.number="order.sellPrice"
 						placeholder="Sell Price" class="w-[6ch] bg-gray-900 text-center text-yellow-400"
@@ -85,7 +85,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmActi
 				</div>
 				<div class="">
 					<span>Amount:</span><br>
-					<span>{{ block.summary.totalTokenAmount.toFixed(3) }}</span>
+					<span>{{ block.summary.totalAmount.toFixed(3) }}</span>
 				</div>
 				<div class="">
 					<span>Sell:</span><br>

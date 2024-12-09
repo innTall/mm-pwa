@@ -33,9 +33,9 @@ export const useSpotBitgetStore = defineStore(
         orders: [],
         isSaved: false,
         summary: computed(() => {
-          const totalTokenAmount = Number(
+          const totalAmount = Number(
             block.orders.reduce(
-              (sum, order) => sum + (order.tokenAmount || 0),
+              (sum, order) => sum + (order.amount || 0),
               0
             )
           );
@@ -53,14 +53,14 @@ export const useSpotBitgetStore = defineStore(
           );
           return {
             avgBuyPrice: Number(
-              totalTokenAmount ? totalBuyOrder / totalTokenAmount : 0
+              totalAmount ? totalBuyOrder / totalAmount : 0
             ),
             avgSellPrice: Number(
-              totalTokenAmount ? totalSellOrder / totalTokenAmount : 0
+              totalAmount ? totalSellOrder / totalAmount : 0
             ),
             totalProfit: Number(totalProfit) || 0,
             totalBuyOrders: Number(totalBuyOrder) || 0,
-            totalTokenAmount: Number(totalTokenAmount) || 0,
+            totalAmount: Number(totalAmount) || 0,
           };
         }),
       });
@@ -69,7 +69,7 @@ export const useSpotBitgetStore = defineStore(
         id: 1,
         buyPrice: 1,
         sellPrice: null,
-        tokenAmount: 0,
+        amount: 0,
         buyOrder: firstBuyOrder.value || 0,
         sellOrder: 0,
         profit: 0,
@@ -78,6 +78,11 @@ export const useSpotBitgetStore = defineStore(
       block.orders.push(initialOrder);
 
       return block;
+    }
+
+    function addBlock() {
+      const newBlock = createNewBlock();
+      activeBlocks.value.unshift(newBlock);
     }
 
     function recalculateOrder(order, previousOrder) {
@@ -92,10 +97,10 @@ export const useSpotBitgetStore = defineStore(
             feeRate
           ).toFixed(2)
         : +(firstBuyOrder.value * feeRate).toFixed(2);
-      order.tokenAmount = +(parseFloat(order.buyOrder) / buyPrice).toFixed(2);
+      order.amount = +(parseFloat(order.buyOrder) / buyPrice).toFixed(2);
       order.sellOrder = +(
         sellPrice *
-        parseFloat(order.tokenAmount) *
+        parseFloat(order.amount) *
         (1 - fee)
       ).toFixed(2);
       order.profit = +(
@@ -103,24 +108,32 @@ export const useSpotBitgetStore = defineStore(
       ).toFixed(2);
     }
 
-    function addBlock() {
-      const newBlock = createNewBlock();
-      activeBlocks.value.unshift(newBlock);
+    function createNewOrder(block, previousOrder) {
+      const feeRate = 1 + fee;
+      const newOrder = reactive({
+        id: block.orders.length + 1,
+        buyPrice: null,
+        sellPrice: null,
+        amount: 0,
+        buyOrder: previousOrder
+          ? (
+              parseFloat(previousOrder.buyOrder) *
+              coefNextBuyOrder.value *
+              feeRate
+            ).toFixed(2)
+          : (firstBuyOrder.value * feeRate).toFixed(2),
+        sellOrder: 0,
+        profit: 0,
+        isManualBuyOrder: false, // Indicates whether buyOrder was manually edited
+      });
+      // Recalculate fields based on default or previous values
+      recalculateOrder(newOrder, previousOrder);
+      return newOrder;
     }
 
     function addOrder(block) {
       const lastOrder = block.orders[block.orders.length - 1];
-      const nextBuyPrice = null; //+(lastOrder.buyPrice - 0.1).toFixed(4);
-      const newOrder = {
-        id: block.orders.length + 1,
-        buyPrice: nextBuyPrice,
-        sellPrice: null, //+(nextBuyPrice + 0.2).toFixed(4),
-        tokenAmount: 0,
-        buyOrder: 0,
-        sellOrder: 0,
-        profit: 0,
-      };
-      recalculateOrder(newOrder, lastOrder);
+      const newOrder = createNewOrder(block, lastOrder);
       block.orders.push(newOrder);
     }
 
