@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
-
+const appVersion = __APP_VERSION__;
 const props = defineProps({
 	lastBalance: {
 		type: String,
@@ -18,6 +18,7 @@ watch(() => props.lastBalance, (newVal) => {
 <template>
 	<hr class="border-green-600">
 	<div class="flex justify-between text-sm ml-3 items-center">
+		<div class="text-green-600 underlined">v.{{ appVersion }}</div>
 		<div class="">
 			<RouterLink :to="{ name: 'MarginBinanceRes' }" v-slot="{ isActive }">
 				<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']">Margin |</span>

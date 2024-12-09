@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from "node:url";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import { version } from "./package.json";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -95,6 +96,9 @@ export default defineConfig({
       },
     }),
   ],
+  define: {
+    __APP_VERSION__: JSON.stringify(version), // Inject the version into the build
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
