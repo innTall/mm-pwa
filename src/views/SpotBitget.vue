@@ -3,7 +3,7 @@ import FooterBitget from '../components/FooterBitget.vue';
 import { useSpotBitgetStore } from '@/stores/spotBitget.js';
 import { storeToRefs } from 'pinia';
 
-const { deposit, coefOfRisk, coefNextOrderCost, firstOrderCost, activeBlocks, showConfirmDialog,
+const { deposit, coefOfRisk, coefNextBuyOrder, firstBuyOrder, activeBlocks, showConfirmDialog,
 	confirmMessage, } = storeToRefs(useSpotBitgetStore());
 const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmAction, cancelAction,
 	clearSellPrice, restoreDefaultBuyPrice, restoreDefaultSellPrice, recalculateOrder, } = useSpotBitgetStore();
@@ -21,7 +21,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmActi
 			</div>
 			<div>
 				<label for="coefCost">CoefCost:
-					<input id="coefCost" type="number" v-model="coefNextOrderCost" step="1" min="1" required
+					<input id="coefCost" type="number" v-model="coefNextBuyOrder" step="1" min="1" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 				</label>
 			</div>
@@ -31,7 +31,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmActi
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 				</label>
 			</div>
-			<div>First Order: {{ firstOrderCost }}</div>
+			<div>First Order: {{ firstBuyOrder }}</div>
 			<button id="addBlock" class="px-2 border border-green-600 font-bold text-green-600" @click="addBlock">ADD</button>
 		</div>
 		<hr class="border-green-600 mt-2">
@@ -43,9 +43,9 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmActi
 				<div class="flex justify-between">
 					<input :id="`symbol-${block.id}`" type="text" v-model="block.symbol" placeholder="Symbol"
 						class="w-[8ch] bg-gray-900 border text-center border-green-600 text-green-400 uppercase" />
-					<input :id="`open-${block.id}`" type="date" v-model="block.open"
+					<input :id="`start-${block.id}`" type="date" v-model="block.start"
 						class="w-[10ch] bg-gray-900 border text-center" />
-					<input :id="`close-${block.id}`" type="date" v-model="block.close"
+					<input :id="`end-${block.id}`" type="date" v-model="block.end"
 						class="w-[10ch] bg-gray-900 border text-center" />
 					<button :id="`removeBlock-${block.id}`" @click="removeBlock(block.id)"
 						class="px-2 font-bold text-red-600 border border-red-600">X Block</button>
@@ -77,7 +77,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmActi
 			<div class="flex justify-between mt-2 text-center">
 				<div class="">
 					<span>Sum, $:</span><br>
-					<span>{{ block.summary.totalBuyOrders }}</span>
+					<span>{{ block.summary.totalBuyOrders.toFixed(2) }}</span>
 				</div>
 				<div class="">
 					<span>Buy:</span><br>
@@ -85,7 +85,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmActi
 				</div>
 				<div class="">
 					<span>Amount:</span><br>
-					<span>{{ block.summary.totalTokenAmount }}</span>
+					<span>{{ block.summary.totalTokenAmount.toFixed(3) }}</span>
 				</div>
 				<div class="">
 					<span>Sell:</span><br>
@@ -93,7 +93,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmActi
 				</div>
 				<div class="">
 					<span>TP:</span><br>
-					<span>{{ block.summary.totalProfit }}</span>
+					<span>{{ block.summary.totalProfit.toFixed(2) }}</span>
 				</div>
 			</div>
 			<hr class="border-green-600 mt-2">

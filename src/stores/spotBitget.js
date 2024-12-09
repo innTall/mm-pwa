@@ -7,14 +7,14 @@ export const useSpotBitgetStore = defineStore(
     const fee = 0.001;
     const deposit = ref(5100);
     const coefOfRisk = ref(0.02);
-    const coefNextOrderCost = ref(1.2);
+    const coefNextBuyOrder = ref(1.2);
     let nextBlockId = 1;
 
     const showConfirmDialog = ref(false);
     const confirmMessage = ref("");
     const pendingAction = ref(null);
 
-    const firstOrderCost = computed(
+    const firstBuyOrder = computed(
       () => +(deposit.value * coefOfRisk.value).toFixed(2)
     );
     const activeBlocks = ref([createNewBlock()]);
@@ -28,8 +28,8 @@ export const useSpotBitgetStore = defineStore(
       const block = reactive({
         id,
         symbol: "",
-        open: "",
-        close: "",
+        start: "",
+        end: "",
         orders: [],
         isSaved: false,
         summary: computed(() => {
@@ -70,7 +70,7 @@ export const useSpotBitgetStore = defineStore(
         buyPrice: 1,
         sellPrice: null,
         tokenAmount: 0,
-        buyOrder: firstOrderCost.value || 0,
+        buyOrder: firstBuyOrder.value || 0,
         sellOrder: 0,
         profit: 0,
       };
@@ -82,16 +82,16 @@ export const useSpotBitgetStore = defineStore(
 
     function recalculateOrder(order, previousOrder) {
       const buyPrice = +order.buyPrice || 1;
-      const sellPrice = +order.sellPrice || 0;
+      const sellPrice = +order.sellPrice || null;
       const feeRate = 1 + fee;
 
       order.buyOrder = previousOrder
         ? +(
             parseFloat(previousOrder.buyOrder) *
-            coefNextOrderCost.value *
+            coefNextBuyOrder.value *
             feeRate
           ).toFixed(2)
-        : +(firstOrderCost.value * feeRate).toFixed(2);
+        : +(firstBuyOrder.value * feeRate).toFixed(2);
       order.tokenAmount = +(parseFloat(order.buyOrder) / buyPrice).toFixed(2);
       order.sellOrder = +(
         sellPrice *
@@ -110,11 +110,11 @@ export const useSpotBitgetStore = defineStore(
 
     function addOrder(block) {
       const lastOrder = block.orders[block.orders.length - 1];
-      const nextBuyPrice = +(lastOrder.buyPrice - 0.1).toFixed(4);
+      const nextBuyPrice = null; //+(lastOrder.buyPrice - 0.1).toFixed(4);
       const newOrder = {
         id: block.orders.length + 1,
         buyPrice: nextBuyPrice,
-        sellPrice: +(nextBuyPrice + 0.2).toFixed(4),
+        sellPrice: null, //+(nextBuyPrice + 0.2).toFixed(4),
         tokenAmount: 0,
         buyOrder: 0,
         sellOrder: 0,
@@ -136,20 +136,7 @@ export const useSpotBitgetStore = defineStore(
     const restoreDefaultSellPrice = (order) => {
       if (!order.sellPrice) order.sellPrice = 1;
     };
-    /*
-    function removeBlock(blockId) {
-      activeBlocks.value = activeBlocks.value.filter(
-        (block) => block.id !== blockId
-      );
-    }
-    // New function to delete an order
-    function removeOrder(blockId, orderId) {
-      const block = activeBlocks.value.find((block) => block.id === blockId);
-      if (block) {
-        block.orders = block.orders.filter((order) => order.id !== orderId); // Reactivity-safe
-      }
-    }
-    */
+    
     function removeBlock(blockId) {
       confirmMessage.value = "Are you sure you want to delete this block?";
       pendingAction.value = () => {
@@ -186,8 +173,8 @@ export const useSpotBitgetStore = defineStore(
     return {
       deposit,
       coefOfRisk,
-      coefNextOrderCost,
-      firstOrderCost,
+      coefNextBuyOrder,
+      firstBuyOrder,
       activeBlocks,
       showConfirmDialog,
       confirmMessage,
