@@ -3,8 +3,10 @@ import FooterBybit from '../components/FooterBybit.vue';
 import { useSpotBybitStore } from '@/stores/spotBybit.js';
 import { storeToRefs } from 'pinia';
 
-const { deposit, coefRisk, coefNextBuyOrder, firstBuyOrder, activeBlocks } = storeToRefs(useSpotBybitStore());
-const { addBlock, addOrder, removeBlock } = useSpotBybitStore();
+const { deposit, coefRisk, coefNextBuyOrder, firstBuyOrder, activeBlocks, showConfirmDialog,
+	confirmMessage, } = storeToRefs(useSpotBybitStore());
+const { addBlock, addOrder, removeBlock, removeOrder, confirmAction, cancelAction, recalculateOrder,
+	clearBuyPrice, clearSellPrice, } = useSpotBybitStore();
 </script>
 
 <template>
@@ -30,12 +32,13 @@ const { addBlock, addOrder, removeBlock } = useSpotBybitStore();
 				</label>
 			</div>
 			<div>First Order: {{ firstBuyOrder }}</div>
-			<button id="addBlock" class="border px-1 bg-gray-700" @click="addBlock">ADD</button>
+			<button id="addBlock" class="h-8 px-2 border border-green-600 font-bold text-green-600"
+				@click="addBlock">ADD</button>
 		</div>
-		<hr class="border-green-600 mt-2">
+		<hr class="border-green-600">
 
 		<!-- Dynamic Orders Blocks -->
-		<div v-for="block in activeBlocks" :key="block.id" class="p-2 mt-2 text-sm">
+		<div v-for="block in activeBlocks" :key="block.id" class="p-2 text-sm">
 			<div class="mb-2">
 				<!-- Basic Block Data -->
 				<div class="flex justify-between">
@@ -46,7 +49,9 @@ const { addBlock, addOrder, removeBlock } = useSpotBybitStore();
 					<input :id="`end-${block.id}`" type="date" v-model="block.end"
 						class="w-[10ch] bg-gray-900 border text-center" />
 					<button :id="`removeBlock-${block.id}`" @click="removeBlock(block.id)"
-						class="border bg-gray-700">Remove</button>
+						class="px-2 font-bold text-red-600 border border-red-600">X Block</button>
+					<button :id="`addOrder-${block.id}`" @click="addOrder(block)"
+						class="px-2 border border-green-600 font-extrabold text-green-600">+</button>
 				</div>
 			</div>
 
@@ -54,17 +59,18 @@ const { addBlock, addOrder, removeBlock } = useSpotBybitStore();
 			<div v-for="order in block.orders" :key="order.id" class="mb-1">
 				<div class="flex justify-between">
 					<span>{{ order.id }}</span>
-					<input :id="`buyPrice-${block.id}-${order.id}`" type="number" v-model="order.buyPrice" placeholder="Buy Price"
-						class="w-[6ch] bg-gray-900 text-center text-yellow-400" />
+					<input :id="`buyPrice-${block.id}-${order.id}`" type="number" v-model.number="order.buyPrice"
+						placeholder="Buy Price" class="w-[6ch] bg-gray-900 text-center text-yellow-400"
+						@input="recalculateOrder(order)" @focus="clearBuyPrice(order)" />
 					<span>{{ order.amount }}</span>
 					<span>{{ order.buyOrder }}</span>
-					<input :id="`sellPrice-${block.id}-${order.id}`" type="number" v-model="order.sellPrice"
-						placeholder="Sell Price" class="w-[6ch] bg-gray-900 text-center text-yellow-400" />
+					<input :id="`sellPrice-${block.id}-${order.id}`" type="number" v-model.number="order.sellPrice"
+						placeholder="Sell Price" class="w-[6ch] bg-gray-900 text-center text-yellow-400"
+						@input="recalculateOrder(order)" @focus="clearSellPrice(order)" />
 					<span>{{ order.sellOrder }}</span>
 					<span>{{ order.profit }}</span>
-					<button :id="`addOrder-${block.id}`" @click="addOrder(block)"
-						class="px-2 border border-green-600 font-extrabold text-green-600">
-						+</button>
+					<button :id="`removeOrder-${block.id} -${order.id}`" @click="removeOrder(block.id, order.id)"
+						class="px-2 border border-red-600 font-bold text-red-600">X</button>
 				</div>
 			</div>
 
@@ -76,7 +82,7 @@ const { addBlock, addOrder, removeBlock } = useSpotBybitStore();
 				</div>
 				<div class="">
 					<span>Buy:</span><br>
-					<span>{{ block.summary.avgBuyPrice }}</span>
+					<span>{{ block.summary.avgBuyPrice.toFixed(4) }}</span>
 				</div>
 				<div class="">
 					<span>Amount:</span><br>
@@ -84,7 +90,7 @@ const { addBlock, addOrder, removeBlock } = useSpotBybitStore();
 				</div>
 				<div class="">
 					<span>Sell:</span><br>
-					<span>{{ block.summary.avgSellPrice }}</span>
+					<span>{{ block.summary.avgSellPrice.toFixed(4) }}</span>
 				</div>
 				<div class="">
 					<span>TP:</span><br>
@@ -92,6 +98,21 @@ const { addBlock, addOrder, removeBlock } = useSpotBybitStore();
 				</div>
 			</div>
 			<hr class="border-green-600 mt-2">
+		</div>
+		<!-- Modal -->
+		<div v-if="showConfirmDialog" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+			<div class="bg-gray-700 rounded-lg shadow-lg w-1/2 max-w-md p-2 text-center">
+				<p class="text-sm text-white">{{ confirmMessage }}</p>
+				<div class="mt-2 flex justify-center space-x-4">
+					<button @click="confirmAction"
+						class="bg-green-600 hover:bg-green-400 text-white px-4 py-2 rounded transition">
+						Yes
+					</button>
+					<button @click="cancelAction" class="bg-red-600 hover:bg-red-400 text-white px-4 py-2 rounded transition">
+						No
+					</button>
+				</div>
+			</div>
 		</div>
 	</div>
 	<footer class="fixed w-full h-12 left-0 bottom-0 z-10 bg-gray-900">

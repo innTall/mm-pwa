@@ -186,16 +186,10 @@ export const useSpotBitgetStore = defineStore(
     const clearBuyPrice = (order) => {
       order.buyPrice = null; // null
     };
-    //const restoreDefaultBuyPrice = (order) => {
-    //  if (!order.buyPrice) order.buyPrice = 1;
-    //};
     const clearSellPrice = (order) => {
       order.sellPrice = null; // null
     };
-    //const restoreDefaultSellPrice = (order) => {
-    //  if (!order.sellPrice) order.sellPrice = 1;
-    //};
-
+    
     return {
       deposit,
       coefRisk,
@@ -213,8 +207,6 @@ export const useSpotBitgetStore = defineStore(
       recalculateOrder,
       clearBuyPrice,
       clearSellPrice,
-      //restoreDefaultBuyPrice,
-      //restoreDefaultSellPrice,
     };
   },
   {

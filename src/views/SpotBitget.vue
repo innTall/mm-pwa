@@ -32,12 +32,12 @@ const { addBlock, addOrder, removeBlock, removeOrder, confirmAction, cancelActio
 				</label>
 			</div>
 			<div>First Order: {{ firstBuyOrder }}</div>
-			<button id="addBlock" class="px-2 border border-green-600 font-bold text-green-600" @click="addBlock">ADD</button>
+			<button id="addBlock" class="h-8 px-2 border border-green-600 font-bold text-green-600" @click="addBlock">ADD</button>
 		</div>
-		<hr class="border-green-600 mt-2">
+		<hr class="border-green-600">
 
 		<!-- Dynamic Orders Blocks -->
-		<div v-for="block in activeBlocks" :key="block.id" class="p-2 mt-2 text-sm">
+		<div v-for="block in activeBlocks" :key="block.id" class="p-2 text-sm">
 			<div class="mb-2">
 				<!-- Basic Block Data -->
 				<div class="flex justify-between">

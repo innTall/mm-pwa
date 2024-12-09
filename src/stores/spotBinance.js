@@ -1,142 +1,215 @@
 import { defineStore } from "pinia";
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, computed } from "vue";
 
-export const useSpotBinanceStore = defineStore("spotBinance", () => {
-  const fee = 0.001;
-  const deposit = ref(468);
-  const riskTrade = ref(0.02);
-  const coefNextBuyOrder = ref(1.2);
+export const useSpotBinanceStore = defineStore(
+  "spotBinance",
+  () => {
+    // Constants and state variables
+    const fee = 0.001; // Transaction fee
+    const deposit = ref(5100); // Initial deposit amount
+    const coefRisk = ref(0.02); // Risk coefficient of Deposit
+    const coefNextBuyOrder = ref(1.2); // Multiplier for the next buy order
+    let nextBlockId = 1; // Block ID generator
 
-  const defaultBlock = () => {
-    const firstOrder = {
-      buyPrice: 1,
-      sellPrice: null,
-      amount: null,
-      buyOrder: null,
-      sellOrder: null,
-      profit: null,
-    };
-    // Watch the first order's values immediately
-    watchOrderValues(firstOrder);
-    return {
-      nr: 1,
-      symbol: "",
-      start: null,
-      fin: null,
-      orders: ref([firstOrder]),
-    };
-  };
-  const orderBlocks = ref([defaultBlock()]);
+    const showConfirmDialog = ref(false); // Confirmation dialog visibility
+    const confirmMessage = ref(""); // Message in the confirmation dialog
+    const pendingAction = ref(null); // Action to execute after confirmation
 
-  const addOrderBlock = () => {
-    orderBlocks.value.push({
-      ...defaultBlock(),
-      nr: orderBlocks.value.length + 1,
-    });
-  };
-
-  const removeOrderBlock = (index) => {
-    orderBlocks.value.splice(index, 1);
-    // Update numbering
-    orderBlocks.value.forEach((block, idx) => (block.nr = idx + 1));
-  };
-
-  const addOrderToBlock = (block) => {
-    const previousOrder = block.orders[block.orders.length - 1];
-    const newBuyOrder = previousOrder
-      ? (parseFloat(previousOrder.buyOrder) * coefNextBuyOrder.value).toFixed(2)
-      : (deposit.value * riskTrade.value).toFixed(2);
-
-    const newOrder = {
-      buyPrice: 1,
-      sellPrice: null,
-      amount: null,
-      buyOrder: newBuyOrder,
-      sellOrder: null,
-      profit: null,
-    };
-    watchOrderValues(newOrder);
-    block.orders.push(newOrder);
-    // block.orders = [...block.orders, newOrder];
-  };
-
-  const removeOrder = (blockIndex, orderIndex) => {
-    const block = orderBlocks.value[blockIndex];
-    if (block && block.orders.length > orderIndex) {
-      block.orders.splice(orderIndex, 1);
-    }
-  };
-
-  function updateOrderValues(order) {
-    if (!order.buyPrice) {
-      order.amount = null;
-      order.buyOrder = null;
-      order.sellOrder = null;
-      order.profit = null;
-      return;
-    }
-
-    const calculateDigits = (priceValue) => {
-      if (priceValue >= 10000) return 1;
-      if (priceValue >= 1000) return 2;
-      if (priceValue >= 100) return 2;
-      if (priceValue >= 10) return 3;
-      if (priceValue >= 1) return 3;
-      if (priceValue >= 0.1) return 4;
-      return 5;
-    };
-
-    const calculateDigitsLote = (digitsPrice) => {
-      if (digitsPrice === 1) return 3;
-      if (digitsPrice === 2) return 2;
-      if (digitsPrice === 3) return 1;
-      if (digitsPrice >= 4) return 0;
-    };
-
-    const digits = calculateDigits(order.buyPrice);
-    const digitsLote = calculateDigitsLote(digits);
-    const buyOrder = (deposit.value * riskTrade.value * (1 + fee)).toFixed(2);
-    const amount = (buyOrder / order.buyPrice).toFixed(digitsLote);
-    const profit = ((order.sellPrice - order.buyPrice) * amount).toFixed(2);
-    const sellOrder = (amount * order.sellPrice * (1 - fee)).toFixed(2);
-
-    order.amount = amount;
-    order.buyOrder = buyOrder;
-    order.sellOrder = sellOrder;
-    order.profit = profit;
-  };
-
-  function watchOrderValues(order) {
-    watch(
-      () => [order.buyPrice],
-      () => {
-        updateOrderValues(order);
-      },
-      { deep: true, immediate: true }
+    // Computed property for the first buy order value
+    const firstBuyOrder = computed(() =>
+      Number(deposit.value * coefRisk.value).toFixed(2)
     );
+
+    // State for blocks
+    const activeBlocks = ref([createNewBlock()]);
+
+    // Utility function to generate unique IDs for blocks
+    function generateUniqueId() {
+      return nextBlockId++;
+    }
+
+    //* ***** Creates a new block with default properties. *****
+    //* @returns {Object} New block object.
+    function createNewBlock() {
+      const id = generateUniqueId();
+      const block = reactive({
+        id,
+        symbol: "",
+        start: "",
+        end: "",
+        orders: [],
+        isSaved: false, // Tracks whether the block is saved
+        summary: computed(() => calculateBlockSummary(block)), // Block summary
+      });
+      // Add an initial order to the block
+      const initialOrder = createNewOrder(1);
+      block.orders.push(initialOrder);
+      return block;
+    }
+
+    //* ***** Calculates summary statistics for a block. *****
+    //* @param {Object} block - The block whose summary is calculated.
+    //* @returns {Object} Summary statistics.
+    function calculateBlockSummary(block) {
+      const totalAmount = block.orders.reduce(
+        (sum, order) => sum + (order.amount || 0),
+        0
+      );
+      const totalBuyOrder = block.orders.reduce(
+        (sum, order) => sum + (order.buyOrder || 0),
+        0
+      );
+      const totalSellOrder = block.orders.reduce(
+        (sum, order) => sum + (order.sellOrder || 0),
+        0
+      );
+      const totalProfit = block.orders.reduce(
+        (sum, order) => sum + (order.profit || 0),
+        0
+      );
+
+      return {
+        avgBuyPrice: totalAmount
+          ? Number((totalBuyOrder / totalAmount).toFixed(4))
+          : 0,
+        avgSellPrice: totalAmount
+          ? Number((totalSellOrder / totalAmount).toFixed(4))
+          : 0,
+        totalProfit: Number(totalProfit.toFixed(2)),
+        totalBuyOrders: Number(totalBuyOrder.toFixed(2)),
+        totalAmount: Number(totalAmount.toFixed(3)),
+      };
+    }
+
+    //* ***** Calculates the buy order value based on the order ID. *****
+    //* @param {number} orderId - The ID of the order.
+    //* @returns {number} Calculated buy order value.
+    function calculateBuyOrder(orderId) {
+      if (orderId === 1) {
+        // If ID is 1, return firstBuyOrder
+        return +firstBuyOrder.value;
+      }
+      // Otherwise, calculate buyOrder as a multiplier of firstBuyOrder
+      return (
+        +firstBuyOrder.value * Math.pow(coefNextBuyOrder.value, orderId - 1)
+      );
+    }
+
+    //* ***** Recalculates order details based on buy/sell prices and previous order. *****
+    //* @param {Object} order - The order to recalculate.
+    //* @param {Object} previousOrder - The previous order (if any).
+    function recalculateOrder(order) {
+      const buyPrice = +order.buyPrice || 1;
+      const sellPrice = +order.sellPrice || null;
+      const feeRate = 1 + fee;
+
+      order.buyOrder = +(calculateBuyOrder(order.id) * feeRate).toFixed(2);
+      order.amount = +(order.buyOrder / buyPrice).toFixed(2);
+      order.sellOrder = sellPrice
+        ? +(sellPrice * order.amount * (1 - fee)).toFixed(2)
+        : 0;
+      order.profit = +(order.sellOrder - order.buyOrder).toFixed(2);
+    }
+
+    //* ***** Creates a new order with default or calculated properties. *****
+    //* @param {Object|null} previousOrder - The previous order (if any).
+    //* @returns {Object} New order object.
+    function createNewOrder(orderId) {
+      const feeRate = 1 + fee;
+      return reactive({
+        id: orderId,
+        buyPrice: null,
+        sellPrice: null,
+        amount: 0,
+        buyOrder: +(calculateBuyOrder(orderId) * feeRate).toFixed(2),
+        sellOrder: 0,
+        profit: 0,
+        isManualBuyOrder: false, // Tracks manual adjustments
+      });
+    }
+
+    //* ***** Adds a new order to the specified block. *****
+    //* @param {Object} block - The block to add an order to.
+    function addOrder(block) {
+      const nextOrderId = block.orders.length + 1;
+      const newOrder = createNewOrder(nextOrderId);
+      block.orders.push(newOrder);
+    }
+
+    //* ***** Adds a new block to the active blocks list. *****
+    function addBlock() {
+      const newBlock = createNewBlock();
+      activeBlocks.value.unshift(newBlock);
+    }
+
+    //* ***** Removes a block after confirmation. *****
+    //* @param {number} blockId - The ID of the block to remove.
+    function removeBlock(blockId) {
+      confirmMessage.value = "Delete this block?";
+      pendingAction.value = () => {
+        activeBlocks.value = activeBlocks.value.filter(
+          (block) => block.id !== blockId
+        );
+      };
+      showConfirmDialog.value = true;
+    }
+
+    //* *****Removes an order from a block after confirmation. *****
+    //* @param {number} blockId - The ID of the block.
+    //* @param {number} orderId - The ID of the order to remove.
+    function removeOrder(blockId, orderId) {
+      confirmMessage.value = "Delete this order?";
+      pendingAction.value = () => {
+        const block = activeBlocks.value.find((block) => block.id === blockId);
+        if (block) {
+          block.orders = block.orders.filter((order) => order.id !== orderId);
+        }
+      };
+      showConfirmDialog.value = true;
+    }
+
+    //* ***** Executes the pending action after confirmation. *****
+    function confirmAction() {
+      if (pendingAction.value) {
+        pendingAction.value();
+        pendingAction.value = null;
+      }
+      showConfirmDialog.value = false;
+    }
+
+    //* ***** Cancels the pending action. *****
+    function cancelAction() {
+      showConfirmDialog.value = false;
+      pendingAction.value = null;
+    }
+
+    const clearBuyPrice = (order) => {
+      order.buyPrice = null; // null
+    };
+    const clearSellPrice = (order) => {
+      order.sellPrice = null; // null
+    };
+
+    return {
+      deposit,
+      coefRisk,
+      firstBuyOrder,
+      coefNextBuyOrder,
+      activeBlocks,
+      showConfirmDialog,
+      confirmMessage,
+      addBlock,
+      addOrder,
+      removeBlock,
+      removeOrder,
+      confirmAction,
+      cancelAction,
+      recalculateOrder,
+      clearBuyPrice,
+      clearSellPrice,
+    };
+  },
+  {
+    persist: false,
   }
-
-  const clearBuyPrice = (order) => {
-    if (order.buyPrice === 1) order.buyPrice = null;
-  };
-
-  const restoreDefaultBuyPrice = (order) => {
-    if (!order.buyPrice) order.buyPrice = 1;
-  };
-
-  return {
-    orderBlocks,
-    deposit,
-    riskTrade,
-    coefNextBuyOrder,
-    addOrderBlock,
-    removeOrderBlock,
-    addOrderToBlock,
-    removeOrder,
-    updateOrderValues,
-    clearBuyPrice,
-    restoreDefaultBuyPrice,
-  };
-},
-  { persist: false },
 );
