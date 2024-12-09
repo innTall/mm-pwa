@@ -42,7 +42,7 @@ export const useSpotBitgetStore = defineStore(
         summary: computed(() => calculateBlockSummary(block)), // Block summary
       });
       // Add an initial order to the block
-      const initialOrder = createNewOrder(null);
+      const initialOrder = createNewOrder(1);
       block.orders.push(initialOrder);
       return block;
     }
@@ -81,17 +81,29 @@ export const useSpotBitgetStore = defineStore(
       };
     }
 
+    //* ***** Calculates the buy order value based on the order ID. *****
+    //* @param {number} orderId - The ID of the order.
+    //* @returns {number} Calculated buy order value.
+    function calculateBuyOrder(orderId) {
+      if (orderId === 1) {
+        // If ID is 1, return firstBuyOrder
+        return +firstBuyOrder.value;
+      }
+      // Otherwise, calculate buyOrder as a multiplier of firstBuyOrder
+      return +
+        firstBuyOrder.value * Math.pow(coefNextBuyOrder.value, orderId - 1)
+      ;
+    }
+
     //* ***** Recalculates order details based on buy/sell prices and previous order. *****
     //* @param {Object} order - The order to recalculate.
     //* @param {Object} previousOrder - The previous order (if any).
-    function recalculateOrder(order, previousOrder) {
+    function recalculateOrder(order) {
       const buyPrice = +order.buyPrice || 1;
       const sellPrice = +order.sellPrice || null;
       const feeRate = 1 + fee;
 
-      order.buyOrder = previousOrder
-        ? +(previousOrder.buyOrder * coefNextBuyOrder.value * feeRate).toFixed(2)
-        : +(firstBuyOrder.value * feeRate).toFixed(2);
+      order.buyOrder = +(calculateBuyOrder(order.id) * feeRate).toFixed(2);
       order.amount = +(order.buyOrder / buyPrice).toFixed(2);
       order.sellOrder = sellPrice
         ? +(sellPrice * order.amount * (1 - fee)).toFixed(2)
@@ -102,16 +114,14 @@ export const useSpotBitgetStore = defineStore(
     //* ***** Creates a new order with default or calculated properties. *****
     //* @param {Object|null} previousOrder - The previous order (if any).
     //* @returns {Object} New order object.
-    function createNewOrder(previousOrder) {
+    function createNewOrder(orderId) {
       const feeRate = 1 + fee;
       return reactive({
-        id: previousOrder ? previousOrder.id + 1 : 1,
+        id: orderId,
         buyPrice: null,
         sellPrice: null,
         amount: 0,
-        buyOrder: previousOrder
-          ? +(previousOrder.buyOrder * coefNextBuyOrder.value * feeRate).toFixed(2)
-          : +(firstBuyOrder.value * feeRate).toFixed(2),
+        buyOrder: +(calculateBuyOrder(orderId) * feeRate).toFixed(2),
         sellOrder: 0,
         profit: 0,
         isManualBuyOrder: false, // Tracks manual adjustments
@@ -121,8 +131,8 @@ export const useSpotBitgetStore = defineStore(
     //* ***** Adds a new order to the specified block. *****
     //* @param {Object} block - The block to add an order to.
     function addOrder(block) {
-      const lastOrder = block.orders[block.orders.length - 1];
-      const newOrder = createNewOrder(lastOrder);
+      const nextOrderId = block.orders.length + 1;
+      const newOrder = createNewOrder(nextOrderId);
       block.orders.push(newOrder);
     }
 
@@ -174,23 +184,23 @@ export const useSpotBitgetStore = defineStore(
     }
 
     const clearBuyPrice = (order) => {
-      if (order.buyPrice === 1) order.buyPrice = undefined; // null
+      order.buyPrice = null; // null
     };
-    const restoreDefaultBuyPrice = (order) => {
-      if (!order.buyPrice) order.buyPrice = 1;
-    };
+    //const restoreDefaultBuyPrice = (order) => {
+    //  if (!order.buyPrice) order.buyPrice = 1;
+    //};
     const clearSellPrice = (order) => {
-      if (order.sellPrice === 1) order.sellPrice = undefined; // null
+      order.sellPrice = null; // null
     };
-    const restoreDefaultSellPrice = (order) => {
-      if (!order.sellPrice) order.sellPrice = 1;
-    };
+    //const restoreDefaultSellPrice = (order) => {
+    //  if (!order.sellPrice) order.sellPrice = 1;
+    //};
 
     return {
       deposit,
       coefRisk,
-      coefNextBuyOrder,
       firstBuyOrder,
+      coefNextBuyOrder,
       activeBlocks,
       showConfirmDialog,
       confirmMessage,
@@ -203,8 +213,8 @@ export const useSpotBitgetStore = defineStore(
       recalculateOrder,
       clearBuyPrice,
       clearSellPrice,
-      restoreDefaultBuyPrice,
-      restoreDefaultSellPrice,      
+      //restoreDefaultBuyPrice,
+      //restoreDefaultSellPrice,
     };
   },
   {

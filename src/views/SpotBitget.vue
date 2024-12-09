@@ -6,7 +6,7 @@ import { storeToRefs } from 'pinia';
 const { deposit, coefRisk, coefNextBuyOrder, firstBuyOrder, activeBlocks, showConfirmDialog,
 	confirmMessage, } = storeToRefs(useSpotBitgetStore());
 const { addBlock, addOrder, removeBlock, removeOrder, confirmAction, cancelAction, recalculateOrder,
-	clearBuyPrice, clearSellPrice, restoreDefaultBuyPrice, restoreDefaultSellPrice, } = useSpotBitgetStore();
+	clearBuyPrice, clearSellPrice, } = useSpotBitgetStore();
 </script>
 
 <template>
@@ -60,12 +60,12 @@ const { addBlock, addOrder, removeBlock, removeOrder, confirmAction, cancelActio
 					<span>{{ order.id }}</span>
 					<input :id="`buyPrice-${block.id}-${order.id}`" type="number" v-model.number="order.buyPrice"
 						placeholder="Buy Price" class="w-[6ch] bg-gray-900 text-center text-yellow-400"
-						@input="recalculateOrder(order)" @focus="clearBuyPrice(order)" @blur="restoreDefaultBuyPrice(order)" />
+						@input="recalculateOrder(order)" @focus="clearBuyPrice(order)" />
 					<span>{{ order.amount }}</span>
 					<span>{{ order.buyOrder }}</span>
 					<input :id="`sellPrice-${block.id}-${order.id}`" type="number" v-model.number="order.sellPrice"
 						placeholder="Sell Price" class="w-[6ch] bg-gray-900 text-center text-yellow-400"
-						@input="recalculateOrder(order)" @focus="clearSellPrice(order)" @blur="restoreDefaultSellPrice(order)" />
+						@input="recalculateOrder(order)" @focus="clearSellPrice(order)" />
 					<span>{{ order.sellOrder }}</span>
 					<span>{{ order.profit }}</span>
 					<button :id="`removeOrder-${block.id} -${order.id}`" @click="removeOrder(block.id, order.id)"
