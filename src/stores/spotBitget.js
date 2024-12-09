@@ -92,7 +92,7 @@ export const useSpotBitgetStore = defineStore(
       order.buyOrder = previousOrder
         ? +(previousOrder.buyOrder * coefNextBuyOrder.value * feeRate).toFixed(2)
         : +(firstBuyOrder.value * feeRate).toFixed(2);
-      order.amount = +(order.buyOrder / buyPrice * 1).toFixed(2);
+      order.amount = +(order.buyOrder / buyPrice).toFixed(2);
       order.sellOrder = sellPrice
         ? +(sellPrice * order.amount * (1 - fee)).toFixed(2)
         : 0;
