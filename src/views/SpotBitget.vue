@@ -3,10 +3,10 @@ import FooterBitget from '../components/FooterBitget.vue';
 import { useSpotBitgetStore } from '@/stores/spotBitget.js';
 import { storeToRefs } from 'pinia';
 
-const { deposit, coefOfRisk, coefNextBuyOrder, firstBuyOrder, activeBlocks, showConfirmDialog,
+const { deposit, coefRisk, coefNextBuyOrder, firstBuyOrder, activeBlocks, showConfirmDialog,
 	confirmMessage, } = storeToRefs(useSpotBitgetStore());
-const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmAction, cancelAction,
-	clearSellPrice, restoreDefaultBuyPrice, restoreDefaultSellPrice, recalculateOrder, } = useSpotBitgetStore();
+const { addBlock, addOrder, removeBlock, removeOrder, confirmAction, cancelAction, recalculateOrder,
+	clearBuyPrice, clearSellPrice, restoreDefaultBuyPrice, restoreDefaultSellPrice, } = useSpotBitgetStore();
 </script>
 
 <template>
@@ -27,7 +27,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmActi
 			</div>
 			<div>
 				<label for="coefRisk">CoefRisk:
-					<input id="coefRisk" type="number" v-model="coefOfRisk" step="1" min="1" required
+					<input id="coefRisk" type="number" v-model="coefRisk" step="1" min="1" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 				</label>
 			</div>
@@ -77,7 +77,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmActi
 			<div class="flex justify-between mt-2 text-center">
 				<div class="">
 					<span>Sum, $:</span><br>
-					<span>{{ block.summary.totalBuyOrders.toFixed(2) }}</span>
+					<span>{{ block.summary.totalBuyOrders }}</span>
 				</div>
 				<div class="">
 					<span>Buy:</span><br>
@@ -85,7 +85,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmActi
 				</div>
 				<div class="">
 					<span>Amount:</span><br>
-					<span>{{ block.summary.totalAmount.toFixed(3) }}</span>
+					<span>{{ block.summary.totalAmount }}</span>
 				</div>
 				<div class="">
 					<span>Sell:</span><br>
@@ -93,7 +93,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, clearBuyPrice, confirmActi
 				</div>
 				<div class="">
 					<span>TP:</span><br>
-					<span>{{ block.summary.totalProfit.toFixed(2) }}</span>
+					<span>{{ block.summary.totalProfit }}</span>
 				</div>
 			</div>
 			<hr class="border-green-600 mt-2">
