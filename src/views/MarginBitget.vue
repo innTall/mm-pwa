@@ -3,10 +3,10 @@ import { ref, computed } from 'vue';
 import FooterBitget from '../components/FooterBitget.vue';
 import { useMarginBitgetStore } from '@/stores/marginBitget.js';
 import { storeToRefs } from 'pinia';
-const { deposit, leverage, riskMargin, margin, tpCost, slCost, buyOrderMath, coefNextOrderCost,
+const { deposit, leverage, coefRisk, margin, tpCost, slCost, buyOrderMath, coefCost,
 	takeProfit, stopLoss, activeBlocks, totalActiveTpAndSl, sortedSymbols } = storeToRefs(useMarginBitgetStore());
-const { addBlock, removeBlock, addOrder, removeOrder, calculateBuyOrder, calculateAmountMath, calculateSlPriceMath,
-	calculateTpPriceMath, calculateSl, calculateTp, } = useMarginBitgetStore();
+const { addBlock, removeBlock, addOrder, removeOrder, calculateBuyOrder, infoAmount, infoSlPrice,
+	infoTpPrice, calculateSl, calculateTp, } = useMarginBitgetStore();
 
 // Helper function to determine the color class for SL/TP
 const getColorClass = (block, type) => {
@@ -50,34 +50,34 @@ const cancelAction = () => {
 			<div class="">
 				<div class="flex justify-between">
 					<div class="">Deposit, $:</div>
-					<input id="deposit" type="number" v-model="deposit" step="1" min="1" required
+					<input :id="'deposit-' + deposit" type="number" v-model="deposit" step="1" min="1" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
 				</div>
 				<div class="flex justify-between">
 					<div class="">Leverage:</div>
-					<input id="leverage" type="number" v-model="leverage" step="1" min="1" required
+					<input :id="'leverage-' + leverage" type="number" v-model="leverage" step="1" min="1" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
 				</div>
 				<div class="flex justify-between">
 					<div class="">CoefCost, %:</div>
-					<input id="coefCost" type="number" v-model="coefNextOrderCost" step="1" min="1" required
+					<input :id="'coefCost-' + coefCost" type="number" v-model="coefCost" step="1" min="1" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
 				</div>
 			</div>
 			<div class="">
 				<div class="flex justify-between">
 					<div class="">Margin:</div>
-					<input id="coefRisk" type="number" v-model="riskMargin" step="0.01" min="0" required
+					<input :id="'coefRisk-' + coefRisk" type="number" v-model="coefRisk" step="0.01" min="0" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 				</div>
 				<div class="flex justify-between">
 					<div class="">TP:</div>
-					<input id="takeProfit" type="number" v-model="takeProfit" step="0.01" min="0" required
+					<input :id="'takeProfit-' + takeProfit" type="number" v-model="takeProfit" step="0.01" min="0" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 				</div>
 				<div class="flex justify-between">
 					<div class="">SL:</div>
-					<input id="stopLoss" type="number" v-model="stopLoss" step="0.01" min="0" required
+					<input :id="'stopLoss-' + stopLoss" type="number" v-model="stopLoss" step="0.01" min="0" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 				</div>
 			</div>
@@ -112,15 +112,16 @@ const cancelAction = () => {
 			<div class="">
 				<!-- Basic Block Data -->
 				<div class="flex justify-between">
-					<input id="symbol" type="text" v-model="block.symbol" placeholder="Symbol"
+					<input :id="'symbol-' + block.id" type="text" v-model="block.symbol" placeholder="Symbol"
 						class="w-[10ch] px-2 text-center font-bold bg-gray-900 border uppercase" />
-					<input id="date" type="date" v-model="block.date" class="w-[10ch] bg-gray-900 border text-center" />
+					<input :id="'date-' + block.id" type="date" v-model="block.date"
+						class="w-[10ch] bg-gray-900 border text-center" />
 					<div class="">
 						<span :class="getBlockTotalColor(block)">{{ block.totalActiveTpAndSl }}</span>
 					</div>
-					<button id="removeBlock" @click="openRemoveBlockDialog(block.id)"
+					<button :id="'removeBlock-' + block.id" @click="openRemoveBlockDialog(block.id)"
 						class="px-2 font-bold text-red-600 border border-red-600">X Block</button>
-					<button id="addOrder" @click="addOrder(block)"
+					<button :id="'addOrder-' + block.id" @click="addOrder(block)"
 						class="px-2 border border-green-600 font-extrabold text-green-600">
 						+
 					</button>
@@ -146,42 +147,44 @@ const cancelAction = () => {
 				<div v-for="order in block.orders" :key="order.id" class="">
 					<div class="flex justify-between mt-1 items-center">
 						<span>{{ order.id }}</span>
-						<input id="buyPrice" type="number" v-model="order.buyPrice" placeholder="Buy Price"
-							class="w-[6ch] bg-gray-900 text-center" />
-						<input id="amount" type="number" v-model="order.amount" placeholder="Amount"
+						<input :id="'buyPrice-' + block.id + '-' + order.id" type="number" v-model="order.buyPrice"
+							placeholder="Buy Price" class="w-[6ch] bg-gray-900 text-center" />
+						<input :id="'amount-' + block.id + '-' + order.id" type="number" v-model="order.amount" placeholder="Amount"
 							class="w-[6ch] bg-gray-900 text-center" />
 						<span class="">{{ calculateBuyOrder(order) }}</span>
 						<div class="text-gray-500 text-xs">
-							<span>({{ calculateAmountMath(order) }} - </span>
+							<span>({{ infoAmount(order) }} - </span>
 							<span>{{ buyOrderMath }})</span>
 						</div>
-						<button id="removeOrder" @click="openRemoveOrderDialog(block, order.id)"
+						<button :id="'removeOrder-' + block.id + '-' + order.id" @click="openRemoveOrderDialog(block, order.id)"
 							class="px-2 font-bold text-red-600 border border-red-600">X</button>
 					</div>
 					<div class="flex justify-between mt-1 mb-1 items-center">
 						<!-- SL Switch -->
 						<div class="flex items-center">
-							<input id="sl" type="radio" :name="'switchGroup' + order.id" v-model="order.selectedSwitch" value="sl"
-								class="accent-red-600" />
+							<input :id="'sl-' + block.id + '-' + order.id" type="radio" :name="'switchGroup' + order.id"
+								v-model="order.selectedSwitch" value="sl" class="accent-red-600" />
 							<span :class="getColorClass(order, 'sl')">SL</span>
 						</div>
-						<input id="slPrice" type="number" v-model="order.slPrice" @input="order.sl = calculateSl(order)"
-							placeholder="SLprice" class="w-[6ch] bg-gray-900 text-center" :class="getColorClass(order, 'sl')" />
+						<input :id="'slPrice-' + block.id + '-' + order.id" type="number" v-model="order.slPrice"
+							@input="order.sl = calculateSl(order)" placeholder="SLprice" class="w-[6ch] bg-gray-900 text-center"
+							:class="getColorClass(order, 'sl')" />
 						<span :class="getColorClass(order, 'sl')">{{ calculateSl(order) }}</span>
 						<div class="text-gray-500">
-							<span class="text-xs">({{ calculateSlPriceMath(order) }})</span>
+							<span class="text-xs">({{ infoSlPrice(order) }})</span>
 						</div>
 						<!-- TP Switch -->
 						<div class="flex items-center">
-							<input id="tp" type="radio" :name="'switchGroup' + order.id" v-model="order.selectedSwitch" value="tp"
-								class="accent-green-600" />
+							<input :id="'tp-' + block.id + '-' + order.id" type="radio" :name="'switchGroup' + order.id"
+								v-model="order.selectedSwitch" value="tp" class="accent-green-600" />
 							<span :class="getColorClass(order, 'tp')">TP</span>
 						</div>
-						<input id="tpPrice" type="number" v-model="order.tpPrice" @input="order.tp = calculateTp(order)"
-							placeholder="TPprice" class="w-[6ch] bg-gray-900 text-center" :class="getColorClass(order, 'tp')" />
+						<input :id="'tpPrice-' + block.id + '-' + order.id" type="number" v-model="order.tpPrice"
+							@input="order.tp = calculateTp(order)" placeholder="TPprice" class="w-[6ch] bg-gray-900 text-center"
+							:class="getColorClass(order, 'tp')" />
 						<span :class="getColorClass(order, 'tp')">{{ calculateTp(order) }}</span>
 						<div class="text-gray-500">
-							<span class="text-xs">({{ calculateTpPriceMath(order) }})</span>
+							<span class="text-xs">({{ infoTpPrice(order) }})</span>
 						</div>
 					</div>
 				</div>
