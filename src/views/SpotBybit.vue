@@ -82,7 +82,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, confirmAction, cancelActio
 				</div>
 				<div class="">
 					<span>Buy:</span><br>
-					<span>{{ block.summary.avgBuyPrice.toFixed(4) }}</span>
+					<span>{{ block.summary.avgBuyPrice }}</span>
 				</div>
 				<div class="">
 					<span>Amount:</span><br>
@@ -90,7 +90,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, confirmAction, cancelActio
 				</div>
 				<div class="">
 					<span>Sell:</span><br>
-					<span>{{ block.summary.avgSellPrice.toFixed(4) }}</span>
+					<span>{{ block.summary.avgSellPrice }}</span>
 				</div>
 				<div class="">
 					<span>TP:</span><br>

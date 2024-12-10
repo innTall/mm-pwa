@@ -47,6 +47,25 @@ export const useSpotBitgetStore = defineStore(
       return block;
     }
 
+    //* ***** Number Precision for Price Calculations *****
+    function calculateDigits(price) {
+      if (price >= 10000) return 0;
+      if (price >= 1000) return 1;
+      if (price >= 100) return 2;
+      if (price >= 10) return 2;
+      if (price >= 1) return 3;
+      if (price >= 0.1) return 4;
+      return 5;
+    }
+
+    function calculateDigitsLote(digits) {
+      if (digits === 0) return 4;
+      if (digits === 1) return 3;
+      if (digits === 2) return 2;
+      if (digits === 3) return 1;
+      if (digits >= 4) return 0;
+    }
+
     //* ***** Calculates summary statistics for a block. *****
     //* @param {Object} block - The block whose summary is calculated.
     //* @returns {Object} Summary statistics.
@@ -68,16 +87,25 @@ export const useSpotBitgetStore = defineStore(
         0
       );
 
+      // Dynamically calculate digits for avgBuyPrice and avgSellPrice based on price
+      const digitsBuyPrice = calculateDigits(totalBuyOrder / totalAmount || 0);
+      const digitsSellPrice = calculateDigits(
+        totalSellOrder / totalAmount || 0
+      );
+
+      // Dynamically calculate digits for totalAmount
+      const digitsAmount = calculateDigitsLote(digitsBuyPrice);
+
       return {
         avgBuyPrice: totalAmount
-          ? Number((totalBuyOrder / totalAmount).toFixed(4))
+          ? Number((totalBuyOrder / totalAmount).toFixed(digitsBuyPrice))
           : 0,
         avgSellPrice: totalAmount
-          ? Number((totalSellOrder / totalAmount).toFixed(4))
+          ? Number((totalSellOrder / totalAmount).toFixed(digitsSellPrice))
           : 0,
         totalProfit: Number(totalProfit.toFixed(2)),
         totalBuyOrders: Number(totalBuyOrder.toFixed(2)),
-        totalAmount: Number(totalAmount.toFixed(3)),
+        totalAmount: Number(totalAmount.toFixed(digitsAmount)),
       };
     }
 
@@ -90,9 +118,9 @@ export const useSpotBitgetStore = defineStore(
         return +firstBuyOrder.value;
       }
       // Otherwise, calculate buyOrder as a multiplier of firstBuyOrder
-      return +
-        firstBuyOrder.value * Math.pow(coefNextBuyOrder.value, orderId - 1)
-      ;
+      return (
+        +firstBuyOrder.value * Math.pow(coefNextBuyOrder.value, orderId - 1)
+      );
     }
 
     //* ***** Recalculates order details based on buy/sell prices and previous order. *****
@@ -102,9 +130,11 @@ export const useSpotBitgetStore = defineStore(
       const buyPrice = +order.buyPrice || 1;
       const sellPrice = +order.sellPrice || null;
       const feeRate = 1 + fee;
+      const digits = calculateDigits(buyPrice);
+      const digitsLote = calculateDigitsLote(digits);
 
       order.buyOrder = +(calculateBuyOrder(order.id) * feeRate).toFixed(2);
-      order.amount = +(order.buyOrder / buyPrice).toFixed(2);
+      order.amount = +(order.buyOrder / buyPrice).toFixed(digitsLote);
       order.sellOrder = sellPrice
         ? +(sellPrice * order.amount * (1 - fee)).toFixed(2)
         : 0;
@@ -189,7 +219,7 @@ export const useSpotBitgetStore = defineStore(
     const clearSellPrice = (order) => {
       order.sellPrice = null; // null
     };
-    
+
     return {
       deposit,
       coefRisk,
