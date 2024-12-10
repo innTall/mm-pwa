@@ -267,5 +267,5 @@ export const useMarginBinanceStore = defineStore(
       infoTpPrice,
     };
   },
-  { persist: false }
+  { persist: true }
 );

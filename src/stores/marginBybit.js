@@ -267,5 +267,5 @@ export const useMarginBybitStore = defineStore(
       infoTpPrice,
     };
   },
-  { persist: false }
+  { persist: true }
 );

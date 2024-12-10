@@ -240,6 +240,6 @@ export const useSpotBinanceStore = defineStore(
     };
   },
   {
-    persist: false,
+    persist: true,
   }
 );

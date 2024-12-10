@@ -47,9 +47,9 @@ const { addBlock, addOrder, removeBlock, removeOrder, confirmAction, cancelActio
 						class="w-[10ch] bg-gray-900 border text-center" />
 					<input :id="`end-${block.id}`" type="date" v-model="block.end"
 						class="w-[10ch] bg-gray-900 border text-center" />
-					<button :id="`removeBlock-${block.id}`" @click="removeBlock(block.id)"
+					<button :id="`remove-block-${block.id}`" @click="removeBlock(block.id)"
 						class="px-2 font-bold text-red-600 border border-red-600">X Block</button>
-					<button :id="`addOrder-${block.id}`" @click="addOrder(block)"
+					<button :id="`add-order-${block.id}`" @click="addOrder(block)"
 						class="px-2 border border-green-600 font-extrabold text-green-600">+</button>
 				</div>
 			</div>
@@ -68,7 +68,7 @@ const { addBlock, addOrder, removeBlock, removeOrder, confirmAction, cancelActio
 						@input="recalculateOrder(order)" @focus="clearSellPrice(order)" />
 					<span>{{ order.sellOrder }}</span>
 					<span>{{ order.profit }}</span>
-					<button :id="`removeOrder-${block.id} -${order.id}`" @click="removeOrder(block.id, order.id)"
+					<button :id="`removeOrder-${block.id}-${order.id}`" @click="removeOrder(block.id, order.id)"
 						class="px-2 border border-red-600 font-bold text-red-600">X</button>
 				</div>
 			</div>

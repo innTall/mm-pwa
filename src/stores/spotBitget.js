@@ -240,6 +240,6 @@ export const useSpotBitgetStore = defineStore(
     };
   },
   {
-    persist: false,
+    persist: true,
   }
 );

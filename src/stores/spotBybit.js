@@ -240,6 +240,6 @@ export const useSpotBybitStore = defineStore(
     };
   },
   {
-    persist: false,
+    persist: true,
   }
 );

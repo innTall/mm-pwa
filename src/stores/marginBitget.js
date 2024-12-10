@@ -267,5 +267,5 @@ export const useMarginBitgetStore = defineStore(
       infoTpPrice,
     };
   },
-  { persist: false }
+  { persist: true }
 );

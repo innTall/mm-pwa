@@ -50,34 +50,34 @@ const cancelAction = () => {
 			<div class="">
 				<div class="flex justify-between">
 					<div class="">Deposit, $:</div>
-					<input :id="'deposit-' + deposit" type="number" v-model="deposit" step="1" min="1" required
+					<input id="deposit" type="number" v-model="deposit" step="1" min="1" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
 				</div>
 				<div class="flex justify-between">
 					<div class="">Leverage:</div>
-					<input :id="'leverage-' + leverage" type="number" v-model="leverage" step="1" min="1" required
+					<input id="leverage" type="number" v-model="leverage" step="1" min="1" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
 				</div>
 				<div class="flex justify-between">
 					<div class="">CoefCost, %:</div>
-					<input :id="'coefCost-' + coefCost" type="number" v-model="coefCost" step="1" min="1" required
+					<input id="coefCost" type="number" v-model="coefCost" step="1" min="1" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
 				</div>
 			</div>
 			<div class="">
 				<div class="flex justify-between">
 					<div class="">Margin:</div>
-					<input :id="'coefRisk-' + coefRisk" type="number" v-model="coefRisk" step="0.01" min="0" required
+					<input id="coefRisk" type="number" v-model="coefRisk" step="0.01" min="0" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 				</div>
 				<div class="flex justify-between">
 					<div class="">TP:</div>
-					<input :id="'takeProfit-' + takeProfit" type="number" v-model="takeProfit" step="0.01" min="0" required
+					<input id="takeProfit" type="number" v-model="takeProfit" step="0.01" min="0" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 				</div>
 				<div class="flex justify-between">
 					<div class="">SL:</div>
-					<input :id="'stopLoss-' + stopLoss" type="number" v-model="stopLoss" step="0.01" min="0" required
+					<input id="stopLoss" type="number" v-model="stopLoss" step="0.01" min="0" required
 						class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
 				</div>
 			</div>
@@ -119,9 +119,9 @@ const cancelAction = () => {
 					<div class="">
 						<span :class="getBlockTotalColor(block)">{{ block.totalActiveTpAndSl }}</span>
 					</div>
-					<button :id="'removeBlock-' + block.id" @click="openRemoveBlockDialog(block.id)"
+					<button :id="'remove-block-' + block.id" @click="openRemoveBlockDialog(block.id)"
 						class="px-2 font-bold text-red-600 border border-red-600">X Block</button>
-					<button :id="'addOrder-' + block.id" @click="addOrder(block)"
+					<button :id="'add-order-' + block.id" @click="addOrder(block)"
 						class="px-2 border border-green-600 font-extrabold text-green-600">
 						+
 					</button>
