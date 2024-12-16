@@ -170,7 +170,7 @@ export const useMarginBitgetStore = defineStore(
 
     function calculateSl(block) {
       const slPrice = parseFloat(block.slPrice);
-      if (!slPrice || !block.buyPrice || !block.amount) return null;
+      if (!slPrice || !block.buyPrice || !block.amount) return 0;
       const buyOrder = calculateBuyOrder(block);
       const feeBuy = (buyOrder * buyFee) / 100;
       const feeSL = (slPrice * block.amount * sellFee) / 100;
@@ -183,7 +183,7 @@ export const useMarginBitgetStore = defineStore(
 
     function calculateTp(block) {
       const tpPrice = parseFloat(block.tpPrice);
-      if (!tpPrice || !block.buyPrice || !block.amount) return null;
+      if (!tpPrice || !block.buyPrice || !block.amount) return 0;
       const buyOrder = calculateBuyOrder(block);
       const feeBuy = (buyOrder * buyFee) / 100;
       const feeTP = (tpPrice * block.amount * sellFee) / 100;
