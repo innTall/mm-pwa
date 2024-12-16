@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { supabase } from '../supabase';
+import { supabase } from '../api/supabase.js';
 
 const users = ref([]);
 const fetchUsers = async () => {
