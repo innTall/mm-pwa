@@ -10,12 +10,11 @@ export const useMarginBinanceStore = defineStore(
     let nextBlockId = 1;
 
     //* ----- Reactive State -----
-    const deposit = ref(468);
-    const leverage = ref(10);
-    const coefRisk = ref(5);
-    const coefCost = ref(20);
-    const takeProfit = ref(5);
-    const stopLoss = ref(2);
+   const deposit = ref(null);
+   const leverage = ref(null);
+   const coefRisk = ref(null);
+   const takeProfit = ref(null);
+   const stopLoss = ref(null);
     const buyPrice = ref(null);
 
     const activeBlocks = ref([createNewBlock()]); // List of active blocks
@@ -145,7 +144,7 @@ export const useMarginBinanceStore = defineStore(
         tpPriceMath: null,
         selectedSwitch: "sl",
       };
-      block.orders.push(newOrder);
+      block.orders.unshift(newOrder);
       // Move block to the top of the list
       const index = activeBlocks.value.findIndex((b) => b.id === block.id);
       if (index !== -1) {
@@ -244,7 +243,6 @@ export const useMarginBinanceStore = defineStore(
       deposit,
       leverage,
       coefRisk,
-      coefCost,
       takeProfit,
       stopLoss,
       activeBlocks,

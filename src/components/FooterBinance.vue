@@ -1,17 +1,12 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { computed } from 'vue';
+import { useMarginBinanceStore } from '@/stores/marginBinance.js';
+import { storeToRefs } from 'pinia';
+const { totalActiveTpAndSl } = storeToRefs(useMarginBinanceStore());
 const appVersion = __APP_VERSION__;
-const props = defineProps({
-	lastBalance: {
-		type: String,
-		required: false,
-		default: '0.00',
-	},
-});
-// Local state to store the last received balance
-const storedBalance = ref(props.lastBalance);
-watch(() => props.lastBalance, (newVal) => {
-	storedBalance.value = newVal || '0.00'; // Update the stored value when props change
+// Helper function to determine color class
+const totalActiveTpAndSlColor = computed(() => {
+	return totalActiveTpAndSl.value > 0 ? "text-green-500" : totalActiveTpAndSl.value < 0 ? "text-red-500" : "text-white";
 });
 </script>
 
@@ -33,9 +28,9 @@ watch(() => props.lastBalance, (newVal) => {
 			</RouterLink>
 		</div>
 		<div class="p-2">
-			<div class="flex justify-between px-2 py-1 gap-3 items-center">
-				<div>Free money:</div>
-				<div class="text-center font-bold">{{ storedBalance }}</div>
+			<div class="">
+				<div class="text-xs">Balance:</div>
+				<div class="text-center font-bold" :class="totalActiveTpAndSlColor">{{ totalActiveTpAndSl }}</div>
 			</div>
 		</div>
 	</div>

@@ -1,10 +1,11 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import FooterBybit from '../components/FooterBybit.vue';
+import SettingsBybit from '../components/SettingsBybit.vue';
 import { useMarginBybitStore } from '@/stores/marginBybit.js';
 import { storeToRefs } from 'pinia';
-const { deposit, leverage, coefRisk, margin, tpCost, slCost, buyOrderMath, coefCost,
-	takeProfit, stopLoss, activeBlocks, totalActiveTpAndSl, sortedSymbols } = storeToRefs(useMarginBybitStore());
+const { deposit, leverage, margin, tpCost, slCost, buyOrderMath,
+	takeProfit, stopLoss, activeBlocks, sortedSymbols } = storeToRefs(useMarginBybitStore());
 const { addBlock, removeBlock, addOrder, removeOrder, calculateBuyOrder, infoAmount, infoSlPrice,
 	infoTpPrice, calculateSl, calculateTp, } = useMarginBybitStore();
 
@@ -12,10 +13,6 @@ const { addBlock, removeBlock, addOrder, removeOrder, calculateBuyOrder, infoAmo
 const getColorClass = (block, type) => {
 	return block.selectedSwitch === type ? (type === "sl" ? "text-red-500" : "text-green-500") : "text-white";
 };
-// Helper function to determine color class
-const totalActiveTpAndSlColor = computed(() => {
-	return totalActiveTpAndSl.value > 0 ? "text-green-500" : totalActiveTpAndSl.value < 0 ? "text-red-500" : "text-white";
-});
 const getBlockTotalColor = (block) => {
 	const value = block.totalActiveTpAndSl; // Assuming this is computed for each block
 	return value > 0 ? "text-green-500" : value < 0 ? "text-red-500" : "text-white";
@@ -44,61 +41,40 @@ const cancelAction = () => {
 </script>
 
 <template>
-	<div class="flex flex-col h-screen">
+	<div class="">
 		<!-- Combined Static Block Section (Static + Symbols) -->
-		<div class="fixed w-full top-[12] z-10 px-2 bg-gray-900">
+		<div class="fixed w-full h-16 top-[10] z-10 px-2 bg-gray-900">
 			<!-- Static Configuration Section -->
-			<div class="flex justify-between text-sm">
-				<div class="">
-					<div class="flex justify-between">
-						<div class="">Deposit, $:</div>
-						<input id="deposit" type="number" v-model="deposit" step="1" min="1" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
-					</div>
-					<div class="flex justify-between">
-						<div class="">Leverage:</div>
-						<input id="leverage" type="number" v-model="leverage" step="1" min="1" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
-					</div>
-					<div class="flex justify-between">
-						<div class="">CoefCost, %:</div>
-						<input id="coefCost" type="number" v-model="coefCost" step="1" min="1" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-right" />
-					</div>
+			<div class="flex justify-between gap-1 text-center">
+				<div class="px-2 py-1 border rounded-lg items-center hover:bg-gray-700">
+					<SettingsBybit />
 				</div>
 				<div class="">
-					<div class="flex justify-between">
-						<div class="">Margin:</div>
-						<input id="coefRisk" type="number" v-model="coefRisk" step="0.01" min="0" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
-					</div>
-					<div class="flex justify-between">
-						<div class="">TP:</div>
-						<input id="takeProfit" type="number" v-model="takeProfit" step="0.01" min="0" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
-					</div>
-					<div class="flex justify-between">
-						<div class="">SL:</div>
-						<input id="stopLoss" type="number" v-model="stopLoss" step="0.01" min="0" required
-							class="w-[6ch] bg-gray-900 text-yellow-400 font-bold text-center" />
-					</div>
+					<div class="text-xs">Depo</div>
+					<div class="text-sm">{{ deposit }}$</div>
 				</div>
 				<div class="">
-					<div class="text-right">{{ margin }} $</div>
-					<div class="text-right">{{ tpCost }} $</div>
-					<div class="text-right">{{ slCost }} $</div>
+					<div class="text-xs">Lever</div>
+					<div class="text-sm">{{ leverage }}</div>
 				</div>
-				<div class="text-center">
-					<button @click="addBlock" class="px-2 border border-green-600 font-bold text-green-600">ADD</button>
-					<!-- Total sum of all active 'sl' and 'tp' values -->
-					<div class="">TP</div>
-					<div :class="totalActiveTpAndSlColor">{{ totalActiveTpAndSl }}</div>
+				<div class="">
+					<div class="text-xs">Margin</div>
+					<div class="text-sm">{{ margin }}$</div>
 				</div>
+				<div class="">
+					<div class="text-xs">TP-{{ takeProfit }}%</div>
+					<div class="text-sm">{{ tpCost }}$</div>
+				</div>
+				<div class="">
+					<div class="text-xs">SL-{{ stopLoss }}%</div>
+					<div class="text-sm">{{ slCost }}$</div>
+				</div>
+				<button @click="addBlock" class="px-2 py-1 text-sm border rounded-lg hover:bg-gray-700">Add</button>
 			</div>
 			<hr class="border-green-600 mt-1">
 			<!-- Block Symbols Section -->
 			<div class="">
-				<div class="flex gap-2 text-sm mb-1">
+				<div class="h-6 flex gap-2 text-sm items-center">
 					<div class="">Symbols:</div>
 					<ul class="flex">
 						<li v-for="symbol in sortedSymbols" :key="symbol" class="uppercase">
@@ -110,7 +86,7 @@ const cancelAction = () => {
 			</div>
 		</div>
 		<!-- Dynamic Orders Blocks (Scrollable Section) -->
-		<div class="overflow-y-auto flex-grow pt-24 pb-12">
+		<div class="fixed w-full pt-16 pb-12">
 			<div v-for="block in activeBlocks" :key="block.id" class="px-2 mt-2 text-sm">
 				<div class="">
 					<!-- Basic Block Data -->
@@ -148,58 +124,62 @@ const cancelAction = () => {
 					</div>
 					<hr class="border-gray-600 mt-2 mb-1">
 					<!-- Orders List -->
-					<div v-for="order in block.orders" :key="order.id" class="">
-						<div class="flex justify-between mt-1 items-center">
-							<span>{{ order.id }}</span>
-							<input :id="'buyPrice-' + block.id + '-' + order.id" type="number" v-model="order.buyPrice"
-								placeholder="Buy Price" class="w-[6ch] bg-gray-900 text-center" />
-							<input :id="'amount-' + block.id + '-' + order.id" type="number" v-model="order.amount"
-								placeholder="Amount" class="w-[6ch] bg-gray-900 text-center" />
-							<span class="">{{ calculateBuyOrder(order) }}</span>
-							<div class="text-gray-500 text-xs">
-								<span>({{ infoAmount(order) }} - </span>
-								<span>{{ buyOrderMath }})</span>
+					<div class="max-h-14 overflow-y-auto px-2">
+						<div v-for="order in block.orders" :key="order.id" class="">
+							<div class="flex justify-between mt-1 items-center">
+								<span>{{ order.id }}</span>
+								<input :id="'buyPrice-' + block.id + '-' + order.id" type="number" v-model="order.buyPrice"
+									placeholder="Buy Price" class="w-[6ch] bg-gray-900 text-center" />
+								<input :id="'amount-' + block.id + '-' + order.id" type="number" v-model="order.amount"
+									placeholder="Amount" class="w-[6ch] bg-gray-900 text-center" />
+								<span class="">{{ calculateBuyOrder(order) }}</span>
+								<div class="text-gray-500 text-xs">
+									<span>({{ infoAmount(order) }} - </span>
+									<span>{{ buyOrderMath }})</span>
+								</div>
+								<button :id="'removeOrder-' + block.id + '-' + order.id" @click="openRemoveOrderDialog(block, order.id)"
+									class="px-2 font-bold text-red-600 border border-red-600">X</button>
 							</div>
-							<button :id="'removeOrder-' + block.id + '-' + order.id" @click="openRemoveOrderDialog(block, order.id)"
-								class="px-2 font-bold text-red-600 border border-red-600">X</button>
+							<div class="flex justify-between mt-1 mb-1 items-center">
+								<!-- SL Switch -->
+								<div class="flex items-center">
+									<input :id="'sl-' + block.id + '-' + order.id" type="radio" :name="'switchGroup' + order.id"
+										v-model="order.selectedSwitch" value="sl" class="accent-red-600" />
+									<span :class="getColorClass(order, 'sl')">SL</span>
+								</div>
+								<input :id="'slPrice-' + block.id + '-' + order.id" type="number" v-model="order.slPrice"
+									@input="order.sl = calculateSl(order)" placeholder="SLprice" class="w-[6ch] bg-gray-900 text-center"
+									:class="getColorClass(order, 'sl')" />
+								<span :class="getColorClass(order, 'sl')">{{ calculateSl(order) }}</span>
+								<div class="text-gray-500">
+									<span class="text-xs">({{ infoSlPrice(order) }})</span>
+								</div>
+								<!-- TP Switch -->
+								<div class="flex items-center">
+									<input :id="'tp-' + block.id + '-' + order.id" type="radio" :name="'switchGroup' + order.id"
+										v-model="order.selectedSwitch" value="tp" class="accent-green-600" />
+									<span :class="getColorClass(order, 'tp')">TP</span>
+								</div>
+								<input :id="'tpPrice-' + block.id + '-' + order.id" type="number" v-model="order.tpPrice"
+									@input="order.tp = calculateTp(order)" placeholder="TPprice" class="w-[6ch] bg-gray-900 text-center"
+									:class="getColorClass(order, 'tp')" />
+								<span :class="getColorClass(order, 'tp')">{{ calculateTp(order) }}</span>
+								<div class="text-gray-500">
+									<span class="text-xs">({{ infoTpPrice(order) }})</span>
+								</div>
+							</div>
+							<hr class="border-gray-600">
 						</div>
-						<div class="flex justify-between mt-1 mb-1 items-center">
-							<!-- SL Switch -->
-							<div class="flex items-center">
-								<input :id="'sl-' + block.id + '-' + order.id" type="radio" :name="'switchGroup' + order.id"
-									v-model="order.selectedSwitch" value="sl" class="accent-red-600" />
-								<span :class="getColorClass(order, 'sl')">SL</span>
-							</div>
-							<input :id="'slPrice-' + block.id + '-' + order.id" type="number" v-model="order.slPrice"
-								@input="order.sl = calculateSl(order)" placeholder="SLprice" class="w-[6ch] bg-gray-900 text-center"
-								:class="getColorClass(order, 'sl')" />
-							<span :class="getColorClass(order, 'sl')">{{ calculateSl(order) }}</span>
-							<div class="text-gray-500">
-								<span class="text-xs">({{ infoSlPrice(order) }})</span>
-							</div>
-							<!-- TP Switch -->
-							<div class="flex items-center">
-								<input :id="'tp-' + block.id + '-' + order.id" type="radio" :name="'switchGroup' + order.id"
-									v-model="order.selectedSwitch" value="tp" class="accent-green-600" />
-								<span :class="getColorClass(order, 'tp')">TP</span>
-							</div>
-							<input :id="'tpPrice-' + block.id + '-' + order.id" type="number" v-model="order.tpPrice"
-								@input="order.tp = calculateTp(order)" placeholder="TPprice" class="w-[6ch] bg-gray-900 text-center"
-								:class="getColorClass(order, 'tp')" />
-							<span :class="getColorClass(order, 'tp')">{{ calculateTp(order) }}</span>
-							<div class="text-gray-500">
-								<span class="text-xs">({{ infoTpPrice(order) }})</span>
-							</div>
-						</div>
-						<hr class="border-gray-600">
+						<hr class="border-green-600">
 					</div>
-					<hr class="border-green-600">
+				</div>
+					<!-- Field for Chart -->
+					<div class="h-64 w-full border bg-gray-700 mt-2 text-center">--- CHART ---</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<footer class="fixed w-full h-12 left-0 bottom-0 z-10 bg-gray-900">
-		<FooterBybit />
-	</footer>
+		<footer class="fixed w-full h-12 left-0 bottom-0 z-10 bg-gray-900">
+			<FooterBybit />
+		</footer>
 </template>
 <style scoped></style>
