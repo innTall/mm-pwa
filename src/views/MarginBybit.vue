@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue';
-import FooterBybit from '../components/FooterBybit.vue';
 import SettingsBybit from '../components/SettingsBybit.vue';
 import { useMarginBybitStore } from '@/stores/marginBybit.js';
 import { storeToRefs } from 'pinia';
@@ -85,7 +84,7 @@ const cancelAction = () => {
 				<hr class="border-green-600">
 			</div>
 		</div>
-		<!-- Dynamic Orders Blocks (Scrollable Section) -->
+		<!-- Dynamic Orders Blocks -->
 		<div class="fixed w-full pt-16 pb-12">
 			<div v-for="block in activeBlocks" :key="block.id" class="px-2 mt-2 text-sm">
 				<div class="">
@@ -173,13 +172,10 @@ const cancelAction = () => {
 						<hr class="border-green-600">
 					</div>
 				</div>
-					<!-- Field for Chart -->
-					<div class="h-64 w-full border bg-gray-700 mt-2 text-center">--- CHART ---</div>
-				</div>
+				<!-- Block for Chart -->
+				<div class="h-64 w-full border bg-gray-700 mt-2 text-center">--- CHART ---</div>
 			</div>
 		</div>
-		<footer class="fixed w-full h-12 left-0 bottom-0 z-10 bg-gray-900">
-			<FooterBybit />
-		</footer>
+	</div>
 </template>
 <style scoped></style>

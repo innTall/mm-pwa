@@ -1,35 +1,19 @@
 <script setup>
-//import { RouterLink } from 'vue-router';
 import HeaderBar from './components/HeaderBar.vue';
-/*
-import { onMounted, ref } from 'vue';
-import AuthPage from './views/AuthPage.vue'
-import { supabase } from './supabase.js'
-
-const session = ref()
-
-onMounted(() => {
-  supabase.auth.getSession().then(({ data }) => {
-    session.value = data.session
-  })
-
-  supabase.auth.onAuthStateChange((_, _session) => {
-    session.value = _session
-  })
-})
-*/
+import FooterBar from './components/FooterBar.vue';
 </script>
 
 <template>
-  <div class="">
-    <header class="sticky top-0 w-full p-1 z-20 items-center bg-gray-900">
+  <div class="flex flex-col h-screen">
+    <header class="w-full top-0 p-1 z-20 bg-gray-900">
       <HeaderBar />
     </header>
-    <RouterView />
-    <!-- div class="">
-      <RouterView v-if="session" :session="session" />
-      <AuthPage v-else />
-    </div -->
+    <main class="flex-1 overflow-auto">
+      <RouterView />
+    </main> 
+    <footer class="w-full h-12 left-0 z-10 bg-gray-900">
+      <FooterBar />
+    </footer>
   </div>
 </template>
 <style scoped></style>

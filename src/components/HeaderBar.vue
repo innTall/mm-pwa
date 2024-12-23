@@ -9,13 +9,13 @@ import LogoItem from './layouts/LogoItem.vue';
 		</div>
 		<div class="flex justify-between gap-5 text-sm">
 			<div class="text-center">
-				<div class="">Bybit</div>
-				<RouterLink :to="{ name: 'MarginBybit' }" v-slot="{ isActive }">
+				<div class="text-xs">Bybit</div>
+				<RouterLink :to="{ name: 'TestPage' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Margin |</span>
 				</RouterLink>
-				<RouterLink :to="{ name: 'SpotBybit' }" v-slot="{ isActive }">
+				<!--RouterLink :to="{ name: 'SpotTrade' }" v-slot="{ isActive }">
 					<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Spot</span>
-				</RouterLink>
+				</RouterLink-->
 			</div>
 		</div>
 	</div>
