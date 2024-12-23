@@ -3,13 +3,14 @@ import SettingsButton from "./SettingsButton.vue";
 import { storeToRefs } from "pinia";
 import { useMarginSettingsStore } from "@/stores/marginSettings.js";
 import { useMarginOptionsStore } from "@/stores/marginOptions.js";
+import { useOrdersBlockStore } from "@/stores/ordersBlock.js";
 const { deposit, leverage, takeProfit, stopLoss } = storeToRefs(useMarginSettingsStore());
 const { margin, tpCost, slCost } = storeToRefs(useMarginOptionsStore());
-const { addBlock } = useMarginOptionsStore();
+const { addBlock } = useOrdersBlockStore();
 </script>
 
 <template>
-	<div class="flex justify-between px-2 gap-1 text-center">
+	<div class="flex justify-between gap-1 text-center">
 		<div class="px-2 py-1 border rounded-md items-center hover:bg-gray-700">
 			<SettingsButton />
 		</div>
@@ -35,6 +36,6 @@ const { addBlock } = useMarginOptionsStore();
 		</div>
 		<button @click="addBlock" class="px-2 py-1 text-sm border rounded-lg hover:bg-gray-700">Add</button>
 	</div>
-	<hr class="border-green-600 mt-1">
+	<hr class="border-green-600 mt-2">
 </template>
 <style scoped></style>
