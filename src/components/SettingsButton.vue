@@ -12,8 +12,8 @@ e.preventDefault();
 </script>
 
 <template>
-	<div class="container mx-auto p-4">
-		<button @click="openSettings = true" class="text-sm bg-gray-900 border text-white px-3 py-2 rounded-md">
+	<div class="container mx-auto">
+		<button @click="openSettings = true" class="text-sm bg-gray-900 text-white">
 			Set
 		</button>
 		<Teleport to="body">

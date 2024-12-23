@@ -1,11 +1,11 @@
 <script setup>
-import SettingsButton from '../components/SettingsButton.vue';
+import OptionsBar from '../components/OptionsBar.vue';
 </script>
 
 <template>
 	<div class="">
+		<OptionsBar />
 		Margin Trade
-		<SettingsButton />
 	</div>
 </template>
 <style scoped></style>
