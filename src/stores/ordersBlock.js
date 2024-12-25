@@ -1,42 +1,73 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useOrdersBlockStore = defineStore(
-  "ordersBlock",
-  () => {
-    // State: List of blocks
-    const blocks = ref([
-      {
-        id: 1, // Default block with unique ID
-        symbol: null,
-        interval: null,
-        quoteAsset: null,
-      },
-    ]);
+// Unique ID generator
+let nextBlockId = 1;
 
-    // Counter for generating unique IDs
-    let blockIdCounter = 2;
+export const useOrdersBlockStore = defineStore("ordersBlock", () => {
+  const blocks = ref([]);
 
-    // Action: Add a new block
-    const addBlock = () => {
-      blocks.value.push({
-        id: blockIdCounter++, // Assign a unique ID
-        symbol: null,
-        interval: null,
-        quoteAsset: null,
-      });
+  // Helper function to generate unique block IDs
+  const generateUniqueBlockId = () => nextBlockId++;
+
+  // Creates a new margin order
+  const createNewMarginOrder = (nextOrderId) => ({
+    id: nextOrderId,
+    buyPrice: null,
+    amount: null,
+    slPrice: null,
+    tpPrice: null,
+    selectedSwitch: "sl",
+    //};
+  });
+
+  // Creates a new block with a default margin order
+  const createNewBlock = () => {
+    const newBlock = {
+      id: generateUniqueBlockId(),
+      symbol: "",
+      interval: "",
+      quoteAsset: "",
+      orders: [createNewMarginOrder(1)],
+      nextOrderId: 2, // Start order numbering for this block
+      isSaved: false,
     };
+    blocks.value.push(newBlock);
+    return newBlock;
+  };
 
-    // Action: Remove a block by its ID
-    const removeBlock = (id) => {
-      blocks.value = blocks.value.filter((block) => block.id !== id);
-    };
+  const ensureDefaultBlock = () => {
+    if (blocks.value.length === 0) {
+      createNewBlock();
+    }
+  };
 
-    return {
-      blocks,
-      addBlock,
-      removeBlock,
-    };
-  },
-  { persist: false }
-);
+  const addBlock = () => createNewBlock();
+
+  const removeBlock = (blockId) => {
+    blocks.value = blocks.value.filter((block) => block.id !== blockId);
+    ensureDefaultBlock(); // Ensure at least one block exists
+  };
+
+  const addOrder = (block) => {
+    block.orders.push(createNewMarginOrder(block.nextOrderId));
+    block.nextOrderId++;
+  };
+
+  const removeOrder = (block, orderId) => {
+    block.orders = block.orders.filter((order) => order.id !== orderId);
+    if (block.orders.length === 0) {
+      removeBlock(block.id); // Remove block if no orders remain
+    }
+  };
+
+  ensureDefaultBlock(); // Ensure one block with one order on initialization
+  
+  return {
+    blocks,
+    addBlock,
+    removeBlock,
+    addOrder,
+    removeOrder,
+  };
+});
