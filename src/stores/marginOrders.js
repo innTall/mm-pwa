@@ -4,13 +4,12 @@ import { useMarginSettingsStore } from "@/stores/marginSettings.js";
 import { useMarginOptionsStore } from "@/stores/marginOptions.js";
 
 export const useMarginOrdersStore = defineStore("marginOrders", () => {
-  
   const { leverage } = storeToRefs(useMarginSettingsStore());
   const { margin, tpCost, slCost } = storeToRefs(useMarginOptionsStore());
 
   const buyFee = 0.02;
   const sellFee = 0.055;
-  
+
   //* ----- Calculation Methods -----
   function calculateBuyOrder(order) {
     if (!order.buyPrice || !order.amount) return 0;
@@ -59,24 +58,39 @@ export const useMarginOrdersStore = defineStore("marginOrders", () => {
   }
   const digits = computed(() => calculateDigits(buyPrice.value || 0));
   const digitsLote = computed(() => calculateDigitsLote(digits.value));
-  
+
   //* ----- Helper Functions -----
   const infoAmount = (block) => {
     if (!block.buyPrice || block.buyPrice <= 0) return 0;
-    return +((leverage.value * margin.value) / block.buyPrice).toFixed(digitsLote.value);
+    return +((leverage.value * margin.value) / block.buyPrice).toFixed(
+      digitsLote.value
+    );
   };
 
   const infoSlPrice = (block) => {
     if (!block.buyPrice || !block.amount || block.amount <= 0) return null;
-    return +(((slCost.value - block.buyPrice * block.amount) * -1) /
-      block.amount).toFixed(digits.value);
+    return +(
+      ((slCost.value - block.buyPrice * block.amount) * -1) /
+      block.amount
+    ).toFixed(digits.value);
   };
 
   const infoTpPrice = (block) => {
     if (!block.buyPrice || !block.amount || block.amount <= 0) return null;
-    return +((tpCost.value + block.buyPrice * block.amount) / block.amount).toFixed(digits.value);
+    return +(
+      (tpCost.value + block.buyPrice * block.amount) /
+      block.amount
+    ).toFixed(digits.value);
   };
 
+  // Helper function to determine the color class for SL/TP
+  const getColorClass = (block, type) => {
+    return block.selectedSwitch === type
+      ? type === "sl"
+        ? "text-red-500"
+        : "text-green-500"
+      : "text-white";
+  };
   return {
     calculateBuyOrder,
     calculateSl,
@@ -84,5 +98,6 @@ export const useMarginOrdersStore = defineStore("marginOrders", () => {
     infoAmount,
     infoSlPrice,
     infoTpPrice,
+    getColorClass,
   };
 });

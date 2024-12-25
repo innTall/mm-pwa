@@ -32,7 +32,7 @@ export const useOrdersBlockStore = defineStore("ordersBlock", () => {
       nextOrderId: 2, // Start order numbering for this block
       isSaved: false,
     };
-    blocks.value.push(newBlock);
+    blocks.value.unshift(newBlock);
     return newBlock;
   };
 
@@ -50,7 +50,7 @@ export const useOrdersBlockStore = defineStore("ordersBlock", () => {
   };
 
   const addOrder = (block) => {
-    block.orders.push(createNewMarginOrder(block.nextOrderId));
+    block.orders.unshift(createNewMarginOrder(block.nextOrderId));
     block.nextOrderId++;
   };
 

@@ -8,8 +8,8 @@ const { openDialog, confirmAction, cancelAction } = useModalRemoveStore();
 const { showModalRemove, confirmMessage, } = storeToRefs(useModalRemoveStore());
 const { buyOrderMath } = storeToRefs(useMarginOptionsStore());
 const { removeOrder } = useOrdersBlockStore();
-const { selectedSwitch } = storeToRefs(useMarginOrdersStore());
-const { calculateBuyOrder, calculateSl, calculateTp,	infoAmount, infoSlPrice, infoTpPrice, } = useMarginOrdersStore();
+const { selectedSwitch,  } = storeToRefs(useMarginOrdersStore());
+const { calculateBuyOrder, calculateSl, calculateTp,	infoAmount, infoSlPrice, infoTpPrice, getColorClass } = useMarginOrdersStore();
 const props = defineProps({
 	block: {
 		type: Object,
@@ -24,7 +24,7 @@ const openRemoveOrderDialog = (block, orderId) => {
 </script>
 
 <template>
-	<div v-if="block && block.orders" class="text-sm">
+	<div v-if="block && block.orders" class="max-h-16 overflow-y-auto text-sm">
 		<div v-for="(order, index) in block.orders" :key="order.id" class="mt-2 border-b border-gray-600">
 			<!-- Order Input -->
 			<div class="flex justify-between mt-1 items-center">
@@ -46,11 +46,11 @@ const openRemoveOrderDialog = (block, orderId) => {
 				<div class="flex items-center">
 					<input id="sl" type="radio" name="switchGroup" v-model="order.selectedSwitch" value="sl"
 						class="accent-red-600" />
-					<span>SL</span>
+					<span :class="getColorClass(order, 'sl')">SL</span>
 				</div>
 				<input id="slPrice" type="number" v-model="order.slPrice" placeholder="SLprice"
-					class="w-[6ch] bg-gray-900 text-center" />
-				<span>{{ calculateSl(order) }}</span>
+					class="w-[6ch] bg-gray-900 text-center" :class="getColorClass(order, 'sl')" />
+				<span :class="getColorClass(order, 'sl')">{{ calculateSl(order) }}</span>
 				<div class="text-gray-500">
 					<span class="text-xs">({{ infoSlPrice(order) }})</span>
 				</div>
@@ -58,11 +58,11 @@ const openRemoveOrderDialog = (block, orderId) => {
 				<div class="flex items-center">
 					<input id="tp" type="radio" name="switchGroup" v-model="order.selectedSwitch" value="tp"
 						class="accent-green-600" />
-					<span>TP</span>
+					<span :class="getColorClass(order, 'tp')">TP</span>
 				</div>
 				<input id="tpPrice" type="number" v-model="order.tpPrice" placeholder="TPprice"
-					class="w-[6ch] bg-gray-900 text-center" />
-				<span>{{ calculateTp(order) }}</span>
+					class="w-[6ch] bg-gray-900 text-center" :class="getColorClass(order, 'tp')" />
+				<span :class="getColorClass(order, 'tp')">{{ calculateTp(order) }}</span>
 				<div class="text-gray-500">
 					<span class="text-xs">({{ infoTpPrice(order) }})</span>
 				</div>
