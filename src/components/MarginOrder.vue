@@ -3,6 +3,9 @@ import { storeToRefs } from 'pinia';
 import { useMarginOptionsStore } from "@/stores/marginOptions.js";
 import { useMarginOrdersStore } from '@/stores/marginOrders.js';
 import { useOrdersBlockStore } from '@/stores/ordersBlock.js';
+import { useModalRemoveStore } from "@/stores/modalRemove.js";
+const { openDialog, confirmAction, cancelAction } = useModalRemoveStore();
+const { showModalRemove, confirmMessage, } = storeToRefs(useModalRemoveStore());
 const { buyOrderMath } = storeToRefs(useMarginOptionsStore());
 const { removeOrder } = useOrdersBlockStore();
 const { selectedSwitch } = storeToRefs(useMarginOrdersStore());
@@ -13,6 +16,11 @@ const props = defineProps({
 		required: true,
 	},
 });
+const openRemoveOrderDialog = (block, orderId) => {
+	openDialog("Delete this order?", () => {
+		removeOrder(block, orderId);
+	});
+};
 </script>
 
 <template>
@@ -30,13 +38,14 @@ const props = defineProps({
 					<span>({{ infoAmount(order) }} - </span>
 					<span>{{ buyOrderMath }})</span>
 				</div>
-				<button id="removeOrder" @click="removeOrder(block, order.id)"
+				<button id="removeOrder" @click="openRemoveOrderDialog(block, order.id)"
 					class="flex px-2 font-bold text-red-600 border border-red-600 items-center">x</button>
 			</div>
 			<div class="flex justify-between mt-1 mb-1 items-center">
 				<!-- SL Switch -->
 				<div class="flex items-center">
-					<input id="sl" type="radio" name="switchGroup" v-model="order.selectedSwitch" value="sl" class="accent-red-600" />
+					<input id="sl" type="radio" name="switchGroup" v-model="order.selectedSwitch" value="sl"
+						class="accent-red-600" />
 					<span>SL</span>
 				</div>
 				<input id="slPrice" type="number" v-model="order.slPrice" placeholder="SLprice"
@@ -47,7 +56,8 @@ const props = defineProps({
 				</div>
 				<!-- TP Switch -->
 				<div class="flex items-center">
-					<input id="tp" type="radio" name="switchGroup" v-model="order.selectedSwitch" value="tp" class="accent-green-600" />
+					<input id="tp" type="radio" name="switchGroup" v-model="order.selectedSwitch" value="tp"
+						class="accent-green-600" />
 					<span>TP</span>
 				</div>
 				<input id="tpPrice" type="number" v-model="order.tpPrice" placeholder="TPprice"

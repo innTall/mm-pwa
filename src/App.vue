@@ -1,6 +1,7 @@
 <script setup>
 import HeaderBar from './components/HeaderBar.vue';
 import FooterBar from './components/FooterBar.vue';
+import ModalRemove from './components/layouts/ModalRemove.vue';
 </script>
 
 <template>
@@ -10,6 +11,7 @@ import FooterBar from './components/FooterBar.vue';
     </header>
     <main class="flex-1 overflow-auto px-2">
       <RouterView />
+      <ModalRemove />
     </main> 
     <footer class="w-full h-12 p-2 left-0 z-10 bg-gray-900">
       <FooterBar />

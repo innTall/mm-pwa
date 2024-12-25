@@ -1,9 +1,17 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import MarginOrder from './MarginOrder.vue';
-import { useOrdersBlockStore } from '@/stores/ordersBlock';
+import { useOrdersBlockStore } from '@/stores/ordersBlock.js';
+import { useModalRemoveStore } from "@/stores/modalRemove.js";
+const { openDialog } = useModalRemoveStore();
+const { showModalRemove, confirmMessage, } = storeToRefs(useModalRemoveStore());
 const { blocks } = storeToRefs(useOrdersBlockStore());
 const { addBlock, removeBlock, addOrder } = useOrdersBlockStore();
+const openRemoveBlockDialog = (blockId) => {
+	openDialog("Delete this block?", () => {
+		removeBlock(blockId);
+	});
+};
 </script>
 
 <template>
@@ -15,7 +23,7 @@ const { addBlock, removeBlock, addOrder } = useOrdersBlockStore();
 				class="w-[8ch] bg-gray-900 border text-center" />
 			<input :id="'quoteAsset-' + block.id" type="text" v-model="block.quoteAsset" placeholder="usdt"
 				class="w-[8ch] bg-gray-900 border text-center uppercase" />
-			<button @click="removeBlock(block.id)" class="px-2 font-bold text-red-600 border border-red-600">
+			<button @click="openRemoveBlockDialog(block.id)" class="px-2 font-bold text-red-600 border border-red-600">
 				X
 			</button>
 			<button @click="addOrder(block)" id="addOrder" class="px-2 font-bold text-green-600 border border-green-600">
