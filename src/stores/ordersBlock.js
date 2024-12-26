@@ -26,8 +26,8 @@ export const useOrdersBlockStore = defineStore("ordersBlock", () => {
     const newBlock = {
       id: generateUniqueBlockId(),
       symbol: "",
-      interval: "",
-      quoteAsset: "",
+      //interval: "",
+      //quoteAsset: "",
       orders: [createNewMarginOrder(1)],
       nextOrderId: 2, // Start order numbering for this block
       isSaved: false,

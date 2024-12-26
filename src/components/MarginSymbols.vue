@@ -1,8 +1,16 @@
 <script setup>
+import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useMarginSymbolsStore } from "@/stores/marginSymbols.js";
+
 const { sortedSymbols } = storeToRefs(useMarginSymbolsStore());
 const { scrollToBlock } = useMarginSymbolsStore();
+const selectedSymbolId = ref(null); // Track the currently selected symbol
+
+const handleSymbolClick = (symbolId, symbolName) => {
+	selectedSymbolId.value = symbolId; // Update the selected symbol ID
+	scrollToBlock(symbolId, symbolName); // Perform the scroll action
+};
 </script>
 
 <template>
@@ -14,7 +22,8 @@ const { scrollToBlock } = useMarginSymbolsStore();
 				<!-- Link/Button for Each Symbol -->
 				<li v-for="symbol in sortedSymbols" :key="symbol.id"
 					class="text-blue-500 cursor-pointer hover:underline uppercase"
-					@click="scrollToBlock(symbol.id)">
+					:class="selectedSymbolId === symbol.id ? 'bg-blue-500 text-white rounded px-2' : ''"
+					@click="handleSymbolClick(symbol.id, symbol.symbol)">
 					{{ symbol.symbol }}
 				</li>
 			</ul>
