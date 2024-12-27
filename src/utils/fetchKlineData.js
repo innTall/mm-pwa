@@ -28,7 +28,25 @@ export async function fetchKlineData(
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
     }
     const data = await response.json();
-    return data; // Return the fetched data
+
+    // Ensure the response contains expected data
+    if (!data || !data.result || !Array.isArray(data.result.list)) {
+      console.error("Unexpected data format from API:", data);
+      return null;
+    }
+
+    // Convert the raw data into Lightweight Charts format
+    const formattedData = data.result.list.map((kline) => {
+      return {
+        time: Math.floor(kline[0] / 1000), // Convert milliseconds to seconds
+        open: parseFloat(kline[1]), // Open price
+        high: parseFloat(kline[2]), // High price
+        low: parseFloat(kline[3]), // Low price
+        close: parseFloat(kline[4]), // Close price
+      };
+    });
+
+    return formattedData; // Return formatted data
   } catch (error) {
     console.error("Failed to fetch Kline data:", error);
     alert("Failed to fetch data. See console for details.");

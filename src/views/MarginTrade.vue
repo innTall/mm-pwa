@@ -3,6 +3,7 @@ import OptionsBar from '../components/OptionsBar.vue';
 import MarginSymbols from '../components/MarginSymbols.vue';
 import OrdersBlock from '../components/OrdersBlock.vue';
 import KlinesBybit from '../api/KlinesBybit.vue';
+import CandlesChart from '../components/CandlesChart.vue';
 </script>
 
 <template>
@@ -11,6 +12,7 @@ import KlinesBybit from '../api/KlinesBybit.vue';
 		<MarginSymbols />
 		<OrdersBlock />
 		<KlinesBybit />
+		<CandlesChart />
 	</div>
 </template>
 <style scoped></style>
