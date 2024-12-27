@@ -40,7 +40,7 @@ const downloadJSON = () => {
 			<button @click="downloadJSON" :disabled="!klineData" class="bg-gray-700 px-2">JSON</button>
 		</div>
 		<hr class="border-green-600 mt-2">
-		<pre v-if="klineData">{{ klineData }}</pre>
+		<!--pre v-if="klineData">{{ klineData }}</pre-->
 	</div>
 </template>
 

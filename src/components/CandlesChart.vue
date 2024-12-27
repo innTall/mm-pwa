@@ -22,15 +22,15 @@ onMounted(async () => {
 		width: chartContainer.value.clientWidth,
 		height: chartContainer.value.clientHeight,
 		layout: {
-			backgroundColor: "#ffffff",
-			textColor: "#333",
+			background: {color: "#111827" },
+			textColor: "#ffffff",
 		},
 		grid: {
 			vertLines: {
-				color: "#eeeeee",
+				color: "#1F2937",
 			},
 			horzLines: {
-				color: "#eeeeee",
+				color: "#1F2937",
 			},
 		},
 		crosshair: {
@@ -67,5 +67,10 @@ onMounted(async () => {
 </script>
 
 <template>
-	<div ref="chartContainer" id="candlestick-chart" class="relative w-full h-96"></div>
+	<div class="">
+		<div ref="chartContainer" id="candlestick-chart" class="relative w-full h-96 bg-gray-900"
+			style="background-color: #111827;">
+		</div>
+	</div>
 </template>
+<style lang="css" scoped></style>

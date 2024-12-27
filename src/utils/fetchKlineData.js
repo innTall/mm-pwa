@@ -1,3 +1,29 @@
+/*
+import data from "../data/kline_data.json";
+export async function fetchKlineData() {
+  //const data = await response.json();
+
+  // Ensure the response contains expected data
+  if (!data || !data.result || !Array.isArray(data.result.list)) {
+    console.error("Unexpected data format from API:", data);
+    return null;
+  }
+
+  // Convert the raw data into Lightweight Charts format
+  const formattedData = data.result.list.map((kline) => {
+    return {
+      time: Math.floor(kline[0] / 1000), // Convert milliseconds to seconds
+      open: parseFloat(kline[1]), // Open price
+      high: parseFloat(kline[2]), // High price
+      low: parseFloat(kline[3]), // Low price
+      close: parseFloat(kline[4]), // Close price
+    };
+  });
+
+  return formattedData; // Return formatted data
+}
+*/
+
 export async function fetchKlineData(
   baseAsset,
   quoteAsset = "USDT",
@@ -27,6 +53,7 @@ export async function fetchKlineData(
     if (!response.ok) {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
     }
+
     const data = await response.json();
 
     // Ensure the response contains expected data
