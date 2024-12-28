@@ -8,8 +8,8 @@ const { openDialog, confirmAction, cancelAction } = useModalRemoveStore();
 const { showModalRemove, confirmMessage, } = storeToRefs(useModalRemoveStore());
 const { buyOrderMath } = storeToRefs(useMarginOptionsStore());
 const { removeOrder } = useOrdersBlockStore();
-const { selectedSwitch,  } = storeToRefs(useMarginOrdersStore());
-const { calculateBuyOrder, calculateSl, calculateTp,	infoAmount, infoSlPrice, infoTpPrice, getColorClass } = useMarginOrdersStore();
+const { selectedSwitch, } = storeToRefs(useMarginOrdersStore());
+const { calculateBuyOrder, calculateSl, calculateTp, infoAmount, infoSlPrice, infoTpPrice, getColorClass } = useMarginOrdersStore();
 const props = defineProps({
 	block: {
 		type: Object,
@@ -67,7 +67,7 @@ const openRemoveOrderDialog = (block, orderId) => {
 					<span class="text-xs">({{ infoTpPrice(order) }})</span>
 				</div>
 			</div>
-			<hr class="border-gray-600">
+			<hr class="w-1/2 border-gray-600">
 		</div>
 	</div>
 </template>

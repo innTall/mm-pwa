@@ -67,9 +67,8 @@ onMounted(async () => {
 </script>
 
 <template>
-	<div class="">
-		<div ref="chartContainer" id="candlestick-chart" class="relative w-full h-96 bg-gray-900"
-			style="background-color: #111827;">
+	<div class="relative w-full h-full">
+		<div ref="chartContainer" id="candlestick-chart" class="absolute inset-0 bg-gray-900">
 		</div>
 	</div>
 </template>

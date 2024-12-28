@@ -6,14 +6,14 @@ import ModalRemove from './components/layouts/ModalRemove.vue';
 
 <template>
   <div class="flex flex-col h-screen">
-    <header class="w-full top-0 p-2 z-20 bg-gray-900">
+    <header class="w-full h-12 top-0 left-0 fixed p-2 z-20 bg-gray-900">
       <HeaderBar />
     </header>
-    <main class="flex-1 overflow-auto px-2">
+    <main class="flex-1 mt-16 mb-12 overflow-hidden px-2">
       <RouterView />
       <ModalRemove />
-    </main> 
-    <footer class="w-full h-12 p-2 left-0 z-10 bg-gray-900">
+    </main>
+    <footer class="w-full h-12 bottom-0 left-0 fixed p-2 z-10 bg-gray-900">
       <FooterBar />
     </footer>
   </div>

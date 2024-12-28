@@ -15,7 +15,7 @@ const handleSymbolClick = (symbolId, symbolName) => {
 
 <template>
 	<!-- Block Symbols Section -->
-	<div class="">
+	<div class="overflow-x-auto">
 		<div class="h-6 flex gap-2 text-sm items-center">
 			<div class="">Symbols:</div>
 			<ul class="flex gap-2">

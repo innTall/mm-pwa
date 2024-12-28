@@ -29,7 +29,8 @@ const downloadJSON = () => {
 </script>
 
 <template>
-	<div class="text-sm mt-2">
+	<div class="text-sm">
+		<hr class="border-green-600 mb-2">
 		<div class="flex justify-between">
 			<input id="interval" type="number" v-model="interval" placeholder="tf"
 				class="w-[6ch] bg-gray-900 border text-center" />

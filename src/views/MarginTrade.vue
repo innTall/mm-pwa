@@ -7,12 +7,14 @@ import CandlesChart from '../components/CandlesChart.vue';
 </script>
 
 <template>
-	<div class="">
+	<div class="flex flex-col h-full">
 		<OptionsBar />
-		<MarginSymbols />
-		<OrdersBlock />
-		<KlinesBybit />
-		<CandlesChart />
+		<MarginSymbols class="flex-shrink-0" />
+		<OrdersBlock class="" />
+		<KlinesBybit class="flex-shrink-0" />
+		<div class="flex-1">
+			<CandlesChart />
+		</div>
 	</div>
 </template>
 <style scoped></style>
