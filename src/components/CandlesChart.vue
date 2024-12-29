@@ -4,62 +4,82 @@ import { storeToRefs } from "pinia";
 import { createChart } from "lightweight-charts";
 import { fetchKlineData } from "@/utils/fetchKlineData.js";
 import { useKlinesBybitStore } from "@/stores/klinesBybit.js";
+import { calculateAO } from "@/utils/ao.js";
 
 // Access the Pinia store for Klines
 const { baseAsset, quoteAsset, interval, limit } = storeToRefs(useKlinesBybitStore()); // Destructure reactive variables
-const chartContainer = ref(null);
-let candlestickSeries = null; //+++ Declare candlestickSeries outside the onMounted scope
-let chart = null; //+++ Declare chart globally to allow reinitialization
+
+const combinedChartContainer = ref(null);
+let priceChart = null;
+let aoChart = null;
+let priceCandlestickSeries = null;
+let aoHistogramSeries = null;
+
+// Function to resize charts dynamically
+const handleResize = () => {
+	const container = combinedChartContainer.value;
+	if (!container) return;
+
+	const containerHeight = container.offsetHeight;
+	const priceChartHeight = (4 / 5) * containerHeight;
+	const aoChartHeight = (1 / 5) * containerHeight;
+
+	if (priceChart) {
+		priceChart.resize(container.offsetWidth, priceChartHeight);
+	}
+	if (aoChart) {
+		aoChart.resize(container.offsetWidth, aoChartHeight);
+	}
+};
 
 // Function to fetch and update chart data
-const updateChart = async () => {
-	if (!chart || !candlestickSeries) return; // Ensure chart is initialized
-	const data = await fetchKlineData(
-		baseAsset.value,
-		quoteAsset.value,
-		interval.value,
-		limit.value
-	);
+const updateCharts = async () => {
+	if (!priceChart || !priceCandlestickSeries || !aoChart || !aoHistogramSeries) return;
 
+	const data = await fetchKlineData(baseAsset.value, quoteAsset.value, interval.value, limit.value);
 	if (!data) {
 		console.error("Failed to fetch candlestick data.");
 		return;
 	}
 
 	const sortedData = data.sort((a, b) => a.time - b.time);
-	candlestickSeries.setData(sortedData); // Update chart data
+	priceCandlestickSeries.setData(sortedData);
+
+	const aoData = calculateAO(sortedData);
+	aoHistogramSeries.setData(aoData);
 };
 
-// Initialize chart
-const initializeChart = () => {
-	chart = createChart(chartContainer.value, {
-		width: chartContainer.value.clientWidth,
-		height: chartContainer.value.clientHeight,
+// Initialize both charts
+const initializeCharts = () => {
+	const container = combinedChartContainer.value;
+	if (!container) return;
+
+	const containerHeight = container.offsetHeight;
+	const priceChartHeight = (4 / 5) * containerHeight;
+	const aoChartHeight = (1 / 5) * containerHeight;
+
+	// Price Chart
+	priceChart = createChart(container, {
+		width: container.offsetWidth,
+		height: priceChartHeight,
 		layout: {
 			background: { color: "#111827" },
 			textColor: "#ffffff",
 		},
 		grid: {
-			vertLines: {
-				color: "#1F2937",
-			},
-			horzLines: {
-				color: "#1F2937",
-			},
+			vertLines: { color: "#1F2937" },
+			horzLines: { color: "#1F2937" },
 		},
-		crosshair: {
-			mode: 1, // Normal crosshair mode
+		timeScale: {
+			borderColor: "#cccccc",
+			rightOffset: 0, // Disable any offset on the time scale
 		},
 		priceScale: {
 			borderColor: "#cccccc",
 		},
-		timeScale: {
-			borderColor: "#cccccc",
-		},
 	});
 
-	// Add a candlestick series
-	candlestickSeries = chart.addCandlestickSeries({
+	priceCandlestickSeries = priceChart.addCandlestickSeries({
 		upColor: "#4caf50",
 		downColor: "#f44336",
 		borderUpColor: "#4caf50",
@@ -68,24 +88,62 @@ const initializeChart = () => {
 		wickDownColor: "#f44336",
 	});
 
-	// Handle window resize
-	window.addEventListener("resize", () => {
-		chart.resize(chartContainer.value.clientWidth, chartContainer.value.clientHeight);
+	// AO Chart
+	aoChart = createChart(container, {
+		width: container.offsetWidth,
+		height: aoChartHeight,
+		layout: {
+			background: { color: "#111827" },
+			textColor: "#ffffff",
+		},
+		grid: {
+			vertLines: { color: "#1F2937" },
+			horzLines: { color: "#1F2937" },
+		},
+		timeScale: {
+			borderColor: "#cccccc",
+			visible: false, // Hide the time scale for the AO chart (shared with price chart)
+			rightOffset: 0, // Disable any offset on the time scale
+		},
+		priceScale: {
+			borderColor: "#cccccc",
+		},
 	});
+
+	aoHistogramSeries = aoChart.addHistogramSeries({
+		color: "#00FF00",
+		base: 0,
+		priceLineVisible: false, // Hides the dynamic price line
+		lastValueVisible: false, // Hides the last value label
+	});
+
+	// Sync time scale between the charts
+	const priceTimeScale = priceChart.timeScale();
+	const aoTimeScale = aoChart.timeScale();
+	priceTimeScale.subscribeVisibleLogicalRangeChange((range) => {
+		aoTimeScale.setVisibleLogicalRange(range);
+	});
+
+	aoTimeScale.subscribeVisibleLogicalRangeChange((range) => {
+		priceTimeScale.setVisibleLogicalRange(range);
+	});
+
+	// Handle window resize
+	window.addEventListener("resize", handleResize);
 };
 
 onMounted(() => {
-	initializeChart();
-	updateChart(); // Initial data fetch
+	initializeCharts();
+	updateCharts(); // Initial data fetch
 });
 
 // Watch for changes in store variables
-watch([baseAsset, quoteAsset, interval, limit], updateChart);
+watch([baseAsset, quoteAsset, interval, limit], updateCharts);
 </script>
 
 <template>
 	<div class="relative w-full h-full">
-		<div ref="chartContainer" id="candlestick-chart" class="absolute inset-0 bg-gray-900">
+		<div ref="combinedChartContainer" id="combined-chart-container" class="absolute inset-0 bg-gray-900">
 		</div>
 	</div>
 </template>
