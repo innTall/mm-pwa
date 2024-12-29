@@ -32,7 +32,6 @@ export async function fetchKlineData(
 ) {
   if (!baseAsset || !quoteAsset) {
     console.error("Base asset or quote asset is not set!");
-    alert("Please ensure both baseAsset and quoteAsset are provided.");
     return null; // Return null to handle gracefully
   }
 
@@ -76,7 +75,6 @@ export async function fetchKlineData(
     return formattedData; // Return formatted data
   } catch (error) {
     console.error("Failed to fetch Kline data:", error);
-    alert("Failed to fetch data. See console for details.");
     return null; // Return null in case of error
   }
 }

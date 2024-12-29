@@ -1,28 +1,42 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
+import { storeToRefs } from "pinia";
 import { createChart } from "lightweight-charts";
-import { fetchKlineData } from "@/utils/fetchKlineData";
+import { fetchKlineData } from "@/utils/fetchKlineData.js";
+import { useKlinesBybitStore } from "@/stores/klinesBybit.js";
+
+// Access the Pinia store for Klines
+const { baseAsset, quoteAsset, interval, limit } = storeToRefs(useKlinesBybitStore()); // Destructure reactive variables
 const chartContainer = ref(null);
-//const candlestickData = ref([]);
+let candlestickSeries = null; //+++ Declare candlestickSeries outside the onMounted scope
+let chart = null; //+++ Declare chart globally to allow reinitialization
 
-onMounted(async () => {
-	const baseAsset = "BTC";
-	const quoteAsset = "USDT";
-	const interval = "15"; // 15-minute intervals
+// Function to fetch and update chart data
+const updateChart = async () => {
+	if (!chart || !candlestickSeries) return; // Ensure chart is initialized
+	const data = await fetchKlineData(
+		baseAsset.value,
+		quoteAsset.value,
+		interval.value,
+		limit.value
+	);
 
-	// Fetch candlestick data
-	const data = await fetchKlineData(baseAsset, quoteAsset, interval);
 	if (!data) {
 		console.error("Failed to fetch candlestick data.");
 		return;
 	}
 
-	// Initialize the Lightweight Charts instance
-	const chart = createChart(chartContainer.value, {
+	const sortedData = data.sort((a, b) => a.time - b.time);
+	candlestickSeries.setData(sortedData); // Update chart data
+};
+
+// Initialize chart
+const initializeChart = () => {
+	chart = createChart(chartContainer.value, {
 		width: chartContainer.value.clientWidth,
 		height: chartContainer.value.clientHeight,
 		layout: {
-			background: {color: "#111827" },
+			background: { color: "#111827" },
 			textColor: "#ffffff",
 		},
 		grid: {
@@ -45,7 +59,7 @@ onMounted(async () => {
 	});
 
 	// Add a candlestick series
-	const candlestickSeries = chart.addCandlestickSeries({
+	candlestickSeries = chart.addCandlestickSeries({
 		upColor: "#4caf50",
 		downColor: "#f44336",
 		borderUpColor: "#4caf50",
@@ -54,16 +68,19 @@ onMounted(async () => {
 		wickDownColor: "#f44336",
 	});
 
-	// Sort the data by time in ascending order
-	const sortedData = data.sort((a, b) => a.time - b.time);
-	// Set the candlestick data
-	candlestickSeries.setData(sortedData);
-
 	// Handle window resize
 	window.addEventListener("resize", () => {
 		chart.resize(chartContainer.value.clientWidth, chartContainer.value.clientHeight);
 	});
+};
+
+onMounted(() => {
+	initializeChart();
+	updateChart(); // Initial data fetch
 });
+
+// Watch for changes in store variables
+watch([baseAsset, quoteAsset, interval, limit], updateChart);
 </script>
 
 <template>

@@ -1,13 +1,9 @@
 <script setup>
-import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useMarginSymbolsStore } from "@/stores/marginSymbols.js";
+import { useKlinesBybitStore } from '@/stores/klinesBybit.js';
+const { interval, quoteAsset, limit } = storeToRefs(useKlinesBybitStore());
 const { klineData } = storeToRefs(useMarginSymbolsStore()); // Use reactive store variable
-
-// Reactive variables
-const interval = ref("15");
-const quoteAsset = ref("USDT");
-const limit = ref("200");
 
 // Function to download the fetched data as a JSON file
 const downloadJSON = () => {
