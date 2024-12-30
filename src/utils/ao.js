@@ -34,9 +34,9 @@ export const calculateAO = (candlestickData) => {
       if (value === null)
         return { time: candle.time, value: 0, color: "#00000000" }; // Transparent for empty periods
       const previousValue = ao[index - 1];
-      let color = "#00FF00"; // Default to green
+      let color = "#16A34A"; // Default to green
       if (previousValue !== undefined && value < previousValue) {
-        color = "#FF0000"; // Red if the value is less than the previous value
+        color = "#DC2626"; // Red if the value is less than the previous value
       }
       return {
         time: candle.time, //time: candlestickData[index].time,

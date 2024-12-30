@@ -72,20 +72,23 @@ const initializeCharts = () => {
 		},
 		timeScale: {
 			borderColor: "#cccccc",
-			rightOffset: 0, // Disable any offset on the time scale
+			rightOffset: 10, // Disable any offset on the time scale
 		},
 		priceScale: {
 			borderColor: "#cccccc",
 		},
+		crosshair: {
+			mode: 0,
+		}
 	});
 
 	priceCandlestickSeries = priceChart.addCandlestickSeries({
-		upColor: "#4caf50",
-		downColor: "#f44336",
-		borderUpColor: "#4caf50",
-		borderDownColor: "#f44336",
-		wickUpColor: "#4caf50",
-		wickDownColor: "#f44336",
+		upColor: "#16A34A",
+		downColor: "#DC2626",
+		borderUpColor: "#16A34A",
+		borderDownColor: "#DC2626",
+		wickUpColor: "#16A34A",
+		wickDownColor: "#DC2626",
 	});
 
 	// AO Chart
@@ -103,11 +106,14 @@ const initializeCharts = () => {
 		timeScale: {
 			borderColor: "#cccccc",
 			visible: false, // Hide the time scale for the AO chart (shared with price chart)
-			rightOffset: 0, // Disable any offset on the time scale
+			rightOffset: 10, // Disable any offset on the time scale
 		},
 		priceScale: {
 			borderColor: "#cccccc",
 		},
+		crosshair: {
+			mode: 2,
+		}
 	});
 
 	aoHistogramSeries = aoChart.addHistogramSeries({
