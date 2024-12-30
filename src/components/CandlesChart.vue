@@ -1,13 +1,22 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { createChart } from "lightweight-charts";
-import { fetchKlineData } from "@/utils/fetchKlineData.js";
+//import { createChart } from "lightweight-charts";
+import { createPriceChart, createAOChart } from "@/utils/chartConfig.js";
 import { useKlinesBybitStore } from "@/stores/klinesBybit.js";
-import { calculateAO } from "@/utils/ao.js";
+import { useCandleChartStore } from "@/stores/candleChart.js";
+import { useIAOStore } from "@/stores/iAO.js";
+//import { fetchKlineData } from "@/utils/fetchKlineData.js";
+//import { calculateAO } from "@/utils/ao.js";
 
+// Store references
+const { baseAsset, quoteAsset, interval, limit } = storeToRefs(useKlinesBybitStore());
+const { candlestickData } = storeToRefs(useCandleChartStore());
+const { fetchCandlestickData } = useCandleChartStore();
+const { aoData } = storeToRefs(useIAOStore());
+const { calculateIndicator } = useIAOStore();
 // Access the Pinia store for Klines
-const { baseAsset, quoteAsset, interval, limit } = storeToRefs(useKlinesBybitStore()); // Destructure reactive variables
+//const { baseAsset, quoteAsset, interval, limit } = storeToRefs(useKlinesBybitStore()); // Destructure reactive variables
 
 const combinedChartContainer = ref(null);
 let priceChart = null;
@@ -19,11 +28,9 @@ let aoHistogramSeries = null;
 const handleResize = () => {
 	const container = combinedChartContainer.value;
 	if (!container) return;
-
 	const containerHeight = container.offsetHeight;
 	const priceChartHeight = (4 / 5) * containerHeight;
 	const aoChartHeight = (1 / 5) * containerHeight;
-
 	if (priceChart) {
 		priceChart.resize(container.offsetWidth, priceChartHeight);
 	}
@@ -36,17 +43,18 @@ const handleResize = () => {
 const updateCharts = async () => {
 	if (!priceChart || !priceCandlestickSeries || !aoChart || !aoHistogramSeries) return;
 
-	const data = await fetchKlineData(baseAsset.value, quoteAsset.value, interval.value, limit.value);
-	if (!data) {
-		console.error("Failed to fetch candlestick data.");
-		return;
-	}
+	//const data = await fetchKlineData(baseAsset.value, quoteAsset.value, interval.value, limit.value);
+	//if (!data) {
+	//	console.error("Failed to fetch candlestick data.");
+	//	return;
+	//}
 
-	const sortedData = data.sort((a, b) => a.time - b.time);
-	priceCandlestickSeries.setData(sortedData);
+	//const sortedData = data.sort((a, b) => a.time - b.time);
+	await fetchCandlestickData(baseAsset.value, quoteAsset.value, interval.value, limit.value);
+	priceCandlestickSeries.setData(candlestickData.value);
 
-	const aoData = calculateAO(sortedData);
-	aoHistogramSeries.setData(aoData);
+	calculateIndicator(candlestickData.value);
+	aoHistogramSeries.setData(aoData.value);
 };
 
 // Initialize both charts
@@ -59,29 +67,7 @@ const initializeCharts = () => {
 	const aoChartHeight = (1 / 5) * containerHeight;
 
 	// Price Chart
-	priceChart = createChart(container, {
-		width: container.offsetWidth,
-		height: priceChartHeight,
-		layout: {
-			background: { color: "#111827" },
-			textColor: "#ffffff",
-		},
-		grid: {
-			vertLines: { color: "#1F2937" },
-			horzLines: { color: "#1F2937" },
-		},
-		timeScale: {
-			borderColor: "#cccccc",
-			rightOffset: 10, // Disable any offset on the time scale
-		},
-		priceScale: {
-			borderColor: "#cccccc",
-		},
-		crosshair: {
-			mode: 0,
-		}
-	});
-
+	priceChart = createPriceChart(container, container.offsetWidth, priceChartHeight);
 	priceCandlestickSeries = priceChart.addCandlestickSeries({
 		upColor: "#16A34A",
 		downColor: "#DC2626",
@@ -92,35 +78,12 @@ const initializeCharts = () => {
 	});
 
 	// AO Chart
-	aoChart = createChart(container, {
-		width: container.offsetWidth,
-		height: aoChartHeight,
-		layout: {
-			background: { color: "#111827" },
-			textColor: "#ffffff",
-		},
-		grid: {
-			vertLines: { color: "#1F2937" },
-			horzLines: { color: "#1F2937" },
-		},
-		timeScale: {
-			borderColor: "#cccccc",
-			visible: false, // Hide the time scale for the AO chart (shared with price chart)
-			rightOffset: 10, // Disable any offset on the time scale
-		},
-		priceScale: {
-			borderColor: "#cccccc",
-		},
-		crosshair: {
-			mode: 2,
-		}
-	});
-
+	aoChart = createAOChart(container, container.offsetWidth,	aoChartHeight)
 	aoHistogramSeries = aoChart.addHistogramSeries({
 		color: "#00FF00",
 		base: 0,
-		priceLineVisible: false, // Hides the dynamic price line
-		lastValueVisible: false, // Hides the last value label
+		priceLineVisible: false,
+		lastValueVisible: false,
 	});
 
 	// Sync time scale between the charts
@@ -129,7 +92,6 @@ const initializeCharts = () => {
 	priceTimeScale.subscribeVisibleLogicalRangeChange((range) => {
 		aoTimeScale.setVisibleLogicalRange(range);
 	});
-
 	aoTimeScale.subscribeVisibleLogicalRangeChange((range) => {
 		priceTimeScale.setVisibleLogicalRange(range);
 	});
