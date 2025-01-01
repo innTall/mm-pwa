@@ -1,4 +1,4 @@
-
+/*
 import data from "../data/kline_data.json";
 export async function fetchKlineData() {
   //const data = await response.json();
@@ -22,8 +22,8 @@ export async function fetchKlineData() {
 
   return formattedData; // Return formatted data
 }
+*/
 
-/*
 export async function fetchKlineData(
   baseAsset,
   quoteAsset = "USDT",
@@ -78,4 +78,3 @@ export async function fetchKlineData(
     return null; // Return null in case of error
   }
 }
-*/

