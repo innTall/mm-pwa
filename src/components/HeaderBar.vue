@@ -19,7 +19,7 @@ const captureScreenshot = async () => {
 
 const sendScreenshotToTelegram = async (imageBlob) => {
 	const botToken = "7892152117:AAGg6Dfh47y8pFlV-iHI2xa3gi0Vrbrwe6g";
-	const chatId = "@mtradelong"; // Include the "@" symbol for channels
+	const chatId = "@m_trade_long"; // Include the "@" symbol for channels
 	const formData = new FormData();
 
 	formData.append("chat_id", chatId);
