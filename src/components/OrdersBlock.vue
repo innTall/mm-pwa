@@ -5,13 +5,17 @@ import MarginOrder from './MarginOrder.vue';
 import { useOrdersBlockStore } from '@/stores/ordersBlock.js';
 import { useModalRemoveStore } from "@/stores/modalRemove.js";
 const { openDialog } = useModalRemoveStore();
-const { blocks } = storeToRefs(useOrdersBlockStore());
+const { blocks, totalActiveTpAndSl } = storeToRefs(useOrdersBlockStore());
 const { removeBlock, addOrder } = useOrdersBlockStore();
 const telegramChannelUrl = "https://t.me/grids_to_long"; // Replace with your Telegram channel URL
 const openRemoveBlockDialog = (blockId) => {
 	openDialog("Delete this block?", () => {
 		removeBlock(blockId);
 	});
+};
+const getBlockTotalColor = (blockIndex) => {
+	const value = totalActiveTpAndSl.value[blockIndex]; // Assuming this is computed for each block
+	return value > 0 ? "text-green-500" : value < 0 ? "text-red-500" : "text-white";
 };
 // Computed property to show only the last block.
 //const visibleBlocks = computed(() => {
@@ -21,11 +25,13 @@ const openRemoveBlockDialog = (blockId) => {
 
 <template>
 	<div v-bind="$attrs" class="max-h-24 overflow-y-auto text-sm">
-		<div v-for="block in blocks" :key="block.id" :id="'block-' + block.id" class="mt-2">
+		<div v-for="(block, index) in blocks" :key="block.id" :id="'block-' + block.id" class="mt-2">
 			<div class="flex justify-between">
 				<input :id="'symbol-' + block.id" type="text" v-model="block.symbol" placeholder="Symbol"
 					class="w-[8ch] text-center font-bold bg-gray-900 border uppercase" />
-				<div class="">TotalBalance</div>
+				<div class="font-bold">
+					<span :class="getBlockTotalColor(index)">{{ totalActiveTpAndSl[index].toFixed(2) }}</span>
+				</div>
 				<div class="">Reserv</div>
 				<div class="flex items-center space-x-4">
 					<a :href="telegramChannelUrl" target="_blank" rel="noopener noreferrer"

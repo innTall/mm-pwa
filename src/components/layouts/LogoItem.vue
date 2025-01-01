@@ -6,6 +6,15 @@
 		<RouterLink :to="{ name: 'MarginTrade' }">
 			<img src="/pwa-64x64.png" alt="Logo" class="h-10 w-10" />
 		</RouterLink>
+		<div class="">
+			<p class="text-sm text-left">
+				<strong>
+					<span>M-trade</span>
+				</strong>
+				<br>
+				<small>Money.Margin.Management</small>
+			</p>
+		</div>
 	</div>
 </template>
 <style scoped></style>

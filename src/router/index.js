@@ -8,11 +8,6 @@ const router = createRouter({
       name: "MarginTrade",
       component: MarginTrade,
     },
-    {
-      path: "/fullCode",
-      name: "FullCode",
-      component: () => import("../views/FullCode.vue"),
-    },
   ],
 });
 

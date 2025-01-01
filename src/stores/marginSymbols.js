@@ -46,5 +46,5 @@ export const useMarginSymbolsStore = defineStore(
       scrollToBlock,
     };
   },
-  { persist: false }
+  { persist: true }
 );

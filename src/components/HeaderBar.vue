@@ -12,10 +12,7 @@ import LogoItem from './layouts/LogoItem.vue';
 				<div class="text-center">
 					<div class="">Bybit</div>
 					<RouterLink :to="{ name: 'MarginTrade' }" v-slot="{ isActive }">
-						<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Margin |</span>
-					</RouterLink>
-					<RouterLink :to="{ name: 'FullCode' }" v-slot="{ isActive }">
-						<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> CODE</span>
+						<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Margin </span>
 					</RouterLink>
 				</div>
 			</div>
