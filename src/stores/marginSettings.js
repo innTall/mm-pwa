@@ -3,12 +3,11 @@ import { ref } from "vue";
 
 export const useMarginSettingsStore = defineStore("marginSettings", () => {
   const openSettings = ref(false);
-  const deposit = ref(270);
-  const leverage = ref(10);
-  const coefRisk = ref(1);
-  const takeProfit = ref(0.5);
-  const stopLoss = ref(0.1);
-  const offlineMode = ref(0);
+  const deposit = ref(null);
+  const leverage = ref(null);
+  const coefRisk = ref(null);
+  const takeProfit = ref(null);
+  const stopLoss = ref(null);
 
   // Actions
   const toggleSettings = () => {
@@ -25,8 +24,6 @@ export const useMarginSettingsStore = defineStore("marginSettings", () => {
       takeProfit.value = newSettings.takeProfit;
     if (newSettings.stopLoss !== undefined)
       stopLoss.value = newSettings.stopLoss;
-    if (newSettings.offlineMode !== undefined)
-      offlineMode.value = newSettings.offlineMode;
   };
 
   const resetSettings = () => {
@@ -35,7 +32,6 @@ export const useMarginSettingsStore = defineStore("marginSettings", () => {
     coefRisk.value = 0;
     takeProfit.value = 0;
     stopLoss.value = 0;
-    offlineMode.value = 0;
   };
 
   return {
@@ -45,7 +41,6 @@ export const useMarginSettingsStore = defineStore("marginSettings", () => {
     coefRisk,
     takeProfit,
     stopLoss,
-    offlineMode,
     toggleSettings,
     setSettings,
     resetSettings,

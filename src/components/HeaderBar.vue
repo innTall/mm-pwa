@@ -1,5 +1,6 @@
 <script setup>
 import LogoItem from './layouts/LogoItem.vue';
+import { CameraIcon } from '@heroicons/vue/24/outline'; // Import Heroicons Outline Camera
 import domtoimage from "dom-to-image";
 const captureScreenshot = async () => {
 	try {
@@ -49,9 +50,11 @@ const sendScreenshotToTelegram = async (dataUrl) => {
 			<div>
 				<LogoItem />
 			</div>
-			<div class="flex gap-3 ">
-				<button @click="captureScreenshot" class="bg-gray-700 text-blue-500 px-2 text-sm rounded shadow hover:bg-gray-500">
-					Scr
+			<div class="flex gap-3 items-center">
+				<button @click="captureScreenshot"
+					class="h-8 bg-gray-900 px-2 shadow hover:bg-gray-700">
+					<!-- Heroicons Camera Icon -->
+					<CameraIcon class="w-6 h-6 text-white" />
 				</button>
 				<div class="flex justify-between text-sm">
 					<div class="text-center">

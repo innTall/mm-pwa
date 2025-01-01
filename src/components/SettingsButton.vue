@@ -2,7 +2,7 @@
 import { storeToRefs } from 'pinia';
 import { useMarginSettingsStore } from '@/stores/marginSettings.js';
 
-const { openSettings, deposit, leverage, coefRisk, takeProfit, stopLoss, offlineMode } = storeToRefs(useMarginSettingsStore());
+const { openSettings, deposit, leverage, coefRisk, takeProfit, stopLoss } = storeToRefs(useMarginSettingsStore());
 //const { toggleSettings, setSettings, resetSettings, } = (useMarginSettingsStore());
 //const openSettings = ref(false);
 const submitForm = (e) => {
@@ -18,7 +18,7 @@ e.preventDefault();
 		</button>
 		<Teleport to="body">
 			<div v-if="openSettings" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-10">
-				<div class="bg-gray-900 text-white border rounded-3xl p-4 w-full sm:w-2/3 md:w-1/2 lg:w-1/3 overflow-auto">
+				<div class="bg-gray-900 text-white border rounded-3xl p-4 w-2/3 sm:w-2/3 md:w-1/2 lg:w-1/3 overflow-auto">
 					<form @submit="submitForm" class="space-y-4">
 						<div class="space-y-3">
 							<div class="flex items-center justify-between">
@@ -31,8 +31,11 @@ e.preventDefault();
 							</div>
 							<div class="flex items-center justify-between">
 								<label for="lev" class="text-sm font-semibold">Leverage:</label>
-								<input id="lev" type="number" v-model="leverage" step="1" required
-									class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md" />
+								<div class="flex items-center gap-2">
+									<input id="lev" type="number" v-model="leverage" step="1" required
+										class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md" />
+									<span>X</span>
+								</div>
 							</div>
 							<div class="flex items-center justify-between">
 								<label for="mar" class="text-sm font-semibold">Margin:</label>
@@ -57,11 +60,6 @@ e.preventDefault();
 										class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md" />
 									<span>%</span>
 								</div>
-							</div>
-							<div class="flex items-center justify-between">
-								<label for="off" class="text-sm font-semibold">Offline Mode:</label>
-								<input id="off" type="number" v-model="offlineMode" step="1" required
-									class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md" />
 							</div>
 						</div>
 						<div class="flex justify-end space-x-3">

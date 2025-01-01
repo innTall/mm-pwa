@@ -9,7 +9,7 @@
 		<div class="">
 			<p class="text-sm text-left">
 				<strong>
-					<span>M-trade</span>
+					<span>M-Trade</span>
 				</strong>
 				<br>
 				<small>Money.Margin.Management</small>
@@ -17,4 +17,4 @@
 		</div>
 	</div>
 </template>
-<style scoped></style>
+<style scoped></style>0

@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import { useMarginSettingsStore } from "@/stores/marginSettings.js";
 import { useMarginOptionsStore } from "@/stores/marginOptions.js";
 import { useOrdersBlockStore } from "@/stores/ordersBlock.js";
-const { deposit, leverage, takeProfit, stopLoss } = storeToRefs(useMarginSettingsStore());
+const { deposit, leverage, coefRisk, takeProfit, stopLoss } = storeToRefs(useMarginSettingsStore());
 const { margin, tpCost, slCost } = storeToRefs(useMarginOptionsStore());
 const { addBlock } = useOrdersBlockStore();
 </script>
@@ -23,7 +23,7 @@ const { addBlock } = useOrdersBlockStore();
 			<div class="text-sm">{{ leverage }}</div>
 		</div>
 		<div>
-			<div class="text-xs">Margin</div>
+			<div class="text-xs">M-{{ coefRisk }}%</div>
 			<div class="text-sm">{{ margin }}$</div>
 		</div>
 		<div>
