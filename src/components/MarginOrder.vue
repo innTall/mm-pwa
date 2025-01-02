@@ -27,26 +27,26 @@ const openRemoveOrderDialog = (block, orderId) => {
 			<!-- Order Input -->
 			<div class="flex justify-between items-center py-2">
 				<span>{{ index + 1 }}</span>
-				<input id="buyPrice" type="number" v-model="order.buyPrice" placeholder="BuyPrice"
+				<input :id="'buyPrice-' + order.id" type="number" v-model="order.buyPrice" placeholder="BuyPrice"
 					class="w-[6ch] bg-gray-900 text-center" />
-				<input id="amount" type="number" v-model="order.amount" placeholder="Amount"
+				<input :id="'amount-' + order.id" type="number" v-model="order.amount" placeholder="Amount"
 					class="w-[6ch] bg-gray-900 text-center" />
 				<span class="">{{ calculateBuyOrder(order) }}</span>
 				<div class="text-gray-500 text-xs">
 					<span>({{ infoAmount(order) }} - </span>
 					<span>{{ buyOrderMath }})</span>
 				</div>
-				<button id="removeOrder" @click="openRemoveOrderDialog(block, order.id)"
+				<button :id="'removeOrder-' + order.id" @click="openRemoveOrderDialog(block, order.id)"
 					class="flex px-2 font-bold text-red-600 border border-red-600 items-center">x</button>
 			</div>
 			<div class="flex justify-between items-center pb-2 border-b">
 				<!-- SL Switch -->
 				<div class="flex items-center">
-					<input id="sl" type="radio" name="switchGroup" v-model="order.selectedSwitch" value="sl"
+					<input :id="'sl-' + order.id" type="radio" name="switchGroup" v-model="order.selectedSwitch" value="sl"
 						class="accent-red-600" />
 					<span :class="getColorClass(order, 'sl')">SL</span>
 				</div>
-				<input id="slPrice" type="number" v-model="order.slPrice" placeholder="SLprice"
+				<input :id="'slPrice-' + order.id" type="number" v-model="order.slPrice" placeholder="SLprice"
 					class="w-[6ch] bg-gray-900 text-center" :class="getColorClass(order, 'sl')" />
 				<span :class="getColorClass(order, 'sl')">{{ calculateSl(order) }}</span>
 				<div class="text-gray-500">
@@ -54,11 +54,11 @@ const openRemoveOrderDialog = (block, orderId) => {
 				</div>
 				<!-- TP Switch -->
 				<div class="flex items-center">
-					<input id="tp" type="radio" name="switchGroup" v-model="order.selectedSwitch" value="tp"
+					<input :id="'tp-' + order.id" type="radio" name="switchGroup" v-model="order.selectedSwitch" value="tp"
 						class="accent-green-600" />
 					<span :class="getColorClass(order, 'tp')">TP</span>
 				</div>
-				<input id="tpPrice" type="number" v-model="order.tpPrice" placeholder="TPprice"
+				<input :id="'tpPrice-' + order.id" type="number" v-model="order.tpPrice" placeholder="TPprice"
 					class="w-[6ch] bg-gray-900 text-center" :class="getColorClass(order, 'tp')" />
 				<span :class="getColorClass(order, 'tp')">{{ calculateTp(order) }}</span>
 				<div class="text-gray-500">
