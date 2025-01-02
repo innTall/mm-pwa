@@ -14,15 +14,30 @@ const baseChartConfig = (width, height, timeScaleVisible = true) => ({
   },
   timeScale: {
     borderColor: "#cccccc",
-    visible: true, //timeScaleVisible,
-    rightOffset: 7, // Disable any offset on the time scale
+    visible: timeScaleVisible, //timeScaleVisible,
+    rightOffset: 5, // Disable any offset on the time scale
+    timeVisible: true, // Ensure time is displayed
   },
   priceScale: {
     borderColor: "#cccccc",
   },
   crosshair: {
-    mode: 0,
+    mode: 1,
+    vertLine: {
+      color: "#ffffff",
+      width: 1,
+      style: 1,
+      visible: true,
+      labelVisible: true,
+    },
+    horzLine: {
+      //markerVisible: false,
+      visible: false, // Disable horizontal crosshair line
+      labelVisible: false,
+    },    
   },
+  crosshairMarkerVisible: false, // Remove price label from the crosshair
+  
 });
 
 // Function to create a price chart
@@ -35,6 +50,6 @@ export const createPriceChart = (container, width, height) => {
 export const createAOChart = (container, width, height) => {
   const config = baseChartConfig(width, height, false); // Hide time scale for AO chart
   config.crosshair = { mode: 2 }; // Crosshair mode off
-  config.timeScale = { visible: false, rightOffset: 7 };
+  config.timeScale = { visible: false, rightOffset: 5 };
   return createChart(container, config);
 };
