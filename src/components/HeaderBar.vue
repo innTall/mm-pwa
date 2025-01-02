@@ -9,7 +9,7 @@ const captureScreenshot = async () => {
 
 		// Capture the screenshot
 		const dataUrl = await domtoimage.toBlob(screenshotElement);
-		
+
 		// Send the image to the Telegram channel
 		await sendScreenshotToTelegram(dataUrl);
 	} catch (error) {
@@ -45,27 +45,23 @@ const sendScreenshotToTelegram = async (dataUrl) => {
 </script>
 
 <template>
-	<div clas="">
-		<div class="flex justify-between">
-			<div>
-				<LogoItem />
-			</div>
-			<div class="flex gap-3 items-center">
-				<button @click="captureScreenshot"
-					class="h-8 bg-gray-900 px-2 shadow hover:bg-gray-700">
-					<!-- Heroicons Camera Icon -->
-					<CameraIcon class="w-6 h-6 text-white" />
-				</button>
-				<div class="flex justify-between text-sm">
-					<div class="text-center">
-						<div class="">Bybit</div>
-						<RouterLink :to="{ name: 'MarginTrade' }" v-slot="{ isActive }">
-							<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Margin </span>
-						</RouterLink>
-					</div>
+	<div class="flex justify-between border-b border-green-600 pb-2">
+		<div>
+			<LogoItem />
+		</div>
+		<div class="flex gap-3 items-center">
+			<button @click="captureScreenshot" class="h-8 bg-gray-900 px-2 shadow hover:bg-gray-700">
+				<!-- Heroicons Camera Icon -->
+				<CameraIcon class="w-6 h-6 text-white" />
+			</button>
+			<div class="flex justify-between text-sm">
+				<div class="text-center">
+					<div class="">Bybit</div>
+					<RouterLink :to="{ name: 'MarginTrade' }" v-slot="{ isActive }">
+						<span :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"> Margin </span>
+					</RouterLink>
 				</div>
 			</div>
 		</div>
-		<hr class="border-green-600 mt-2">
 	</div>
 </template>

@@ -1,22 +1,17 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { storeToRefs } from "pinia";
-//import { createChart } from "lightweight-charts";
 import { createPriceChart, createAOChart } from "@/utils/chartConfig.js";
-import { useKlinesBybitStore } from "@/stores/klinesBybit.js";
+import { useChartSettingsStore } from "@/stores/chartSettings.js";
 import { useCandleChartStore } from "@/stores/candleChart.js";
 import { useIAOStore } from "@/stores/iAO.js";
-//import { fetchKlineData } from "@/utils/fetchKlineData.js";
-//import { calculateAO } from "@/utils/ao.js";
 
 // Store references
-const { baseAsset, quoteAsset, interval, limit } = storeToRefs(useKlinesBybitStore());
+const { baseAsset, quoteAsset, interval, limit } = storeToRefs(useChartSettingsStore());
 const { candlestickData } = storeToRefs(useCandleChartStore());
 const { fetchCandlestickData } = useCandleChartStore();
 const { aoData } = storeToRefs(useIAOStore());
 const { calculateIndicator } = useIAOStore();
-// Access the Pinia store for Klines
-//const { baseAsset, quoteAsset, interval, limit } = storeToRefs(useKlinesBybitStore()); // Destructure reactive variables
 
 const combinedChartContainer = ref(null);
 let priceChart = null;
@@ -42,12 +37,6 @@ const handleResize = () => {
 // Function to fetch and update chart data
 const updateCharts = async () => {
 	if (!priceChart || !priceCandlestickSeries || !aoChart || !aoHistogramSeries) return;
-
-	//const data = await fetchKlineData(baseAsset.value, quoteAsset.value, interval.value, limit.value);
-	//if (!data) {
-	//	console.error("Failed to fetch candlestick data.");
-	//	return;
-	//}
 
 	//const sortedData = data.sort((a, b) => a.time - b.time);
 	await fetchCandlestickData(baseAsset.value, quoteAsset.value, interval.value, limit.value);
@@ -110,9 +99,9 @@ watch([baseAsset, quoteAsset, interval, limit], updateCharts);
 </script>
 
 <template>
-	<div class="relative w-full h-full">
-		<div ref="combinedChartContainer" id="combined-chart-container" class="absolute inset-0 bg-gray-900">
+	<div class="relative w-full h-full border-t border-green-600">
+		<div ref="combinedChartContainer" id="combined-chart-container" class="absolute inset-0">
 		</div>
 	</div>
 </template>
-<style lang="css" scoped></style>
+<style scoped></style>

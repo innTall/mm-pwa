@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useKlinesBybitStore = defineStore(
-  "klinesBybit",
+export const useChartSettingsStore = defineStore(
+  "chartSettings",
   () => {
     
     const baseAsset = ref("BTC");

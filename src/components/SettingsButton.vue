@@ -3,8 +3,7 @@ import { storeToRefs } from 'pinia';
 import { useMarginSettingsStore } from '@/stores/marginSettings.js';
 
 const { openSettings, deposit, leverage, coefRisk, takeProfit, stopLoss } = storeToRefs(useMarginSettingsStore());
-//const { toggleSettings, setSettings, resetSettings, } = (useMarginSettingsStore());
-//const openSettings = ref(false);
+
 const submitForm = (e) => {
 e.preventDefault();
 	console.log("Form Submitted");

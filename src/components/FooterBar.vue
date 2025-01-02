@@ -31,10 +31,9 @@ const getTotalBalanceColor = computed(() =>
 </script>
 
 <template>
-	<hr class="border-green-600">
-	<div class="h-10 flex justify-between ml-3 items-center text-sm">
-		<div class="text-green-600 items-center">v.{{ appVersion }}</div>
-		<div class="flex p-1 gap-2">
+	<div class="flex justify-between pt-2 text-sm border-t border-green-600">
+		<div class="text-green-600">v.{{ appVersion }}</div>
+		<div class="flex gap-2">
 			<!-- Total Balance -->
 			<div class="">Balance:</div>
 			<span :class="getTotalBalanceColor" class="">{{ totalBalance.toFixed(2) }}</span>

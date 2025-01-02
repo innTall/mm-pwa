@@ -10,7 +10,7 @@ const { addBlock } = useOrdersBlockStore();
 </script>
 
 <template>
-	<div class="flex justify-between gap-1 text-center">
+	<div class="flex justify-between text-center pt-1 pb-1 border-b border-green-600">
 		<div class="px-2 py-1 border rounded-md items-center hover:bg-gray-700">
 			<SettingsButton />
 		</div>
@@ -36,6 +36,5 @@ const { addBlock } = useOrdersBlockStore();
 		</div>
 		<button @click="addBlock" class="px-2 py-1 text-sm border rounded-lg hover:bg-gray-700">Add</button>
 	</div>
-	<hr class="border-green-600 mt-2">
 </template>
 <style scoped></style>

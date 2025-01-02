@@ -4,11 +4,9 @@ import { useMarginOptionsStore } from "@/stores/marginOptions.js";
 import { useMarginOrdersStore } from '@/stores/marginOrders.js';
 import { useOrdersBlockStore } from '@/stores/ordersBlock.js';
 import { useModalRemoveStore } from "@/stores/modalRemove.js";
-const { openDialog, confirmAction, cancelAction } = useModalRemoveStore();
-const { showModalRemove, confirmMessage, } = storeToRefs(useModalRemoveStore());
+const { openDialog } = useModalRemoveStore();
 const { buyOrderMath } = storeToRefs(useMarginOptionsStore());
 const { removeOrder } = useOrdersBlockStore();
-const { selectedSwitch, } = storeToRefs(useMarginOrdersStore());
 const { calculateBuyOrder, calculateSl, calculateTp, infoAmount, infoSlPrice, infoTpPrice, getColorClass } = useMarginOrdersStore();
 const props = defineProps({
 	block: {
@@ -24,10 +22,10 @@ const openRemoveOrderDialog = (block, orderId) => {
 </script>
 
 <template>
-	<div v-if="block && block.orders" class="max-h-16 overflow-y-auto text-sm">
-		<div v-for="(order, index) in block.orders" :key="order.id" class="mt-2 border-b border-gray-600">
+	<div v-if="block && block.orders" class="h-16 overflow-y-auto text-sm">
+		<div v-for="(order, index) in block.orders" :key="order.id" class="">
 			<!-- Order Input -->
-			<div class="flex justify-between mt-1 items-center">
+			<div class="flex justify-between items-center py-2">
 				<span>{{ index + 1 }}</span>
 				<input id="buyPrice" type="number" v-model="order.buyPrice" placeholder="BuyPrice"
 					class="w-[6ch] bg-gray-900 text-center" />
@@ -41,7 +39,7 @@ const openRemoveOrderDialog = (block, orderId) => {
 				<button id="removeOrder" @click="openRemoveOrderDialog(block, order.id)"
 					class="flex px-2 font-bold text-red-600 border border-red-600 items-center">x</button>
 			</div>
-			<div class="flex justify-between mt-1 mb-1 items-center">
+			<div class="flex justify-between items-center pb-2 border-b">
 				<!-- SL Switch -->
 				<div class="flex items-center">
 					<input id="sl" type="radio" name="switchGroup" v-model="order.selectedSwitch" value="sl"
@@ -67,7 +65,6 @@ const openRemoveOrderDialog = (block, orderId) => {
 					<span class="text-xs">({{ infoTpPrice(order) }})</span>
 				</div>
 			</div>
-			<hr class="w-1/2 border-gray-600">
 		</div>
 	</div>
 </template>
